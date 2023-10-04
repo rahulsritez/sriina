@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Books Store | <%=title%></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" href="/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+  <%- include ("../../common/css") %>
+</head>
+<body class="hold-transition sidebar-mini layout-fixed">
+<div class="wrapper">
+<%- include ("../../common/top_nav") %>
+<%- include ("../../common/sidebar") %>
+  <div class="content-wrapper">
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0 text-dark">Dashboard</h1>
+          </div>
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
+              <li class="breadcrumb-item active">Discount</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="container">
+            <% if(message.length > 0) { %>
+                <div class="alert alert-success alert-dismissible show" role="alert">
+                  <%= message %>
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+            <% } %>
+            <div class="card">
+              <div class="card-body">
+                <table id="products_tbl" class="table table-bordered table-striped">
+                  <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Total Products</th>
+                    <th>Discount</th>
+                    <th>Quantity</th>
+                    <th>Publisher name</th>
+                    <th>Status</th>
+                    <th width="15%">Action</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                    <% if (updated_discount.length > 0) { %>
+                    <% updated_discount.forEach((list, index) => { %>
+                  <tr>
+                    <td><%= index+1 %></td>
+                    <td><%= list.total_products %></td>
+                    <td><%= list.discount %></td>
+                    <td><%= list.quantity %></td>
+                    <td><%= list.imprint_name %></td>
+                    <td><% if(list.status==1){ %>Active<% } else { %>Inactive<% } %></td>
+                    <td>
+                      <a class="edit_pages btn btn-info btn-sm" data-publishing_role_id="<%= list.publishing_role_id %>" data-publisher="<%= list.publisher %>" data-status="<%= list.status %>" data-target="#myModaledit" data-toggle="modal"><i class="fas fa-pencil-alt"></i>Edit</a>
+                    </td>
+                  </tr>
+                  <% }) %>
+                  <% } else { %>
+                    <tr><td colspan="6" style="text-align:center">no record found</td></tr>
+                    <% } %>
+                  </tbody>
+                  <tfoot>
+                  <tr>
+                    <th>#</th>
+                    <th>Total Products</th>
+                    <th>Discount</th>
+                    <th>Quantity</th>
+                    <th>Publisher name</th>
+                    <th>Status</th>
+                    <th width="15%">Action</th>
+                  </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+        </div>
+
+<div class="modal fade" id="myModaledit" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content animated bounceInRight">
+          <div class="modal-header">
+            <h5 class="modal-title">Edit Discount </h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+            <!--end modal-header-->
+            <form action="/savediscount" method="post" id="updatefrm" >
+                <input type="hidden" id="publishing_role_id" name="publishing_role_id" value="">
+                <div class="modal-body">
+                    <div class="row mb-2">
+                        <div class="col-md-6">
+                          <label class="control-label label-margin">Publisher</label>
+                          <input type="text" class="form-control" id="edit_publisher" placeholder="Name" name="edit_publisher" readonly required>
+                        </div>
+                        <div class="col-md-6">
+                          <label class="control-label label-margin">Discount</label>
+                              <input type="number" name="edit_discount" id="edit_dicount" class="form-control">
+                        </div>
+                      </div>
+                      
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+        </div>
+      </div>
+    </section>
+  </div>
+<%- include ("../../common/footer") %>
+</div>
+<%- include ("../../common/js") %>
+<script>
+    $('#products_tbl').on('click','.edit_pages',function(){
+    var publishing_role_id = $(this).data('publishing_role_id');
+    var publisher          = $(this).data('publisher');
+    
+    $('#myModaledit').modal('show');
+    $('#publishing_role_id').val(publishing_role_id);
+    $("#edit_publisher").val(publisher);
+    $("#edit_discount").val();
+  });
+</script>
+</body>
+</html>

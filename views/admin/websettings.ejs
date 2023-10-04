@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Books Store | <%= title %></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" href="/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+    <%- include ("../../common/css") %>
+</head>
+<body class="hold-transition sidebar-mini layout-fixed">
+<div class="wrapper">
+<%- include ("../../common/top_nav") %>
+<%- include ("../../common/sidebar") %>
+  <div class="content-wrapper">
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0 text-dark">Dashboard</h1>
+          </div>
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
+              <li class="breadcrumb-item active">User</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="container">
+            <div class="card">
+            
+              <% if(message.length > 0) {%>
+                <div class="alert alert-success alert-dismissible show" role="alert">
+                   <%= message %> 
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <% } %>
+              <!-- /.card-header -->
+              <div class="card-body">
+                <table id="products_tbl" class="table table-bordered table-striped">
+                  <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Permission</th>
+                    <th>Status</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                    <% for(var i=0; i < permissionlist.length; i++){ %>
+                  <tr>
+                    <td><%= i+1 %></td>
+                    <td><%= permissionlist[i].page_name %></td>
+                    <td><%if(permissionlist[i].permission=='1') {%><span class="text-success">Active</span><% } else if(permissionlist[i].permission=='0'){%><span class="text-danger">Inactive</span><% } else {%>ERROR<% }%></td>
+                    <td>
+                      <a class="edit_permission btn btn-info btn-sm" data-id="<%= permissionlist[i].id %>"  data-page_name="<%= permissionlist[i].page_name %>" data-permission="<%= permissionlist[i].permission %>" data-target="#myModaledit" data-toggle="modal"><i class="fas fa-pencil-alt"></i>Edit</a>
+                      <a class="delete_permission btn btn-danger btn-sm" id="<%= permissionlist[i].id %>"><i class="fas fa-trash"></i>Delete</a></td>
+                  </tr>
+                  <% } %>
+                  </tbody>
+                  <tfoot>
+                  <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Permission</th>
+                    <th>Status</th>
+                  </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="myModaledit" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content animated bounceInRight">
+                  <div class="modal-header">
+                    <h4 class="modal-title">Edit Customer</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                    <!--end modal-header-->
+                    <form action="/updatepermission" method="post">
+                        <input type="hidden" id="edit_id" name="edit_id" value="">
+                        <div class="modal-body">
+                            <div class="example-box-wrapper">
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        <label class="control-label label-margin">Name</label>
+                                        <input type="text" class="form-control" id="edit_page_name" placeholder="Name" name="edit_page_name" required>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        <label class="control-label label-margin">Status</label>
+                                        <select class="form-control" name="edit_permission" id="edit_permission"required>
+                                            <option value="0">Inactive</option>
+                                            <option value="1">Active</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+        
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        </div>
+      </div>
+    </section>
+  </div>
+<%- include ("../../common/footer") %>
+</div>
+<%- include ("../../common/js") %>
+<script type="text/javascript">
+$(function() { 
+  "use strict";  
+  $("#example1").DataTable({
+        "responsive": true,
+        "autoWidth": false,
+  });
+});  
+</script>
+</body>
+</html>

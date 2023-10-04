@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="description" content="">
+<meta name="author" content="">
+<meta name="keywords" content="MediaCenter, Template, eCommerce">
+<meta name="robots" content="all">
+<title>Sriina | <%= title %></title>
+<link rel="stylesheet" href="<%= baseURL %>assets/css/bootstrap.min.css">
+<link rel="stylesheet" href="<%= baseURL %>assets/css/main.css">
+<link rel="stylesheet" href="<%= baseURL %>assets/css/blue.css">
+<link rel="stylesheet" href="<%= baseURL %>assets/css/owl.carousel.css">
+<link rel="stylesheet" href="<%= baseURL %>assets/css/owl.transitions.css">
+<link rel="stylesheet" href="<%= baseURL %>assets/css/animate.min.css">
+<link rel="stylesheet" href="<%= baseURL %>assets/css/rateit.css">
+<link rel="stylesheet" href="<%= baseURL %>assets/css/bootstrap-select.min.css">
+<link href="<%= baseURL %>assets/css/custom.css" rel="stylesheet" />
+<link href="<%= baseURL %>assets/grocery/css/style.css" rel="stylesheet" />
+<!-- Icons/Glyphs -->
+<link rel="stylesheet" href="<%= baseURL %>assets/css/font-awesome.css">
+<link rel="stylesheet" href="<%= baseURL %>assets/css/grocery.css">
+<!-- Fonts -->
+<link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,400italic,600,600italic,700,700italic,800' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
+<style>
+  #categorys{
+  max-height: 500px !important;
+  margin-bottom: 20px;
+  overflow-y: scroll;
+  }
+</style>
+</head>
+<body class="cnt-home">
+<!-- ============================================== HEADER ============================================== -->
+<header class="header-style-1">
+  <%- include("../front/top_bar") -%>
+  <%- include("../front/search") -%>
+  <%- include("../front/navigation") -%>
+</header>
+
+<div class="body-content outer-top-xs" id="top-banner-and-menu">
+  <div class="container">
+    <div class="row">
+      <div class='col-md-3 sidebar'> 
+        <input type='hidden' id="sort-by-val" value="popularity">
+        <input type='hidden' id="page-by-val" value="1">
+        <input type='hidden' id="filter-by-min-price" value="<%= min_val %>">
+        <input type='hidden' id="filter-by-max-price" value="<%= max_val %>">
+        <input type='hidden' id="filter-by-min-discount" value="<%= min_discount_val %>">
+        <input type='hidden' id="filter-by-max-discount" value="<%= max_discount_val %>">
+        <div class="side-menu animate-dropdown outer-bottom-xs">
+          <div class="head"><i class="icon fa fa-align-justify fa-fw"></i> Categories</div>
+          <%- include ("../../common/left_category") -%>
+        </div>
+        <div class="side-menu animate-dropdown outer-bottom-xs" style="max-height: 600px !important;padding-bottom: 2px;">
+          <div class="head"><i class="icon fa fa-align-justify fa-fw"></i> Filters</div>
+          <div class="list-group pricefilter">
+            <a href="javascript:void(0)" style="border: none;"><h4>Price </h4><input type="text" id="amount" readonly style="border:0; color:#f6931f; font-weight:bold;"></a>
+            <div id="slider-range"></div>
+          </div>
+          <div class="list-group pricefilter" style="padding-bottom: 20px !important;margin-left: 0;">
+            <a href="javascript:void(0)" style="border: none;"><h4>Discount </h4><input type="text" id="amount2" readonly style="border:0; color:#f6931f; font-weight:bold;"></a>
+            <div id="slider-range2"></div>
+          </div>
+        </div>
+      </div>
+      <div class='col-md-9'> 
+        <div id="category" class="category-carousel hidden-xs">
+          <div class="item">
+            <div class="image"> 
+              <img src="<%= baseURL %>assets/images/banners/spotlight_new-3-20210330.jpeg" alt="" class="cat_images img-responsive"> 
+            </div>
+          </div>
+        </div>
+        <div class="search-result-container ">
+          <div id="myTabContent" class="tab-content category-list">
+            <!-- grocery content -->
+            <div class="toolbar">
+              <div class="number"> Showing <span id="showing_count"><%= page %></span> of <span id="total_count"><%= total_count %></span> items </div>
+              <div class="sort-option">
+                 Sort by: 
+                 <div id="sort-by">
+
+                <div id="sort_container">
+                <button class="sort-button sort-button-popularity active" data-index="prod_mart_groceries_products_popularity" onclick="setSort('popularity')">Popularity</button>
+                <button class="sort-button sort-button-high_to_low" data-index="prod_mart_groceries_products_price_desc" onclick="setSort('high_to_low')">High to Low</button>
+                <button class="sort-button sort-button-low_to_high" data-index="prod_mart_groceries_products_price_asc" onclick="setSort('low_to_high')">Low to High</button>
+                <button class="sort-button sort-button-discount" data-index="prod_mart_groceries_products_discount" onclick="setSort('discount')">Discount</button>
+                <!-- <button class="sort-button" data-index="prod_mart_groceries">All Products</button> -->
+              </div>
+
+                  </div>
+              </div>
+              <div class="clearfix"></div>
+           </div> 
+
+            <!-- <div class="tab-pane active"  id="list-container">
+              ALL Products
+            </div> -->
+            <!--  -->
+            <div class="row product-list">
+                                 <div class="productmain">
+                                    <% if (myJsonString.products.length > 0) {%>
+                                      <% myJsonString.products.forEach((list, index) => { %>
+                                    <div class="cat-item ">
+                                       <a class="category_name prod-name" href="p/groceries/<%= list.slug %>/<%= base64.encode(list.id) %>" title="<%= list.name %>" data-queryid="<%= base64.encode(list.id) %>" data-objid="<%= base64.encode(list.id) %>">
+                                          <input name="data-manu" type="hidden" value="Super Sarvottam" class="data-manu" />
+                                           <input name="data-cate" type="hidden" value="Staples" class="data-cate" /> 
+                                           <input name="data-subcate" type="hidden" value="Edible Oils" class="data-subcate" /> 
+                                           <input name="data-vertical" type="hidden" value="Groceries" class="data-vertical" /> <input name="data-position" type="hidden" value="1" class="data-position" /> 
+                                           <span class="cat-img"> 
+                                            <img class="product-image-photo lazyload" data-sizes="auto" src="<%= list.image %>" data-src="https://www.jiomart.com/images/product/150x150/491504124/super-sarvottam-physicaly-refined-100-rice-bran-oil-1-l-pouch-0-20201021.jpg" alt="<%= list.name %>"> 
+                                          </span> 
+                                          <% if(list.discount) { %>
+                                            <span class="dis_section">
+                                             <span><%= list.discount || 0 %><span class="per_txt">%</span></span> 
+                                             <div class="clearfix"></div>
+                                             OFF 
+                                            </span>
+                                          <% } %>
+                                          <span class="food_type_sec">
+                                            <span class="text-veg"></span></span> 
+                                            <span class="clsgetname"><%= `${list.name} ${list.unit_weight} ${list.unit_title}` %></span> 
+                                       </a>
+                                       <!-- <span class="drug-varients ellipsis">SUPER SARVOTTAM</span> --> 
+                                       <div class="clearfix"></div>
+                                       <span class="price-box"> <span id="final_price">₹ <%= ((list.price)-(list.price/100)*list.discount).toFixed(2) %></span> M.R.P: <strike id="price">₹ <%= (list.price).toFixed(2) %></strike> </span> 
+                                       <div class="add_cart" style="width:100%;float:none;margin-bottom:0px;"> 
+                                        <a href="p/groceries/<%= list.slug %>/<%= base64.encode(list.id) %>"><i class="fa fa-shopping-cart"></i> View Product</a>
+                                      </div>
+                                       <div class="clearfix"></div>
+                                    </div>
+                                    <% }) %>
+                                  <% } else {%>
+                                  <div class="row">
+                                    <div class="col-md-12 x-text text-center">
+                                      <h3>No record found.</h3>
+                                      <p>We are sorry, the page you've requested is not available. </p>
+                                      <a href="/"><i class="fa fa-home"></i> Go To Homepage</a>
+                                    </div>
+                                  </div>
+                                  <% } %>
+                                    
+                                  </div> 
+                                  </div> 
+                                </div>
+                                </div>
+                                <!--  -->
+                                    <div class="text-center">
+                                      <% if (myJsonString.pages > 0) { %>
+                                          <ul class="pagination">
+                                            <% if (myJsonString.current == 1) { %>
+                                              <li class="page-item disabled"><a class="page-link">First</a></li>
+                                          <% } else { %>
+                                              <li><a class="page-link" href="javascript:void(0)" onclick="setPage('1')" style="color: #E67B00;">First</a></li>
+                                          <% } %>
+                                          <% var i = (Number(myJsonString.current) > 5 ? Number(myJsonString.current) - 4 : 1) %>
+                                          <% if (i !== 1) { %>
+                                              <li class="page-item disabled"><a>...</a></li>
+                                          <% } %>
+                                          <% for (; i <= (Number(myJsonString.current) + 4) && i <= myJsonString.pages; i++) { %>
+                                              <% if (i == myJsonString.current) { %>
+                                                  <li class="page-item active"><a class="page-link" style="background-color: #e67a00;border-color: #e67a00;"><%= i %></a></li>
+                                              <% } else { %>
+                                                  <li><a class="page-link" href="javascript:void(0)" onclick="setPage('<%= i %>')" style="color: #E67B00;"><%= i %></a></li>
+                                              <% } %>
+                                              <% if (i == Number(myJsonString.current) + 4 && i < myJsonString.pages) { %>
+                                                  <li class="page-item disabled"><a class="page-link">...</a></li>
+                                              <% } %>
+                                          <% } %>
+                                          <% if (myJsonString.current == myJsonString.pages) { %>
+                                              <li class="page-item disabled"><a class="page-link">Last</a></li>
+                                          <% } else { %>
+                                              <li><a class="page-link" href="javascript:void(0)" onclick="setPage('<%= myJsonString.pages %>')" style="color: #E67B00;">Last</a></li>
+                                          <% } %>
+                                          </ul>
+                                          <% } %>
+                                  </div>
+                                        <div class="clearfix"></div> 
+                                    <!--  -->   
+                              </div></div>
+                            </div>
+<%- include ("../front/book_footer") %>
+<script src="<%= baseURL %>assets/js/jquery-1.11.1.min.js"></script> 
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script>
+    const setSort = (type) => {
+      $('.sort-button').removeClass('active')
+      $('.sort-button-'+type).addClass('active')
+      $('#sort-by-val').val(type);
+      $('#page-by-val').val(1)
+      filterItem();
+    }
+
+    const setPage = (no = 1) => {
+      $('#page-by-val').val(parseInt(no))
+      filterItem();
+    }
+
+    const filterItem = () => {
+      window.location.href = "?page="+parseInt($('#page-by-val').val())+"&sort="+$('#sort-by-val').val()+"&min="+$('#filter-by-min-price').val()+"&max="+$('#filter-by-max-price').val()+"&min_discount="+$('#filter-by-min-discount').val()+"&max_discount="+$('#filter-by-max-discount').val();
+    }
+
+    $( function() {
+      function getUrlParameter(name) {
+        name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+        var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+        results = regex.exec(location.search);
+        return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+      }
+
+      $('.sort-button').removeClass('active')
+      let sortBy = getUrlParameter('sort') || 'popularity';
+      $('#sort-by-val').val(sortBy || 'popularity');
+      $('.sort-button-'+sortBy).addClass('active')
+    $( "#slider-range" ).slider({
+    range: true,
+    min: parseInt("<%= min %>"),
+    max: parseInt("<%= max %>"),
+    values: [ parseInt("<%= min_val %>"), parseInt("<%= max_val %>") ],
+    slide: function( event, ui ) {
+      $('#filter-by-min-price').val(ui.values[ 0 ]);
+      $('#filter-by-max-price').val(ui.values[ 1 ]);
+    $( "#amount" ).val( "₹ " + ui.values[ 0 ] + " - ₹ " + ui.values[ 1 ] );
+      setTimeout(() => {
+        filterItem()
+      }, 1000);
+    }
+    });
+    $( "#amount" ).val( "₹ " + $( "#slider-range" ).slider( "values", 0 ) +
+    " - ₹ " + $( "#slider-range" ).slider( "values", 1 ) );
+
+    $( "#slider-range2" ).slider({
+    range: true,
+    min: parseInt("<%= min_discount %>"),
+    max: parseInt("<%= max_discount %>"),
+    values: [ parseInt("<%= min_discount_val %>"), parseInt("<%= max_discount_val %>") ],
+    slide: function( event, ui ) {
+      $('#filter-by-min-discount').val(ui.values[ 0 ]);
+      $('#filter-by-max-discount').val(ui.values[ 1 ]);
+      $( "#amount2" ).val( ui.values[ 0 ] + "% - " + ui.values[ 1 ]+"%" );
+      setTimeout(() => {
+        filterItem()
+      }, 1000);
+    }
+    });
+    $( "#amount2" ).val( $( "#slider-range2" ).slider( "values", 0 ) +
+    "% - " + $( "#slider-range2" ).slider( "values", 1 )+"%" );
+    } );
+</script>
+<script src="<%= baseURL %>assets/js/bootstrap.min.js"></script> 
+<script src="<%= baseURL %>assets/js/bootstrap-hover-dropdown.min.js"></script> 
+<script src="<%= baseURL %>assets/js/owl.carousel.min.js"></script> 
+<script src="<%= baseURL %>assets/js/echo.min.js"></script> 
+<script src="<%= baseURL %>assets/js/jquery.easing-1.3.min.js"></script> 
+<script src="<%= baseURL %>assets/js/bootstrap-slider.min.js"></script> 
+<script src="<%= baseURL %>assets/js/jquery.rateit.min.js"></script> 
+<script src="<%= baseURL %>assets/js/lightbox.min.js"></script> 
+<script src="<%= baseURL %>assets/js/bootstrap-select.min.js"></script> 
+<script src="<%= baseURL %>assets/js/wow.min.js"></script> 
+<script src="<%= baseURL %>assets/js/scripts.js"></script>
+</body>
+</html>

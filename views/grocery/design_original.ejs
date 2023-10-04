@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="description" content="">
+<meta name="author" content="">
+<meta name="keywords" content="MediaCenter, Template, eCommerce">
+<meta name="robots" content="all">
+<title>Sriina | <%= title %></title>
+<link rel="stylesheet" href="../assets/css/bootstrap.min.css">
+<link rel="stylesheet" href="../assets/css/main.css">
+<link rel="stylesheet" href="../assets/css/blue.css">
+<link rel="stylesheet" href="../assets/css/owl.carousel.css">
+<link rel="stylesheet" href="../assets/css/owl.transitions.css">
+<link rel="stylesheet" href="../assets/css/animate.min.css">
+<link rel="stylesheet" href="../assets/css/rateit.css">
+<link rel="stylesheet" href="../assets/css/bootstrap-select.min.css">
+<link href="../assets/css/custom.css" rel="stylesheet" />
+
+<!-- Icons/Glyphs -->
+<link rel="stylesheet" href="../assets/css/font-awesome.css">
+<link rel="stylesheet" href="../assets/css/grocery.css">
+<!-- Fonts -->
+<link href='http://fonts.googleapis.com/css?family=Roboto:300,400,500,700' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,400italic,600,600italic,700,700italic,800' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
+<style>
+  #categorys{
+  max-height: 500px !important;
+  margin-bottom: 20px;
+  overflow-y: scroll;
+  }
+</style>
+</head>
+<body class="cnt-home">
+<!-- ============================================== HEADER ============================================== -->
+<header class="header-style-1">
+  <%- include("../front/top_bar") -%>
+  <%- include("../front/search") -%>
+  <%- include("../front/navigation") -%>
+</header>
+
+<div class="body-content outer-top-xs" id="top-banner-and-menu">
+  <div class="container">
+    <div class="row">
+      <div class='col-md-3 sidebar'> 
+        <div class="side-menu animate-dropdown outer-bottom-xs">
+          <div class="head"><i class="icon fa fa-align-justify fa-fw"></i> Categories</div>
+          <%- include ("../../common/left_category") -%>
+        </div>
+        <div class="side-menu animate-dropdown outer-bottom-xs" style="max-height: 600px !important;padding-bottom: 2px;">
+          <div class="head"><i class="icon fa fa-align-justify fa-fw"></i> Filters</div>
+          <div class="list-group pricefilter">
+            <a href="javascript:void(0)" style="border: none;"><h4>Price </h4><input type="text" id="amount" readonly style="border:0; color:#f6931f; font-weight:bold;"></a>
+            <div id="slider-range"></div>
+          </div>
+          <div class="list-group pricefilter" style="padding-bottom: 20px !important;margin-left: 0;">
+            <a href="javascript:void(0)" style="border: none;"><h4>Discount </h4><input type="text" id="amount2" readonly style="border:0; color:#f6931f; font-weight:bold;"></a>
+            <div id="slider-range2"></div>
+          </div>
+        </div>
+      </div>
+      <div class='col-md-9'> 
+        <div id="category" class="category-carousel hidden-xs">
+          <div class="item">
+            <div class="image"> 
+              <img src="../../assets/images/banners/groceries-20210201.jpeg" alt="" class="cat_images img-responsive"> 
+            </div>
+          </div>
+        </div>
+        <div class="search-result-container ">
+          <div id="myTabContent" class="tab-content category-list">
+            <!-- grocery content -->
+            <div class="toolbar">
+              <div class="number"> Showing <span id="showing_count">20</span> of <span id="total_count">50741</span> items </div>
+              <div class="sort-option">
+                 Sort by: 
+                 <div id="sort-by">
+
+                <div id="sort_container">
+                <button class="sort-button active" data-index="prod_mart_groceries_products_popularity">Popularity</button>
+                <button class="sort-button" data-index="prod_mart_groceries_products_price_desc">High to Low</button>
+                <button class="sort-button" data-index="prod_mart_groceries_products_price_asc">Low to High</button>
+                <button class="sort-button" data-index="prod_mart_groceries_products_discount">Discount</button>
+                <button class="sort-button" data-index="prod_mart_groceries">All Products</button>
+              </div>
+
+                  </div>
+              </div>
+              <div class="clearfix"></div>
+           </div> 
+
+            <div class="tab-pane active"  id="list-container">
+              ALL Products
+            </div>
+            <!--  -->
+            <div class="row product-list">
+                                 <div class="productmain">
+                                    <div class="cat-item ">
+                                       <a class="category_name prod-name" href="/p/groceries/super-sarvottam-rice-bran-oil-1-l-pouch/491504124" title="Super Sarvottam Physically Refined 100% Rice Bran Oil 1 L" data-queryid="95534f840ae108a30d43d44063dddb15" data-objid="491504124">
+                                          <input name="data-manu" type="hidden" value="Super Sarvottam" class="data-manu" />
+                                           <input name="data-cate" type="hidden" value="Staples" class="data-cate" /> 
+                                           <input name="data-subcate" type="hidden" value="Edible Oils" class="data-subcate" /> 
+                                           <input name="data-vertical" type="hidden" value="Groceries" class="data-vertical" /> <input name="data-position" type="hidden" value="1" class="data-position" /> 
+                                           <span class="cat-img"> 
+                                            <img class="product-image-photo lazyload" data-sizes="auto" src="../../assets/images/grocery/detergent-powder.jpg" data-src="https://www.jiomart.com/images/product/150x150/491504124/super-sarvottam-physicaly-refined-100-rice-bran-oil-1-l-pouch-0-20201021.jpg" alt="Super Sarvottam Physically Refined 100% Rice Bran Oil 1 L"> 
+                                          </span> 
+                                          <span class="dis_section">
+                                             <span>29<span class="per_txt">%</span></span> 
+                                             <div class="clearfix"></div>
+                                             OFF 
+                                          </span>
+                                          <span class="food_type_sec">
+                                            <span class="text-veg"></span></span> 
+                                            <span class="clsgetname">Super Sarvottam Physically Refined 100% Rice Bran Oil 1 L</span> 
+                                       </a>
+                                       <span class="drug-varients ellipsis">SUPER SARVOTTAM</span> 
+                                       <div class="clearfix"></div>
+                                       <span class="price-box"> <span id="final_price">&#8377; 139.00</span> M.R.P: <strike id="price">&#8377; 198.00</strike> </span> 
+                                       <div class="cart_btn"> 
+                                        <button type="button" title="ADD TO CART" class="toCart addtocartbtn" data-sku="491504124"> <span class="txt_btn">Add to Cart</span> <span class="add_plus"></span> </button> 
+                                      </div>
+                                       <div class="clearfix"></div>
+                                    </div>
+                                    <div class="cat-item ">
+                                       <a class="category_name prod-name" href="/p/groceries/super-sarvottam-rice-bran-oil-1-l-pouch/491504124" title="Super Sarvottam Physically Refined 100% Rice Bran Oil 1 L" data-queryid="95534f840ae108a30d43d44063dddb15" data-objid="491504124">
+                                          <input name="data-manu" type="hidden" value="Super Sarvottam" class="data-manu" />
+                                           <input name="data-cate" type="hidden" value="Staples" class="data-cate" /> 
+                                           <input name="data-subcate" type="hidden" value="Edible Oils" class="data-subcate" /> 
+                                           <input name="data-vertical" type="hidden" value="Groceries" class="data-vertical" /> <input name="data-position" type="hidden" value="1" class="data-position" /> 
+                                           <span class="cat-img"> 
+                                            <img class="product-image-photo lazyload" data-sizes="auto" src="../../assets/images/grocery/detergent-surf-powder.jpg" data-src="https://www.jiomart.com/images/product/150x150/491504124/super-sarvottam-physicaly-refined-100-rice-bran-oil-1-l-pouch-0-20201021.jpg" alt="Super Sarvottam Physically Refined 100% Rice Bran Oil 1 L"> 
+                                          </span> 
+                                          <span class="dis_section">
+                                             <span>29<span class="per_txt">%</span></span> 
+                                             <div class="clearfix"></div>
+                                             OFF 
+                                          </span>
+                                          <span class="food_type_sec">
+                                            <span class="text-veg"></span></span> 
+                                            <span class="clsgetname">Super Sarvottam Physically Refined 100% Rice Bran Oil 1 L</span> 
+                                       </a>
+                                       <span class="drug-varients ellipsis">SUPER SARVOTTAM</span> 
+                                       <div class="clearfix"></div>
+                                       <span class="price-box"> <span id="final_price">&#8377; 139.00</span> M.R.P: <strike id="price">&#8377; 198.00</strike> </span> 
+                                       <div class="cart_btn"> 
+                                        <button type="button" title="ADD TO CART" class="toCart addtocartbtn" data-sku="491504124"> <span class="txt_btn">Add to Cart</span> <span class="add_plus"></span> </button> 
+                                      </div>
+                                       <div class="clearfix"></div>
+                                    </div>
+                                    <div class="cat-item ">
+                                       <a class="category_name prod-name" href="/p/groceries/super-sarvottam-rice-bran-oil-1-l-pouch/491504124" title="Super Sarvottam Physically Refined 100% Rice Bran Oil 1 L" data-queryid="95534f840ae108a30d43d44063dddb15" data-objid="491504124">
+                                          <input name="data-manu" type="hidden" value="Super Sarvottam" class="data-manu" />
+                                           <input name="data-cate" type="hidden" value="Staples" class="data-cate" /> 
+                                           <input name="data-subcate" type="hidden" value="Edible Oils" class="data-subcate" /> 
+                                           <input name="data-vertical" type="hidden" value="Groceries" class="data-vertical" /> <input name="data-position" type="hidden" value="1" class="data-position" /> 
+                                           <span class="cat-img"> 
+                                            <img class="product-image-photo lazyload" data-sizes="auto" src="../../assets/images/grocery/aashirvaad-wheat-atta.jpg" data-src="https://www.jiomart.com/images/product/150x150/491504124/super-sarvottam-physicaly-refined-100-rice-bran-oil-1-l-pouch-0-20201021.jpg" alt="Super Sarvottam Physically Refined 100% Rice Bran Oil 1 L"> 
+                                          </span> 
+                                          <span class="dis_section">
+                                             <span>29<span class="per_txt">%</span></span> 
+                                             <div class="clearfix"></div>
+                                             OFF 
+                                          </span>
+                                          <span class="food_type_sec">
+                                            <span class="text-veg"></span></span> 
+                                            <span class="clsgetname">Super Sarvottam Physically Refined 100% Rice Bran Oil 1 L</span> 
+                                       </a>
+                                       <span class="drug-varients ellipsis">SUPER SARVOTTAM</span> 
+                                       <div class="clearfix"></div>
+                                       <span class="price-box"> <span id="final_price">&#8377; 139.00</span> M.R.P: <strike id="price">&#8377; 198.00</strike> </span> 
+                                       <div class="cart_btn"> 
+                                        <button type="button" title="ADD TO CART" class="toCart addtocartbtn" data-sku="491504124"> <span class="txt_btn">Add to Cart</span> <span class="add_plus"></span> </button> 
+                                      </div>
+                                       <div class="clearfix"></div>
+                                    </div>
+                                    <div class="cat-item ">
+                                       <a class="category_name prod-name" href="/p/groceries/super-sarvottam-rice-bran-oil-1-l-pouch/491504124" title="Super Sarvottam Physically Refined 100% Rice Bran Oil 1 L" data-queryid="95534f840ae108a30d43d44063dddb15" data-objid="491504124">
+                                          <input name="data-manu" type="hidden" value="Super Sarvottam" class="data-manu" />
+                                           <input name="data-cate" type="hidden" value="Staples" class="data-cate" /> 
+                                           <input name="data-subcate" type="hidden" value="Edible Oils" class="data-subcate" /> 
+                                           <input name="data-vertical" type="hidden" value="Groceries" class="data-vertical" /> <input name="data-position" type="hidden" value="1" class="data-position" /> 
+                                           <span class="cat-img"> 
+                                            <img class="product-image-photo lazyload" data-sizes="auto" src="../../assets/images/grocery/tide-powder.jpg" data-src="https://www.jiomart.com/images/product/150x150/491504124/super-sarvottam-physicaly-refined-100-rice-bran-oil-1-l-pouch-0-20201021.jpg" alt="Super Sarvottam Physically Refined 100% Rice Bran Oil 1 L"> 
+                                          </span> 
+                                          <span class="dis_section">
+                                             <span>29<span class="per_txt">%</span></span> 
+                                             <div class="clearfix"></div>
+                                             OFF 
+                                          </span>
+                                          <span class="food_type_sec">
+                                            <span class="text-veg"></span></span> 
+                                            <span class="clsgetname">Super Sarvottam Physically Refined 100% Rice Bran Oil 1 L</span> 
+                                       </a>
+                                       <span class="drug-varients ellipsis">SUPER SARVOTTAM</span> 
+                                       <div class="clearfix"></div>
+                                       <span class="price-box"> <span id="final_price">&#8377; 139.00</span> M.R.P: <strike id="price">&#8377; 198.00</strike> </span> 
+                                       <div class="cart_btn"> 
+                                        <button type="button" title="ADD TO CART" class="toCart addtocartbtn" data-sku="491504124"> <span class="txt_btn">Add to Cart</span> <span class="add_plus"></span> </button> 
+                                      </div>
+                                       <div class="clearfix"></div>
+                                    </div>
+                                     <div class="cat-item ">
+                                       <a class="category_name prod-name" href="/p/groceries/super-sarvottam-rice-bran-oil-1-l-pouch/491504124" title="Super Sarvottam Physically Refined 100% Rice Bran Oil 1 L" data-queryid="95534f840ae108a30d43d44063dddb15" data-objid="491504124">
+                                          <input name="data-manu" type="hidden" value="Super Sarvottam" class="data-manu" />
+                                           <input name="data-cate" type="hidden" value="Staples" class="data-cate" /> 
+                                           <input name="data-subcate" type="hidden" value="Edible Oils" class="data-subcate" /> 
+                                           <input name="data-vertical" type="hidden" value="Groceries" class="data-vertical" /> <input name="data-position" type="hidden" value="1" class="data-position" /> 
+                                           <span class="cat-img"> 
+                                            <img class="product-image-photo lazyload" data-sizes="auto" src="../../assets/images/grocery/surf-liquid.jpg" data-src="https://www.jiomart.com/images/product/150x150/491504124/super-sarvottam-physicaly-refined-100-rice-bran-oil-1-l-pouch-0-20201021.jpg" alt="Super Sarvottam Physically Refined 100% Rice Bran Oil 1 L"> 
+                                          </span> 
+                                          <span class="dis_section">
+                                             <span>29<span class="per_txt">%</span></span> 
+                                             <div class="clearfix"></div>
+                                             OFF 
+                                          </span>
+                                          <span class="food_type_sec">
+                                            <span class="text-veg"></span></span> 
+                                            <span class="clsgetname">Super Sarvottam Physically Refined 100% Rice Bran Oil 1 L</span> 
+                                       </a>
+                                       <span class="drug-varients ellipsis">SUPER SARVOTTAM</span> 
+                                       <div class="clearfix"></div>
+                                       <span class="price-box"> <span id="final_price">&#8377; 139.00</span> M.R.P: <strike id="price">&#8377; 198.00</strike> </span> 
+                                       <div class="cart_btn"> 
+                                        <button type="button" title="ADD TO CART" class="toCart addtocartbtn" data-sku="491504124"> <span class="txt_btn">Add to Cart</span> <span class="add_plus"></span> </button> 
+                                      </div>
+                                       <div class="clearfix"></div>
+                                    </div>
+                                    <div class="cat-item ">
+                                       <a class="category_name prod-name" href="/p/groceries/super-sarvottam-rice-bran-oil-1-l-pouch/491504124" title="Super Sarvottam Physically Refined 100% Rice Bran Oil 1 L" data-queryid="95534f840ae108a30d43d44063dddb15" data-objid="491504124">
+                                          <input name="data-manu" type="hidden" value="Super Sarvottam" class="data-manu" />
+                                           <input name="data-cate" type="hidden" value="Staples" class="data-cate" /> 
+                                           <input name="data-subcate" type="hidden" value="Edible Oils" class="data-subcate" /> 
+                                           <input name="data-vertical" type="hidden" value="Groceries" class="data-vertical" /> <input name="data-position" type="hidden" value="1" class="data-position" /> 
+                                           <span class="cat-img"> 
+                                            <img class="product-image-photo lazyload" data-sizes="auto" src="../../assets/images/grocery/red-label-tea.jpg" data-src="https://www.jiomart.com/images/product/150x150/491504124/super-sarvottam-physicaly-refined-100-rice-bran-oil-1-l-pouch-0-20201021.jpg" alt="Super Sarvottam Physically Refined 100% Rice Bran Oil 1 L"> 
+                                          </span> 
+                                          <span class="dis_section">
+                                             <span>29<span class="per_txt">%</span></span> 
+                                             <div class="clearfix"></div>
+                                             OFF 
+                                          </span>
+                                          <span class="food_type_sec">
+                                            <span class="text-veg"></span></span> 
+                                            <span class="clsgetname">Super Sarvottam Physically Refined 100% Rice Bran Oil 1 L</span> 
+                                       </a>
+                                       <span class="drug-varients ellipsis">SUPER SARVOTTAM</span> 
+                                       <div class="clearfix"></div>
+                                       <span class="price-box"> <span id="final_price">&#8377; 139.00</span> M.R.P: <strike id="price">&#8377; 198.00</strike> </span> 
+                                       <div class="cart_btn"> 
+                                        <button type="button" title="ADD TO CART" class="toCart addtocartbtn" data-sku="491504124"> <span class="txt_btn">Add to Cart</span> <span class="add_plus"></span> </button> 
+                                      </div>
+                                       <div class="clearfix"></div>
+                                    </div>
+                                    <div class="cat-item ">
+                                       <a class="category_name prod-name" href="/p/groceries/super-sarvottam-rice-bran-oil-1-l-pouch/491504124" title="Super Sarvottam Physically Refined 100% Rice Bran Oil 1 L" data-queryid="95534f840ae108a30d43d44063dddb15" data-objid="491504124">
+                                          <input name="data-manu" type="hidden" value="Super Sarvottam" class="data-manu" />
+                                           <input name="data-cate" type="hidden" value="Staples" class="data-cate" /> 
+                                           <input name="data-subcate" type="hidden" value="Edible Oils" class="data-subcate" /> 
+                                           <input name="data-vertical" type="hidden" value="Groceries" class="data-vertical" /> <input name="data-position" type="hidden" value="1" class="data-position" /> 
+                                           <span class="cat-img"> 
+                                            <img class="product-photo lazyload" data-sizes="auto" src="../../assets/images/grocery/madhur-sugar.jpg" data-src="https://www.jiomart.com/images/product/150x150/491504124/super-sarvottam-physicaly-refined-100-rice-bran-oil-1-l-pouch-0-20201021.jpg" alt="Super Sarvottam Physically Refined 100% Rice Bran Oil 1 L"> 
+                                          </span> 
+                                          <span class="dis_section">
+                                             <span>29<span class="per_txt">%</span></span> 
+                                             <div class="clearfix"></div>
+                                             OFF 
+                                          </span>
+                                          <span class="food_type_sec">
+                                            <span class="text-veg"></span></span> 
+                                            <span class="clsgetname">Super Sarvottam Physically Refined 100% Rice Bran Oil 1 L</span> 
+                                       </a>
+                                       <span class="drug-varients ellipsis">SUPER SARVOTTAM</span> 
+                                       <div class="clearfix"></div>
+                                       <span class="price-box"> <span id="final_price">&#8377; 139.00</span> M.R.P: <strike id="price">&#8377; 198.00</strike> </span> 
+                                       <div class="cart_btn"> 
+                                        <button type="button" title="ADD TO CART" class="toCart addtocartbtn" data-sku="491504124"> <span class="txt_btn">Add to Cart</span> <span class="add_plus"></span> </button> 
+                                      </div>
+                                       <div class="clearfix"></div>
+                                    </div>
+                                    <div class="cat-item ">
+                                       <a class="category_name prod-name" href="/p/groceries/super-sarvottam-rice-bran-oil-1-l-pouch/491504124" title="Super Sarvottam Physically Refined 100% Rice Bran Oil 1 L" data-queryid="95534f840ae108a30d43d44063dddb15" data-objid="491504124">
+                                          <input name="data-manu" type="hidden" value="Super Sarvottam" class="data-manu" />
+                                           <input name="data-cate" type="hidden" value="Staples" class="data-cate" /> 
+                                           <input name="data-subcate" type="hidden" value="Edible Oils" class="data-subcate" /> 
+                                           <input name="data-vertical" type="hidden" value="Groceries" class="data-vertical" /> <input name="data-position" type="hidden" value="1" class="data-position" /> 
+                                           <span class="cat-img"> 
+                                            <img class="product-image-photo lazyload" data-sizes="auto" src="../../assets/images/grocery/detergent-powder.jpg" data-src="https://www.jiomart.com/images/product/150x150/491504124/super-sarvottam-physicaly-refined-100-rice-bran-oil-1-l-pouch-0-20201021.jpg" alt="Super Sarvottam Physically Refined 100% Rice Bran Oil 1 L"> 
+                                          </span> 
+                                          <span class="dis_section">
+                                             <span>29<span class="per_txt">%</span></span> 
+                                             <div class="clearfix"></div>
+                                             OFF 
+                                          </span>
+                                          <span class="food_type_sec">
+                                            <span class="text-veg"></span></span> 
+                                            <span class="clsgetname">Super Sarvottam Physically Refined 100% Rice Bran Oil 1 L</span> 
+                                       </a>
+                                       <span class="drug-varients ellipsis">SUPER SARVOTTAM</span> 
+                                       <div class="clearfix"></div>
+                                       <span class="price-box"> <span id="final_price">&#8377; 139.00</span> M.R.P: <strike id="price">&#8377; 198.00</strike> </span> 
+                                       <div class="cart_btn"> 
+                                        <button type="button" title="ADD TO CART" class="toCart addtocartbtn" data-sku="491504124"> <span class="txt_btn">Add to Cart</span> <span class="add_plus"></span> </button> 
+                                      </div>
+                                       <div class="clearfix"></div>
+
+                                    </div>
+                                  </div> 
+                                  </div> 
+                                </div>
+                                </div>
+                                <!--  -->
+                                    <div class="pages">
+                                    <ul class="pages-items">
+                                       <li class="previous"><a href="1" data-ci-pagination-page="1" rel="prev">PREVIOUS</a></li>
+                                       <a href="1" data-ci-pagination-page="1" rel="start">1</a><strong>2</strong>
+                                       <a href="" data-ci-pagination-page="3">3</a>
+                                       <a href="" data-ci-pagination-page="4">4</a>
+                                       <li class="next">
+                                        <a href="" data-ci-pagination-page="3" rel="next">NEXT</a>
+                                       </li>
+                                    </ul>
+                                 </div>
+                                        <div class="clearfix"></div> 
+                                    <!--  -->   
+                              </div></div>
+                                 
+    
+ 
+
+<%- include ("../front/book_footer") %>
+<script src="../assets/js/jquery-1.11.1.min.js"></script> 
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script>
+    $( function() {
+    $( "#slider-range" ).slider({
+    range: true,
+    min: 0,
+    max: 500,
+    values: [ 75, 300 ],
+    slide: function( event, ui ) {
+    $( "#amount" ).val( "₹" + ui.values[ 0 ] + " - ₹" + ui.values[ 1 ] );
+    }
+    });
+    $( "#amount" ).val( "₹" + $( "#slider-range" ).slider( "values", 0 ) +
+    " - ₹" + $( "#slider-range" ).slider( "values", 1 ) );
+
+    $( "#slider-range2" ).slider({
+    range: true,
+    min: 0,
+    max: 45,
+    values: [ 0, 45 ],
+    slide: function( event, ui ) {
+    $( "#amount2" ).val( ui.values[ 0 ] + "% - " + ui.values[ 1 ]+"%" );
+    }
+    });
+    $( "#amount2" ).val( $( "#slider-range2" ).slider( "values", 0 ) +
+    "% - " + $( "#slider-range2" ).slider( "values", 1 )+"%" );
+    } );
+</script>
+<script src="../assets/js/bootstrap.min.js"></script> 
+<script src="../assets/js/bootstrap-hover-dropdown.min.js"></script> 
+<script src="../assets/js/owl.carousel.min.js"></script> 
+<script src="../assets/js/echo.min.js"></script> 
+<script src="../assets/js/jquery.easing-1.3.min.js"></script> 
+<script src="../assets/js/bootstrap-slider.min.js"></script> 
+<script src="../assets/js/jquery.rateit.min.js"></script> 
+<script type="text/javascript" src="../assets/js/lightbox.min.js"></script> 
+<script src="../assets/js/bootstrap-select.min.js"></script> 
+<script src="../assets/js/wow.min.js"></script> 
+<script src="../assets/js/scripts.js"></script>
+</body>
+</html>

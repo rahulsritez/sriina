@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Books Store | <%=title%></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" href="/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+  <%- include ("../../common/css") %>
+</head>
+<body class="hold-transition sidebar-mini layout-fixed">
+<div class="wrapper">
+<%- include ("../../common/top_nav") %>
+<%- include ("../../common/sidebar") %>
+  <div class="content-wrapper">
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0 text-dark">Dashboard</h1>
+          </div>
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
+              <li class="breadcrumb-item active">Pages</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="container">
+            <% if(message.length > 0) { %>
+                <div class="alert alert-success alert-dismissible show" role="alert">
+                  <%= message %>
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+            <% } %>
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title float-right">
+                  <button type="button" class="btn btn-default" data-toggle="modal" data-target="#modal-default"> Add Pages</button></h3>
+              </div>
+              <div class="card-body">
+                <table id="products_tbl" class="table table-bordered table-striped">
+                  <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Descriptions</th>
+                    <th>Status</th>
+                    <th width="15%">Action</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                    <% if (pageslist.length > 0) { %>
+                    <% pageslist.forEach((list, index) => { %>
+                  <tr>
+                    <td><%= index+1 %></td>
+                    <td><%= list.title %></td>
+                    <td><%= list.description %></td>
+                    <td><% if(list.status==0){ %>Active<% } else { %>Inactive<% } %></td>
+                    <td>
+                      <a class="edit_pages btn btn-info btn-sm" data-id="<%= list.id %>" data-title="<%= list.title %>" data-description="<%= list.description %>" data-status="<%= list.status %>" data-target="#myModaledit" data-toggle="modal"><i class="fas fa-pencil-alt"></i>Edit</a>
+                      <a class="delete_pages btn btn-danger btn-sm" id="<%= list.id %>"><i class="fas fa-trash"></i>Delete</a>
+                    </td>
+                  </tr>
+                  <% }) %>
+                  <% } else { %>
+                    <tr><td colspan="8" style="text-align:center">no pages found</td></tr>
+                    <% } %>
+                  </tbody>
+                  <tfoot>
+                  <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Descriptions</th>
+                    <th>Status</th>
+                    <th width="15%">Action</th>
+                  </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+        </div>
+
+<div class="modal fade" id="modal-default">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Add Pages</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form action="/addpages" method="post">
+      <div class="modal-body">
+        <div class="row mb-2">
+          <div class="col-md-6">
+            <label class="control-label label-margin">Title</label>
+            <input type="text" class="form-control" id="title" placeholder="Page Title" name="title" required>
+          </div>
+          <div class="col-md-6">
+            <label class="control-label label-margin">Status</label>
+                <select class="form-control" name="status" required>
+                    <option value="0">Active</option>
+                    <option value="1">Inactive</option>
+                </select>
+          </div>
+        </div>
+        
+        <div class="row mb-2">
+            <div class="col-md-12">
+                <label class="control-label label-margin">Descriptions</label>
+                <textarea name="description" id="descriptions" class="form-control textarea"></textarea>
+            </div>
+        </div>
+       
+      </div>
+      <div class="modal-footer justify-content-between">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </div>
+    </form>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade" id="myModaledit" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content animated bounceInRight">
+          <div class="modal-header">
+            <h5 class="modal-title">Edit Pages [<span style="color: green;" id="get_edit_title"></span>]</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+            <!--end modal-header-->
+            <form action="/editpages" method="post" id="updatefrm" >
+                <input type="hidden" id="edit_id" name="edit_id" value="">
+                <div class="modal-body">
+                    <div class="row mb-2">
+                        <div class="col-md-6">
+                          <label class="control-label label-margin">Title</label>
+                          <input type="text" class="form-control" id="page_title" placeholder="Name" name="page_title" required>
+                        </div>
+                        <div class="col-md-6">
+                          <label class="control-label label-margin">Status</label>
+                              <select class="form-control" name="status" id="status" required>
+                                  <option value="0">Active</option>
+                                  <option value="1">Inactive</option>
+                              </select>
+                        </div>
+                      </div>
+                      
+                      <div class="row mb-2">
+                          <div class="col-md-12">
+                              <label class="control-label label-margin">Descriptions</label>
+                              <textarea name="edit_description" id="edit_description" class="form-control textarea"></textarea>
+                          </div>
+                      </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+        </div>
+      </div>
+    </section>
+  </div>
+<%- include ("../../common/footer") %>
+</div>
+<%- include ("../../common/js") %>
+<script>
+    $('#products_tbl').on('click','.edit_pages',function(){
+    var edit_id         = $(this).data('id');
+    var title            = $(this).data('title');
+    var description     = $(this).data('description');
+    var status          = $(this).data('status');
+    //alert(edit_id);
+    $('#myModaledit').modal('show');
+    $('#edit_id').val(edit_id);
+    $("#get_edit_title").html(title);
+    $("#page_title").val(title);
+    $('#edit_status').val(status);
+    $('#edit_description').summernote('code', description);
+  });
+</script>
+</body>
+</html>

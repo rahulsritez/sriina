@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="description" content="">
+<meta name="author" content="">
+<meta name="keywords" content="MediaCenter, Template, eCommerce">
+<link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon.png">
+<meta name="robots" content="all">
+<title>Sriina: <%= title %></title>
+<link rel="stylesheet" href="assets/css/bootstrap.min.css">
+<link rel="stylesheet" href="assets/css/main.css">
+<link rel="stylesheet" href="assets/css/blue.css">
+<link rel="stylesheet" href="assets/css/owl.carousel.css">
+<link rel="stylesheet" href="assets/css/owl.transitions.css">
+<link rel="stylesheet" href="assets/css/animate.min.css">
+<link rel="stylesheet" href="assets/css/rateit.css">
+<link rel="stylesheet" href="assets/css/bootstrap-select.min.css">
+<link href="assets/css/lightbox.css" rel="stylesheet">
+<link href="assets/css/custom.css" rel="stylesheet" />
+<link rel="stylesheet" href="assets/css/font-awesome.css">
+<link href='http://fonts.googleapis.com/css?family=Roboto:300,400,500,700' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,400italic,600,600italic,700,700italic,800' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-184850763-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-184850763-1');
+</script>
+</head>
+    <body class="cnt-home">
+    <!-- ============================================== HEADER ============================================== -->
+        <header class="header-style-1">
+            <%- include("top_bar") -%>
+            <%- include("search") -%>
+            <%- include("navigation") -%>
+        </header>
+<!-- ============================================== HEADER : END ============================================== -->
+<div class="breadcrumb">
+  <div class="container">
+    <div class="breadcrumb-inner">
+      <ul class="list-inline list-unstyled">
+        <li><a href="/">Home</a></li>
+        <li><a href="about-us">About us</a></li>
+      </ul>
+    </div><!-- /.breadcrumb-inner -->
+  </div><!-- /.container -->
+</div><!-- /.breadcrumb -->
+<div class="body-content outer-top-xs">
+    <div class="container">
+        <div class="row single-product">
+            <div class="col-md-12">
+                <div class="detail-block">
+                    <div class="row wow fadeInUp" style="padding: 18px;line-height: 25px;font-size: 14px;">
+                        <p>
+                            <% if (getresult) { %>
+                                <%= //getresult.description %>
+                                <h4><strong>Cancellation Policy</strong></h4>
+                                <h5><strong>CANCELLATION BEFORE SHIPMENT:</strong></h5>
+                                <p>Order once placed can only be canceled within 4 hours from the placing the order, you can write to our customer support team on info@sriina.com In such cases, the order will be canceled and the money will be refunded to you within 24-48 business hours after the cancellation request.</p>
+                                <p>Those who return any product, the amount will be credited automatically in your bank account within 3 to 4 days which you can use for any further purchase. If the product you purchase is not of the accurate size or the item is defective, you may also go for an exchange policy.</p>
+                                <p>In this case, the new item will be delivered at your doorstep free of cost but it all depends on the availability of the item in the stock. Those items which are to be returned or exchanged must be unused.</p>
+                                <p>For example, if you wish to return the Book which you bought from Boookart, then it should be in its original box with proper packaging.</p>
+                                <p>If any item purchased does not match with your placing order, or there are any brand issues, then only it can be exchanged. Exchanges are allowed only if your address is serviceable for an Exchange by their logistics team.</p>
+                            <% } else { %>
+                                <p class="text-center">Page data not found.</p>
+                            <% } %>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+  </div>
+</div>
+
+<%- include ("../front/book_footer") %>
+<script src="assets/js/jquery-1.11.1.min.js"></script>  
+<script src="assets/js/bootstrap.min.js"></script>
+<script src="assets/js/bootstrap-hover-dropdown.min.js"></script>
+<script src="assets/js/owl.carousel.min.js"></script>
+<script src="assets/js/echo.min.js"></script>
+<script src="assets/js/jquery.easing-1.3.min.js"></script>
+<script src="assets/js/bootstrap-slider.min.js"></script>
+<script src="assets/js/jquery.rateit.min.js"></script>
+<script type="text/javascript" src="assets/js/lightbox.min.js"></script>
+<script src="assets/js/bootstrap-select.min.js"></script>
+<script src="assets/js/wow.min.js"></script>
+<script src="assets/js/scripts.js"></script>
+</body>
+</html>

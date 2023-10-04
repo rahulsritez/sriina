@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="description" content="<%= title %>">
+<meta name="author" content="">
+<meta name="keywords" content="<%= title %>">
+<meta name="robots" content="all">
+<title>Sriina | <%= title %></title>
+<link rel="stylesheet" href="<%= baseURL %>assets/css/bootstrap.min.css">
+<link rel="stylesheet" href="<%= baseURL %>assets/css/main.css">
+<link rel="stylesheet" href="<%= baseURL %>assets/css/blue.css">
+<link rel="stylesheet" href="<%= baseURL %>assets/css/owl.carousel.css">
+<link rel="stylesheet" href="<%= baseURL %>assets/css/owl.transitions.css">
+<link rel="stylesheet" href="<%= baseURL %>assets/css/animate.min.css">
+<link rel="stylesheet" href="<%= baseURL %>assets/css/rateit.css">
+<link rel="stylesheet" href="<%= baseURL %>assets/css/bootstrap-select.min.css">
+<!-- <link rel="stylesheet" href="<%= baseURL %>assets/css/custom.css" /> -->
+<link rel="stylesheet" type="text/css" href="<%= baseURL %>assets/grocery/css/style.css">
+<script src="<%= baseURL %>assets/grocery/js/jquery-1.8.3.min.js"></script>
+<link rel="stylesheet" href="<%= baseURL %>assets/css/font-awesome.css">
+<link href='http://fonts.googleapis.com/css?family=Roboto:300,400,500,700' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,400italic,600,600italic,700,700italic,800' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
+<style>
+  #categorys{
+  max-height: 500px !important;
+  margin-bottom: 20px;
+  overflow-y: scroll;
+  }
+  img#zoom_10 {
+    width: 400px !important;
+}
+.content_txt {
+    padding: 12px 0 0 32px;
+    margin: 0 0 12px;
+    line-height: 24px;
+    font-size: 14px;
+}
+.content_txt .prodDetTable {
+    width: 47%;
+    float: left;
+    margin-right: 3%;
+    border-bottom: 0.1rem solid #e7e7e7;
+    font-size: 14px;
+    margin-bottom: 8px;
+    table-layout: fixed;
+}
+.content_txt .prodDetTable tr th {
+    border-top: 0.1rem solid #e7e7e7;
+    background-color: #f3f3f3;
+    color: #000;
+    padding: 12px;
+    width: 350px;
+    font-weight: 400;
+}
+span#text-veg img {
+    width: 20px;
+    height: 20px;
+}
+span#text-veg {
+    padding: 10px;
+}
+</style>
+</head>
+<body class="cnt-home">
+<!-- ============================================== HEADER ============================================== -->
+<header class="header-style-1">
+  <%- include("../front/top_bar") -%>
+  <%- include("../front/search") -%>
+  <%- include("../front/navigation") -%>
+</header>
+<% if (productInfo) { 
+  let price = productInfo.price;
+  let discount = productInfo.discount || 0;
+  let discountedPrice = price - (price * discount / 100);
+  let youSaveMoney = (price - discountedPrice);
+%>
+<section class="detail_wrap" style="background-color: #FFF;">
+    <div class="detail_container">
+      <div class="detail-full breadcrumbs">
+        <ul>
+          <li><a href="#">Home</a></li>
+          <li><a href="<%= baseURL%>grocery">All Categories</a></li>
+          <li><span><%= productInfo.name %></span></li>
+        </ul>
+      </div>
+      <div class="detail-full single-product">
+        <div class="detail-half space-top">
+          <div class="pdp-image-gallery-block">
+            <!-- Gallery  Thumbnail Images-->
+            <div class="gallery_pdp_container">
+              <div id="gallery_pdp">
+                <% productImages.forEach((list, index) => { %>
+                <a href="#" data-image="<%= list.grocery_image %>" data-zoom-image="<%= list.grocery_image %>">
+                  <img id="" src="<%= list.grocery_image %>" width='100' height='67'/>
+                </a>
+                <% }) %>
+              </div>
+              <a href="#" id="ui-carousel-next" style="display: inline;"></a>
+              <a href="#" id="ui-carousel-prev" style="display: inline;"></a>
+            </div>
+
+            <!-- Gallery -->
+
+            <!-- gallery Viewer medium image -->
+            <div class="gallery-viewer">
+              <% productImages.forEach((list, index) => { %>
+                <% if(index==0) {%>
+                  <img id="zoom_10" style="width: 400px;" src="<%= list.grocery_image %>" data-zoom-image="<%= list.grocery_image %>" />
+                <% } %>
+                <% }) %>
+            </div>
+
+            <!-- gallery Viewer -->
+          </div>
+        </div>
+        <div class="detail-half product-info">
+          <div class="detail-veg"><img src="<%= baseURL %>/assets/grocery/images/new-veg.svg" alt="veg" width="24" height="24" /></div>
+          <form action="/groceyaddtocart" method="post">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <div class="detail-product-info product-info">
+            <h2><%= `${productInfo.name} ${productInfo.unit_weight} ${productInfo.unit_title}` %></h2>
+            <div class="detail-full">
+              <span class="detail-price">₹ <%= discountedPrice.toFixed(2) %></span>
+              <span class="detail-price-mrp">M.R.P: <strike>₹ <%= price.toFixed(2) %></strike></span>
+            </div>
+            <p class="detail-saving">You Save: ₹ <span><%= (youSaveMoney ? youSaveMoney.toFixed(2) : 0) %> &nbsp;(<%= productInfo.discount %>% OFF)</span> Inclusive of all taxes</p>
+            <div class="detail-full">
+              <% if(productInfo.quantity > 0) { %>
+                <span class="detail-price text-green">In Stock</span>
+              <% } else { %> 
+                <span class="detail-price" style="color: #dd0608">Out of Stock</span>
+              <% } %>
+            </div>
+            <p class="detail-saving" style="display:block">Sold by <a href="#">Sriina Retail</a></p>
+            <p class="detail-saving">
+              <strong>Free Shipping</strong>
+            </p>
+            <div class="row col-sm-12 quantity-container">
+            <% if(productInfo.quantity > 0) { %>
+            <div class="col-sm-2">
+                <span class="label">Qty :</span>
+            </div>
+            <div class="col-sm-2">
+              <div class="cart-quantity input-group">
+                  <div class="quant-input">
+                      <div class="arrows">
+                        <div class="arrow btn-plus gradient"><span class="ir"><i class="icon fa fa-sort-asc"></i></span></div>
+                        <div class="arrow btn-minus gradient"><span class="ir"><i class="icon fa fa-sort-desc"></i></span></div>
+                      </div>
+                      <input class="form-control quantity" min="1" max="10" name="quantity" value="1" type="number">
+                      <input type="hidden" name="product_id" value="<%= productInfo.id %>">
+                  </div>
+              </div>
+            </div>
+            <div class="col-sm-2"><button class="btn btn-primary" type="submit">Add to Cart</button></div>
+          </div>
+            <% } %>
+            <!-- <div class="detail-full">
+              <div class="delivery-hd">Delivery</div>
+              <div class="pincode-wrap">
+              <input class="pincode" type="text" id="fname" name="fname" value="" />
+              <button class="check-pin" type="button">Check</button>
+              </div>
+              <p class="est-date">Check for estimated delivery date</p>
+            </div> -->
+            <div class="delivery-hd space-bottom" style="display:block">Offers <span id="show-hidden-menu">See All</span></div>
+            <div class="detail-full offers" style="display:block">
+              <ul>
+                <li>Cashback T&C Apply</li>
+                <li>AU Bank - 10% Cashback* Up to Rs. 500/- T&C Apply.</li>                
+              </ul>
+            </div>
+            <div class="hidden-menu detail-full offers" style="display: block;">
+              <ul>
+                <li>Dhani Pay - 10% Cashback* Up to Rs. 600/- T&C Apply.</li>
+                <li>Simpl - Pay using Simpl & Get Upto Rs. 200/- Cashback* T&C Apply</li>
+                <li>Freecharge - Pay using Freecharge & Get 25% Cashback. T&C Apply.</li>
+              </ul>
+            </div>
+          </div>
+        </form>
+        </div>
+      </div>
+      <div class="detail-full top-line">
+        <div class="delivery-hd">Description</div>
+        <div class="clearfix"></div>
+        <div class="detail-full">
+          <p class="detail-saving"><%= productInfo.description.replace(/<[^>]+>/g, '').replace('&nbsp;',' ') %></p>
+        </div>
+        <div class="delivery-hd">Features & Details</div>
+        <div class="clearfix"></div>
+        <div class="detail-full">
+          <p class="detail-saving"><%= productInfo.features_details %></p>
+        </div>
+
+        <div class="delivery-hd">Product Information</div>
+        <div class="clearfix"></div>
+        <div class="content_txt">
+    <table class="prodDetTable">
+        <tbody>
+            <tr>
+                <th>Brand</th>
+                <td><a style="padding: 10px;" href="#" title="<%= productInfo.brand_name.replace(/<[^>]+>/g, '').replace('&nbsp;',' ') %>"> <%= productInfo.brand_name.replace(/<[^>]+>/g, '').replace('&nbsp;',' ') %> </a></td>
+            </tr>
+            <tr>
+                <th>Manufacturer</th>
+                <td><a style="padding: 10px;" href="#" title="<%= productInfo.manufacturer_name.replace(/<[^>]+>/g, '').replace('&nbsp;',' ') %>"> <%= productInfo.manufacturer_name.replace(/<[^>]+>/g, '').replace('&nbsp;',' ') %> </a></td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="prodDetTable">
+        <tbody>
+            <tr>
+                <th>Country of Origin</th>
+                <td><span style="padding: 10px;">India</span></td>
+            </tr>
+            <tr>
+                <th>Food Type</th>
+                <td>
+                  <% if(productInfo.manufacturer_name==1) {%>
+                    <span id="text-veg"><img src="https://www.jiomart.com/assets/version1640197013/smartweb/images/icons/veg.svg"></span>
+                  <% } else {%>
+                    <span id="text-veg"><img src="https://www.jiomart.com/assets/version1640197013/smartweb/images/icons/veg.svg"></span>
+                  <% } %>
+                </td>
+            </tr>
+            <!-- <tr> <th> EANS </th> <td> - </td> </tr> -->
+        </tbody>
+    </table>
+    <div class="clearfix"></div>
+</div>
+
+  <div class="delivery-hd">Disclaimer</div>
+        <div class="clearfix"></div>
+        <div class="detail-full">
+          <p class="detail-saving"><%= productInfo.disclaimer.replace(/<[^>]+>/g, '').replace('&nbsp;',' ') %></p>
+        </div>
+
+
+      </div>
+    </div> 
+  </section>
+<% } %>
+<%- include ("../front/book_footer") %>
+<script src="<%= baseURL %>assets/grocery/js/jquery-ui.min.js"></script>
+<script src="<%= baseURL %>assets/grocery/js/jquery.fancybox.js"></script>
+<script src="<%= baseURL %>assets/grocery/js/jquery.elevatezoom.js"></script>
+<script src="<%= baseURL %>assets/grocery/js/ui-carousel.js"></script>
+
+<script src="<%= baseURL %>assets/grocery/js/zoom.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+  $('#show-hidden-menu').click(function() {
+    $('.hidden-menu').slideToggle("fast");    
+  });
+  $('#show-hidden-menu1').click(function() {
+    $('.hidden-menu1').slideToggle("fast");    
+  });
+   $('.btn-plus, .btn-minus').on('click', function(e) {
+      const isNegative = $(e.target).closest('.btn-minus').is('.btn-minus');
+      const input = $(e.target).closest('.input-group').find('input');
+      if (input.is('input')) {
+        input[0][isNegative ? 'stepDown' : 'stepUp']()
+      }
+    })
+
+});      
+</script>
+
+<script src="<%= baseURL %>assets/js/jquery-1.11.1.min.js"></script> 
+<script src="<%= baseURL %>assets/js/bootstrap.min.js"></script> 
+<script src="<%= baseURL %>assets/js/bootstrap-hover-dropdown.min.js"></script> 
+<script src="<%= baseURL %>assets/js/owl.carousel.min.js"></script> 
+<script src="<%= baseURL %>assets/js/echo.min.js"></script> 
+<script src="<%= baseURL %>assets/js/jquery.easing-1.3.min.js"></script> 
+<script src="<%= baseURL %>assets/js/bootstrap-slider.min.js"></script> 
+<script src="<%= baseURL %>assets/js/jquery.rateit.min.js"></script> 
+<script src="<%= baseURL %>assets/js/lightbox.min.js"></script> 
+<script src="<%= baseURL %>assets/js/bootstrap-select.min.js"></script> 
+<script src="<%= baseURL %>assets/js/wow.min.js"></script> 
+<script src="<%= baseURL %>assets/js/scripts.js"></script>
+</body>
+</html>

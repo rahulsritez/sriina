@@ -1,0 +1,23 @@
+<div class="top-bar animate-dropdown">
+  <div class="container">
+    <div class="header-top-inner">
+      <div class="cnt-account">
+        <ul class="list-unstyled">
+          <% if(user) { %>  
+            <li><a href="/myaccount"><i class="icon fa fa-user"></i>My Account</a></li>
+          <% } %>  
+          <% if(user) { %>  
+            <li><a href="/addtocart"><i class="icon fa fa-shopping-cart"></i>My Cart</a></li>
+          <% } %>  
+          <li><a href="/membership"><i class="icon fa fa-user"></i>Membership</a></li>
+          <% if(user) { %>
+            <li><a href="/userlogout"><i class="icon fa fa-lock"></i>Logout</a></li>
+          <% } else { %>
+            <li><a href="/sign-in"><i class="icon fa fa-lock"></i>Login / Sign up</a></li>
+          <% } %>  
+        </ul>
+      </div>
+      <div class="clearfix"></div>
+    </div> 
+  </div> 
+</div>

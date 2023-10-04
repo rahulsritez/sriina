@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Cart | Dashboard</title>
+  <meta name="_csrf" content="#{csrfToken}">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" href="/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+  <%- include ("../../common/css") %>
+</head>
+<body class="hold-transition sidebar-mini layout-fixed">
+<div class="wrapper">
+<%- include ("../../common/top_nav") %>
+<% if(user.type==5){ %>
+  <%- include ("../../common/seosidebar") %>
+  <% } else if(user.type==2) { %>
+    <%- include ("../../common/dataentrysidebar") %>
+  <% } else {%>
+    <%- include ("../../common/sidebar") %>
+  <% } %>
+  <div class="content-wrapper">
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0 text-dark">Dashboard</h1>
+          </div>
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
+              <li class="breadcrumb-item active">Cart</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="container">
+            <% if(message.length > 0) {%>
+              <div class="alert alert-success alert-dismissible show" role="alert">
+                 <%= message %> 
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <% } %>
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title float-right"><button type="button" class="btn btn-default" data-toggle="modal" data-target="#modal-default">
+                  Add Cart
+                </button></h3>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body">
+                <table id="example1" class="table table-bordered table-striped">
+                  <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Code</th>
+                    <th>User Limit</th>
+                    <th>Valid From</th>
+                    <th>Valid To</th>
+                    <th>Minimum Amount</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                    <% for(var i=0; i < cataloglist.length; i++){ %>
+                  <tr>
+                    <td><%= i+1 %></td>
+                    <td><%= cataloglist[i].name %></td>
+                    <td><%= cataloglist[i].descs %></td>
+                    <td><%= cataloglist[i].code %></td>
+                    <td><%= cataloglist[i].user_limit %></td>
+                    <td><%= cataloglist[i].valid_from %></td>
+                    <td><%= cataloglist[i].valid_to %></td>
+                    <td><%= cataloglist[i].minimum_amt %></td>
+            
+                    
+                 
+                    
+                    <td>Active</td>
+                    <td>
+                      <a class="edit_cartts btn btn-info btn-sm" data-id="<%= cataloglist[i].id %>" data-name="<%= cataloglist[i].name %>"  data-desc="<%= cataloglist[i].descs %>" data-code="<%= cataloglist[i].code %>" data-user_limit="<%= cataloglist[i].user_limit %>" data-valid_from="<%= cataloglist[i].valid_from %>" data-valid_to="<%= cataloglist[i].valid_to %>" data-mini_amt="<%= cataloglist[i].minimum_amt %>"  data-target="#myModaledit" data-toggle="modal"><i class="fas fa-pencil-alt"></i>Edit</a>
+                                        
+                      <a class="btn btn-danger btn-sm" href="/deletecarts/<%= cataloglist[i].id %>" id=""><i class="fas fa-trash"></i>Delete</a>
+                    </td>
+                  </tr>
+                  <% } %>
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <th>#</th>
+                      <th>Name</th>
+                      <th>Description</th>
+                      <th>Code</th>
+                      <th>User Limit</th>
+                      <th>Valid From</th>
+                      <th>Valid To</th>
+                      <th>Minimum Amount</th>
+                      <th>Status</th>
+                      <th>Action</th>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+        </div>
+
+<div class="modal fade" id="modal-default">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Add Cart</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="/addcarts" method="post" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <div class="col-sm-12">
+                            <label class="control-label label-margin">Name</label>
+                            <input type="text" class="form-control" id="name" placeholder="Name" name="name" required />
+                        </div>
+                        <div class="col-sm-12">
+                            <label class="control-label label-margin">Description</label>
+                            <input type="text" class="form-control" id="pub_name" placeholder="Description" name="desc" required />
+                        </div>
+                        <div class="col-sm-12">
+                          <label class="control-label label-margin">Code</label>
+                          <input type="text" class="form-control" id="auth_name" placeholder="Code" name="code" required />
+                      </div>
+                        <div class="col-sm-12">
+                            <label class="control-label label-margin">Limit to a single customer</label>
+                            <input type="number" class="form-control" id="auth_name" placeholder="Limit to a single customer" name="userlimit" required />
+                        </div>
+                        <div class="col-sm-12">
+                          <label class="control-label label-margin">Valid From Date</label>
+                          <input type="date" class="form-control" id="auth_name" placeholder="Valid From Date" name="vdate" required />
+                      </div>
+                      <div class="col-sm-12">
+                        <label class="control-label label-margin">Valid To Date</label>
+                        <input type="date" class="form-control" id="auth_name" placeholder="Valid To Date" name="tdate" required />
+                    </div>
+                    <div class="col-sm-12">
+                      <label class="control-label label-margin">Minimum Amount</label>
+                      <input type="number" class="form-control" id="auth_name" placeholder="Minimum Amount" name="mamount" required />
+                    </div>
+
+                    
+                       
+                        <div class="col-sm-12">
+                          <label class="control-label label-margin">Status</label>
+                          <select class="form-control" name="country" required>
+                            <option value="Active">Active</option>
+                            <option value="Inactive">Inactive</option>
+                        </select>
+                        </div>
+                    </div>
+                   
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="myModaledit" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content animated bounceInRight">
+            <div class="modal-header">
+              <h4 class="modal-title">Edit Cart</h4>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <!--end modal-header-->
+            <form action="/updatecartts" method="post" enctype="multipart/form-data" id="updatecategory">
+                <input type="hidden" id="edit_id" name="edit_id" value="" />
+                <div class="modal-body">
+                    <div class="example-box-wrapper">
+                        <div class="form-group">
+                            <div class="col">
+                                <label class="control-label label-margin">Name</label>
+                                <input type="text" class="form-control" id="edit_name" placeholder=" Name" name="edit_name" />
+                            </div>
+                            
+                            <div class="col">
+                            <label class="control-label label-margin">Description</label>
+                            <textarea class="form-control" id="edit_desc" name="edit_desc"></textarea>
+                            </div>
+                        	<div class="col">
+                            <label class="control-label label-margin">Code</label>
+                            <textarea class="form-control" id="edit_code" name="edit_code"></textarea>
+                          </div>
+                         <div class="col">
+                            <label class="control-label label-margin">User Limit</label>
+                            <input type="text" class="form-control" id="edit_user_limit" name="edit_user_limit">
+                        </div>
+
+                        <div class="col-sm-12">
+                          <label class="control-label label-margin">Valid From Date</label>
+                          <input type="date" class="form-control" id="edit_valid_from" name="edit_valid_from" required />
+                      </div>
+                      <div class="col-sm-12">
+                        <label class="control-label label-margin">Valid To Date</label>
+                        <input type="date" class="form-control" id="edit_valid_to" name="edit_valid_to" required />
+                    </div>
+                    <div class="col-sm-12">
+                      <label class="control-label label-margin">Minimum Amount</label>
+                      <input type="number" class="form-control" id="edit_mini_amt" name="edit_mini_amt" required />
+                  </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col">
+                                <label class="control-label label-margin">Status</label>
+                                <select class="form-control" id="edit_status" name="edit_status" required>
+                                    <option value="1">Active</option>
+                                    <option value="0">Inactive</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+        </div>
+      </div>
+    </section>
+  </div>
+<%- include ("../../common/footer") %>
+</div>
+<%- include ("../../common/js") %>
+<script type="text/javascript">
+$(function() { 
+  "use strict";  
+  $("#example1").DataTable({
+        "responsive": true,
+        "autoWidth": false,
+        "pageLength": 25,
+  });
+});  
+</script>
+</body>
+</html>

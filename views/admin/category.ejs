@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Category | Dashboard</title>
+  <meta name="_csrf" content="#{csrfToken}">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" href="/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+  <%- include ("../../common/css") %>
+</head>
+<body class="hold-transition sidebar-mini layout-fixed">
+<div class="wrapper">
+<%- include ("../../common/top_nav") %>
+<% if(user.type==5){ %>
+  <%- include ("../../common/seosidebar") %>
+  <% } else if(user.type==2) { %>
+    <%- include ("../../common/dataentrysidebar") %>
+  <% } else {%>
+    <%- include ("../../common/sidebar") %>
+  <% } %>
+  <div class="content-wrapper">
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0 text-dark">Dashboard</h1>
+          </div>
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
+              <li class="breadcrumb-item active">Category</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+    <section class="content">
+      <div class="container-fluid">
+        <div class="">
+          <div class="">
+            <% if(message.length > 0) {%>
+              <div class="alert alert-success alert-dismissible show" role="alert">
+                 <%= message %> 
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <% } %>
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title float-right"><button type="button" class="btn btn-default" data-toggle="modal" data-target="#modal-default">
+                  Add Category
+                </button></h3>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body">
+                <table id="example1" class="table table-bordered table-striped">
+                  <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Image</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                    <% for(var i=0; i < categorylist.length; i++){ %>
+                  <tr>
+                    <td><%= i+1 %></td>
+                    <td><%= categorylist[i].id %></td>
+                    <td><%= categorylist[i].name %></td>
+                    <td><img height="100" src="<%= process.env.IMAGE_URL %><%= categorylist[i].image %>" ></td>
+                    <td><% if(categorylist[i].status==1){ %>Active<% } else{ %>Inactive<% } %></td>
+                    <td>
+                      <a class="edit_category btn btn-info btn-sm" data-id="<%= categorylist[i].id %>" data-name="<%= categorylist[i].name %>" data-image="<%= categorylist[i].image %>" data-status="<%= categorylist[i].status %>" data-meta_title="<%= categorylist[i].meta_title %>" data-meta_description="<%= categorylist[i].meta_description %>" data-meta_canonical_tag="<%= categorylist[i].meta_canonical_tag %>" data-category_text="<%= categorylist[i].category_text %>" data-target="#myModaledit" data-toggle="modal"><i class="fas fa-pencil-alt"></i>Edit</a>
+                      <% if(user.type != 2) { %>                      
+                      <a class="delete_category btn btn-danger btn-sm" id="<%= categorylist[i].id %>"><i class="fas fa-trash"></i>Delete</a>
+                      <% } %>
+                    </td>
+                  </tr>
+                  <% } %>
+                  </tbody>
+                  <tfoot>
+                  <tr>
+                    <th>#</th>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Image</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+        </div>
+
+<div class="modal fade" id="modal-default">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Add Category</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="addcategory" method="post" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <div class="col-sm-12">
+                            <label class="control-label label-margin">Category Name</label>
+                            <input type="text" class="form-control" id="cat_name" placeholder="Name" name="cat_name" required />
+                        </div>
+                        <div class="col-sm-12">
+                            <label class="control-label label-margin">Image</label>
+                            <input type="file" class="form-control" id="category_image" placeholder="Image" name="category_image" accept="image/png, image/jpeg"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <select class="form-control" name="cat_status" required>
+                            <option value="1">Active</option>
+                            <option value="0">Inactive</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="myModaledit" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content animated bounceInRight">
+            <div class="modal-header">
+              <h4 class="modal-title">Edit Categroy</h4>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <!--end modal-header-->
+            <form action="/updatecategory" method="post" enctype="multipart/form-data" id="updatecategory">
+                <input type="hidden" id="edit_id" name="edit_id" value="" />
+                <div class="modal-body">
+                    <div class="example-box-wrapper">
+                        <div class="form-group">
+                            <div class="col">
+                                <label class="control-label label-margin">Category Name</label>
+                                <input type="text" class="form-control" id="edit_name" placeholder="Category Name" name="edit_name" />
+                            </div>
+                            <div class="col">
+                                <label class="control-label label-margin">Image</label>
+                                <input type="file" class="form-control" id="edit_image" placeholder="Image" name="edit_image" accept="image/png, image/jpeg"/>
+                            </div>
+                            <div class="col">
+                            <label class="control-label label-margin">Category Text</label>
+                            <textarea class="form-control" id="edit_category_text" name="edit_category_text" rows="5"></textarea>
+                            </div>
+                            <div class="col">
+                            <label class="control-label label-margin">Meta Title</label>
+                            <textarea class="form-control" id="edit_meta_title" name="edit_meta_title"></textarea>
+                            </div>
+                        	<div class="col">
+                            <label class="control-label label-margin">Meta Description</label>
+                            <textarea class="form-control" id="edit_meta_description" name="edit_meta_description"></textarea>
+                          </div>
+                         <div class="col">
+                            <label class="control-label label-margin">Meta Canonical Tag</label>
+                            <input type="text" class="form-control" id="edit_meta_canonical_tag" name="edit_meta_canonical_tag">
+                        </div>
+
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col">
+                                <label class="control-label label-margin">Status</label>
+                                <select class="form-control" id="edit_status" name="edit_status" required>
+                                    <option value="1">Active</option>
+                                    <option value="0">Inactive</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+        </div>
+      </div>
+    </section>
+  </div>
+<%- include ("../../common/footer") %>
+</div>
+<%- include ("../../common/js") %>
+<script type="text/javascript">
+$(function() { 
+  "use strict";  
+  $("#example1").DataTable({
+        "responsive": true,
+        "autoWidth": false,
+        "pageLength": 25,
+  });
+});  
+</script>
+</body>
+</html>

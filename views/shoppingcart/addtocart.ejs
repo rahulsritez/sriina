@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <meta name="keywords" content="MediaCenter, Template, eCommerce" />
+        <meta name="robots" content="INDEX,FOLLOW"/>
+        <title>Sriina | Shopping Cart</title>
+        <link rel="stylesheet" href="<%= baseURL %>assets/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="<%= baseURL %>assets/css/main.css" />
+        <link rel="stylesheet" href="<%= baseURL %>assets/css/blue.css" />
+        <link rel="stylesheet" href="<%= baseURL %>assets/css/owl.carousel.css" />
+        <link rel="stylesheet" href="<%= baseURL %>assets/css/owl.transitions.css" />
+        <link rel="stylesheet" href="<%= baseURL %>assets/css/animate.min.css" />
+        <link rel="stylesheet" href="<%= baseURL %>assets/css/rateit.css" />
+        <link rel="stylesheet" href="<%= baseURL %>assets/css/bootstrap-select.min.css" />
+        <link href="<%= baseURL %>assets/css/custom.css" rel="stylesheet" />
+        <link rel="stylesheet" href="<%= baseURL %>assets/css/font-awesome.css" />
+        <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet" type="text/css" />
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,300,400italic,600,600italic,700,700italic,800" rel="stylesheet" type="text/css" />
+        <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
+    </head>
+    <body class="cnt-home">
+        <!-- ============================================== HEADER ============================================== -->
+        <header class="header-style-1">
+           <%- include("../front/top_bar") -%> <%- include("../front/search") -%> <%- include("../front/navigation") -%>
+        </header>
+        <div class="breadcrumb">
+            <div class="container">
+                <div class="breadcrumb-inner">
+                    <ul class="list-inline list-unstyled">
+                        <li><a href="/">Home</a></li>
+                        <li class="active">Shopping Cart</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="body-content outer-top-xs">
+            <div class="container">
+                <div class="row">
+                    <div class="shopping-cart" id="shopping-cart">
+                        <% if(message.length > 0) {%>
+                        <div class="alert alert-success alert-dismissible show" role="alert">
+                          <%= message %>
+                          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <% } %>
+                        <% if(errors.length > 0) {%>
+                            <div class="alert alert-danger alert-dismissible show" role="alert">
+                                <%= errors %> 
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        <% } %>
+                        <div class="shopping-cart-table">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th class="cart-sr-no item">#</th>
+                                            <th class="cart-romove item">Remove</th>
+                                            <th class="cart-description item">Image</th>
+                                            <!-- <th class="cart-edit item">Type</th> -->
+                                            <th class="cart-product-name item">Product Name</th>
+                                            <th class="cart-qty item">Quantity</th>
+                                            <th class="cart-sub-total item">Total</th>
+                                            <th class="cart-total last-item">Subtotal</th>
+                                        </tr>
+                                    </thead>
+                                    <!-- /thead -->
+                                    
+                                        <% 
+                                            var total = 0; 
+                                            var CartId = 0;
+                                        %>
+                                        <% if(getcartdata.length > 0) {%>
+                                        <% getcartdata.forEach((list, index) => { %>
+                                        <tr>
+                                            <td><%= index+1 %></td>
+                                            <td class="romove-item">
+                                               <form action="/delete-cart" method="post">
+                                                <input type="hidden" name="product_id" value="<%= list.productId %>">
+                                                <button class="btn btn-danger" type="submit"><i class="fa fa-trash-o"></i></button>
+                                               </form>
+                                                <!-- <a onclick="deleteFromCart('<%= list.productId %>')" title="cancel" class="icon"><i class="fa fa-trash-o"></i></a> -->
+                                            </td>
+                                            <td class="cart-image">
+                                                <% if(list.productType==1){%>
+                                                    <a target="_blank" class="entry-thumbnail" href="<%= list.slug %>/<%= list.productId %>">
+                                                    <% if(/(http(s?)):\/\//i.test(list.image)) {%>
+                                                        <img src="<%= list.image %>" alt="" />
+                                                    <% } else { %>
+                                                        <img src="<%= process.env.IMAGE_URL %><%= list.image %>" alt="" />
+                                                    <% } %>
+                                                </a>
+                                                <% } else if(list.productType==2) { %>
+                                                    <a target="_blank" class="entry-thumbnail" href="p/groceries/<%= list.slug %>/<%= base64.encode(list.productId) %>">
+                                                    <img src="<%= baseURL %>/admin/grocery/images/<%= list.groceyImg %>" alt="" />
+                                                </a>
+                                                <% } else { %>
+                                                    <a href="javascript:void(0);">Error!</a>
+                                                <% } %>
+                                            </td>
+                                            <!-- <td>
+                                                <% if(list.on_rental===1) { %>
+                                                    <span class="text-success"><strong>On Rent</strong> </span>
+                                                <% } else {%>    
+                                                    <span>Purchase</span>
+                                                <% } %>       
+                                            </td> -->
+                                            <td class="cart-product-name-info">
+                                                <% if(list.productType==1){%>
+                                                    <h4 class="cart-product-description">
+                                                        <a target="_blank" href="<%= list.slug %>/<%= list.productId %>"><%= list.name %></a>
+                                                    </h4>
+                                                <% } else if(list.productType==2) {%>
+                                                    <h4 class="cart-product-description">
+                                                        <a target="_blank" href="p/groceries/<%= list.slug %>/<%= base64.encode(list.productId) %>"><%= list.name %></a>
+                                                    </h4> 
+                                                <% } else { %>
+                                                    <h4 class="cart-product-description">Error!</h4>
+                                                <% } %>
+                                            </td>
+                                            <!-- <td class="cart-product-edit"><a href="#" class="product-edit">Edit</a></td> -->
+                                            <td class="cart-quantity input-group">
+                                                <div class="col-sm-6 quant-input">
+                                                   <!-- <div class="arrows">
+                                                      <div class="arrow btn-plus gradient"><span class="ir"><i class="icon fa fa-sort-asc"></i></span></div>
+                                                      <div class="arrow btn-minus gradient"><span class="ir"><i class="icon fa fa-sort-desc"></i></span></div>
+                                                    </div> -->
+                                                    <!-- <input class="form-control quantity" min="1" max="10" name="quantity" value="1" type="number"> -->
+                                                    
+                                                    <input type="number" name="quantity[]" min="1" max="<%= list.actualQuantity %>" onkeyup=enforceMinMax(this) value="<%= list.cartquantity %>" data-product_id="<%= list.productId %>" class="cls_qty">
+                                                </div>
+                                                <!-- <div class="cart-quantity">
+                                                    <div class="quant-input">
+                                                        <div class="arrows">
+                                                            <div class="arrow plus gradient">
+                                                                <span class="ir"><i class="icon fa fa-sort-asc"></i></span>
+                                                            </div>
+                                                            <div class="arrow minus gradient">
+                                                                <span class="ir"><i class="icon fa fa-sort-desc"></i></span>
+                                                            </div>
+                                                        </div>
+                                                        <input type="text" value="1" />
+                                                    </div>
+                                                </div> -->
+                                            </td>
+
+                                             <!-- let newTotal = (list.price) * (list.cartquantity)
+                                               
+                                                let afterdiscount = (newTotal)-(newTotal/100)*list.discount;
+                                                total+= afterdiscount;
+                                                CartId = list.CartId; -->
+                                            <%
+                                               
+
+                                                let newTotal = (list.price) * (list.quantity);
+                                                let afterdiscount = (newTotal)-(newTotal/100)*list.discount;
+
+                                                let newTotalGrocery = (list.groceyProductPrice) * (list.quantity);
+                                                let afterDiscountGroceryPrice = (newTotalGrocery)-(newTotalGrocery/100)*list.unitDiscount;
+
+                                                total+= parseFloat(afterdiscount) + parseFloat(afterDiscountGroceryPrice);
+                                                CartId = list.CartId;
+
+                                            %>
+                                            <% if( list.productType==1 ) {%>
+                                                <td class="cart-product-sub-total">
+                                                    <span class="cart-sub-total-price">₹<% if(afterdiscount){%><%= afterdiscount.toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,") %><% } %> </span>
+                                                </td>
+                                            <% } else if( list.productType==2 ) {%>
+                                                <td class="cart-product-sub-total">
+                                                    
+                                                    <span class="cart-sub-total-price">₹<% if(afterDiscountGroceryPrice){%><%= afterDiscountGroceryPrice.toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,") %><% } %> </span>
+                                                </td>
+                                            <% } else { %>
+                                                <td class="cart-product-sub-total">
+                                                    <span class="cart-sub-total-price">Error!</span>
+                                                </td>
+                                            <% } %>
+                                            <% if( list.productType==1 ) {%>
+                                                <td class="cart-product-grand-total">
+                                                    <span class="cart-grand-total-price">₹<% if(afterdiscount){%><%= afterdiscount.toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,") %><% } %></span>
+                                                </td>
+                                            <% } else if( list.productType==2 ){%>
+                                                <td class="cart-product-grand-total">
+                                                    <span class="cart-grand-total-price">₹<% if(afterDiscountGroceryPrice){%><%= afterDiscountGroceryPrice.toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,") %><% } %></span>
+                                                </td>
+                                            <% } else {%>
+                                                <td class="cart-product-grand-total">
+                                                    <span class="cart-grand-total-price">Error!</span>
+                                                </td>
+                                            <% } %>
+                                        </tr>
+                                        <% }) %>
+                                        <% } else { %>
+                                        <tr><td colspan="7" align="center" style="color: red; text-transform: uppercase;">your shopping cart is empty.</td></tr>
+                                        <% } %>
+
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="7">
+                                                <div class="shopping-cart-btn">
+                                                    <span class="">
+                                                        <a href="/" class="btn btn-upper btn-primary outer-left-xs">Continue Shopping</a>
+                                                        <a onclick="updateShoppingCart('<%= CartId %>')" class="btn btn-upper btn-primary pull-right outer-right-xs">Update shopping cart</a>
+                                                    </span>
+                                                </div>
+                                                <!-- /.shopping-cart-btn -->
+                                            </td>
+                                        </tr>
+                                    </tfoot>
+                                    <tbody>
+                                    <!-- /tbody -->
+                                </table>
+                                <!-- /table -->
+                            </div>
+                        </div>
+                        <!-- /.shopping-cart-table -->
+                        <!-- <div class="col-md-4 col-sm-12 estimate-ship-tax">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            <span class="estimate-title">Estimate shipping and tax</span>
+                                            <p>Enter your descriptionination to get shipping and tax.</p>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <div class="form-group">
+                                                <label class="info-title control-label">Country <span>*</span></label>
+                                                <select class="form-control unicase-form-control selectpicker">
+                                                    <option>--Select options--</option>
+                                                    <option>India</option>
+                                                    <option>SriLanka</option>
+                                                    <option>united kingdom</option>
+                                                    <option>saudi arabia</option>
+                                                    <option>united arab emirates</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="info-title control-label">State/Province <span>*</span></label>
+                                                <select class="form-control unicase-form-control selectpicker">
+                                                    <option>--Select options--</option>
+                                                    <option>TamilNadu</option>
+                                                    <option>Kerala</option>
+                                                    <option>Andhra Pradesh</option>
+                                                    <option>Karnataka</option>
+                                                    <option>Madhya Pradesh</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="info-title control-label">Zip/Postal Code</label>
+                                                <input type="text" class="form-control unicase-form-control text-input" placeholder="" />
+                                            </div>
+                                            <div class="pull-right">
+                                                <button type="submit" class="btn-upper btn btn-primary">GET A QOUTE</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div> -->
+                        <!-- /.estimate-ship-tax -->
+
+                        <div class="col-md-6 col-sm-12 estimate-ship-tax">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            <span class="estimate-title">Discount Code</span>
+                                            <p>Enter your coupon code if you have one..</p>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <div class="form-group">
+                                                <input type="text" class="form-control unicase-form-control text-input" placeholder="Enter your coupon code here.." />
+                                            </div>
+                                            <div class="clearfix pull-right">
+                                                <button type="submit" class="btn-upper btn btn-primary">APPLY COUPON</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <!-- /tbody -->
+                            </table>
+                            <!-- /table -->
+                        </div>
+                        <!-- /.estimate-ship-tax -->
+
+                        <div class="col-md-6 col-sm-12 cart-shopping-total">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            <div class="cart-grand-total">Grand Total<span class="inner-left-md">₹ <% if(total){%><%= total.toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,") %><% } %></span></div>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <!-- /thead -->
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <% if(total==0) { %>
+                                            <div class="cart-checkout-btn pull-right">
+                                                <button class="btn btn-upper btn-primary pull-right outer-right-xs">Your basket is empty</button>
+                                            </div>
+                                            <% } else { %>
+                                            <div class="cart-checkout-btn pull-right">
+                                                <form method="get" action="checkout">
+                                                <button class="btn btn-upper btn-primary pull-right outer-right-xs">Proceed to Checkout</button>
+                                                </form>
+                                            </div>
+                                            <% } %>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <!-- /tbody -->
+                            </table>
+                            <!-- /table -->
+                        </div>
+                        <!-- /.cart-shopping-total -->
+                    </div>
+                    <!-- /.shopping-cart -->
+                </div>
+            </div>
+            <!-- /.container -->
+        </div>
+        <!-- /.body-content -->
+
+        <% include ("../front/book_footer") %>
+        <script src="<%= baseURL %>assets/js/jquery-1.11.1.min.js"></script>
+        <script src="<%= baseURL %>assets/js/bootstrap.min.js"></script>
+        <script src="<%= baseURL %>assets/js/bootstrap-hover-dropdown.min.js"></script>
+        <script src="<%= baseURL %>assets/js/owl.carousel.min.js"></script>
+        <script src="<%= baseURL %>assets/js/echo.min.js"></script>
+        <script src="<%= baseURL %>assets/js/jquery.easing-1.3.min.js"></script>
+        <script src="<%= baseURL %>assets/js/bootstrap-slider.min.js"></script>
+        <script src="<%= baseURL %>assets/js/jquery.rateit.min.js"></script>
+        <script src="<%= baseURL %>assets/js/lightbox.min.js"></script>
+        <script src="<%= baseURL %>assets/js/bootstrap-select.min.js"></script>
+        <script src="<%= baseURL %>assets/js/wow.min.js"></script>
+        <script src="<%= baseURL %>assets/js/scripts.js"></script>
+        <link href="<%= baseURL %>assets/css/sweetalert2.css" rel="stylesheet">
+        <script src="<%= baseURL %>assets/js/sweetalert2.min.js"></script>
+        <script type="text/javascript">
+            function enforceMinMax(el) {
+                if (el.value != "") {
+                    if (parseInt(el.value) < parseInt(el.min)) {
+                    el.value = el.min;
+                    }
+                    if (parseInt(el.value) > parseInt(el.max)) {
+                    el.value = el.max;
+                    }
+                }
+            }
+           function updateShoppingCart(cartId){
+                var productId = [];
+                var product_value = [];
+                
+                $(".table-responsive").find(".cls_qty").each(function(){
+                    if(($.trim($(this).val()).length>0)){
+                        product_value.push($(this).val());
+                        productId.push($(this).data("product_id"));
+                    }
+                });
+                
+                var dataString = 'cartId='+cartId+'&productId='+productId+'&quantity='+product_value;
+               
+                Swal.fire({
+                    title: 'Do you want to update the cart?',
+                    showDenyButton: true,
+                    showCancelButton: true,
+                    confirmButtonText: `Save`,
+                    denyButtonText: `Don't save`,
+                    }).then((result) => {
+                    /* Read more about isConfirmed, isDenied below */
+                    if (result.isConfirmed) {
+                        Swal.fire('Saved!', '', 'success')
+                        $.ajax({
+                            type: 'get',
+                            url: '/updatecart',
+                            data: dataString,
+                                success: function(result){
+                                if(result.status==1){
+                                    errorsHtml = '<div class="alert alert-danger"><ul>';
+                                    $.each(result.msg_error, function( key, value ) {
+                                            errorsHtml += '<li>' + value + '</li>';
+                                        });
+                                        errorsHtml += '</ul></div>';
+                                    $('#validation-errors').html(errorsHtml);
+
+                                } else {
+                                    window.location.reload();
+                                    // Swal.fire('Something went wrong!');
+                                }
+                            }
+                        });
+                        window.location.reload();
+                    } else if (result.isDenied) {
+                        Swal.fire('Changes are not saved', '', 'info')
+                    }
+                });
+            }
+
+          $(document).ready(function () {
+            $('.btn-plus, .btn-minus').on('click', function(e) {
+              const isNegative = $(e.target).closest('.btn-minus').is('.btn-minus');
+              const input = $(e.target).closest('.input-group').find('input');
+              if (input.is('input')) {
+                input[0][isNegative ? 'stepDown' : 'stepUp']()
+              }
+            });
+
+          });
+
+    $(".btn-plus").click(function(){
+        let quantity = $(".quantity").val();
+        var total = $(".cart-sub-total-price").text();
+        alert(total);
+    })
+    $(".input-number").keydown(function (e) {
+        // Allow: backspace, delete, tab, escape, enter and .
+        if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 190]) !== -1 ||
+             // Allow: Ctrl+A
+            (e.keyCode == 65 && e.ctrlKey === true) || 
+             // Allow: home, end, left, right
+            (e.keyCode >= 35 && e.keyCode <= 39)) {
+                 // let it happen, don't do anything
+                 return;
+        }
+        // Ensure that it is a number and stop the keypress
+        if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+            e.preventDefault();
+        }
+    });
+        </script>
+    </body>
+</html>

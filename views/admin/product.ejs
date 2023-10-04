@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Books Store | Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" href="/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+  <link rel="stylesheet" href="../../common/pagination.css">
+  <style>
+    .pagination {
+      display: inline-block;
+    }
+
+    .pagination span {
+      color: black;
+      float: left;
+      padding: 6px 12px;
+      text-decoration: none;
+      border: 1px solid #ddd;
+    }
+
+    .pagination span.active {
+      background-color: #007BFF;
+      color: white;
+      border: 1px solid #007BFF;
+    }
+
+    .pagination span:hover:not(.active) {
+      background-color: #ddd;
+    }
+
+    .pagination span:first-child {
+      border-top-left-radius: 5px;
+      border-bottom-left-radius: 5px;
+    }
+
+    .pagination span:last-child {
+      border-top-right-radius: 5px;
+      border-bottom-right-radius: 5px;
+    }
+
+
+    .left {
+      margin-left: 20px;
+      margin-top: 10px;
+
+    }
+
+    .right {
+      margin-right: 20px;
+      margin-top: 10px;
+
+    }
+  </style>
+  <%- include ("../../common/css") %>
+</head>
+<body class="hold-transition sidebar-mini layout-fixed">
+  <div class="wrapper">
+    <%- include ("../../common/top_nav") %>
+      <% if(user.type==5){ %>
+        <%- include ("../../common/seosidebar") %>
+          <% } else if(user.type==2) { %>
+            <%- include ("../../common/dataentrysidebar") %>
+              <% } else {%>
+                <%- include ("../../common/sidebar") %>
+                  <% } %>
+                    <div class="content-wrapper">
+                      <div class="content-header">
+                        <div class="container-fluid">
+                          <div class="row mb-2">
+                            <div class="col-sm-6">
+                              <h1 class="m-0 text-dark">Dashboard</h1>
+                            </div>
+                            <div class="col-sm-6">
+                              <ol class="breadcrumb float-sm-right">
+                                <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
+                                <li class="breadcrumb-item active">Book</li>
+                              </ol>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <section class="content">
+                        <div class="container-fluid">
+                          <div class="">
+                            <div class="">
+                              <% if(message.length > 0) {%>
+                                <div class="alert alert-success alert-dismissible show" role="alert">
+                                  <%= message %>
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                      <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <% } %>
+                                  <% if(errors.length > 0) {%>
+                                    <div class="alert alert-danger alert-dismissible show" role="alert">
+                                      <%= errors %>
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                          <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <% } %>
+                                      <div class="card">
+                                        <div class="card-header">
+                                          <h3 class="card-title float-right">
+                                            <button type="button" class="btn btn-default" data-toggle="modal"
+                                              data-target="#modal-default"> Add Book</button>
+                                          </h3>
+                                        </div>
+
+                                        <div class="row ">
+                                          <div class="col-sm-6">
+                                            <p align="left" class="left">
+                                              <span>Show</span>
+                                              <select id="count-select" onchange="changeCount(this.value)">
+                                                <option value=10>10 </option>
+                                                <option value=25>25 </option>
+                                                <option value=50>50 </option>
+                                                <option value=100>100 </option>
+
+                                              </select>
+                                              <span>entries</span>
+                                            </p>
+                                          </div>
+
+                                          <div class="col-sm-6">
+                                            <p align="right" class="right">
+                                              Search:
+                                              <input type="text" id="searchitem" value="" />
+                                              <button
+                                                onclick="handleValueChange(1, '<%=(+query.count) %>')">Search</button>
+                                            </p>
+
+                                          </div>
+
+                                        </div>
+                                        <div class="card-body">
+                                          <table id="products_tbl" class="table table-bordered table-striped">
+                                            <tr>
+                                              <th>#</th>
+                                              <th>
+                                                Name
+                                              </th>
+                                              <!-- <th>Category</th> -->
+                                              <th>ISBN13</th>
+                                              <th>Price</th>
+                                              <th>Discount</th>
+                                              <th>Status</th>
+                                              <th width="15%">Action</th>
+                                            </tr>
+                                            <tbody>
+                                              <% if (productlist?.length> 0) { %>
+                                                <% productlist.forEach((list, index)=> { %>
+                                                  <tr>
+                                                    <td>
+                                                      <%= ((+query.count )*(+query.page-1))+index+1 %>
+                                                    </td>
+                                                    <td>
+                                                      <img src="<%= process.env.IMAGE_URL %><%= list.image %>" width="50"/>
+                                                      <%= list.name %>
+                                                    </td>
+                                                    <!-- <td><%= list.categoryname %></td> -->
+                                                    <td>
+                                                      <%= list.isbn13 %>
+                                                    </td>
+                                                    <td>
+                                                      <%= list.price %>
+                                                    </td>
+                                                    <td>
+                                                      <% if(list.discount > 50){ %>50<% } else{ %><%= list.discount %><% } %>%
+                                                    </td>
+                                                    <td>
+                                                      <% if(list.status==1){ %>Active<% } else{ %>Inactive<% } %>
+                                                    </td>
+                                                    <td>
+                                                      <a class="edit_products btn btn-info btn-sm"
+                                                        data-id="<%= list.id %>"
+                                                        data-product_type_id="<%= list.product_type_id %>"
+                                                        data-name="<%= list.name %>" data-cat_id="<%= list.cat_id %>"
+                                                        data-price="<%= list.price %>"
+                                                        data-discount="<%= list.discount %>"
+                                                        data-delivery_charge="<%= list.delivery_charge %>"
+                                                        data-quantity="<%= list.quantity %>"
+                                                        data-isbn="<%= list.isbn %>" data-isbn13="<%= list.isbn13 %>"
+                                                        data-tax_included="<%= list.tax_included %>"
+                                                        data-author="<%= list.author %>"
+                                                        data-book_edition="<%= list.book_edition %>"
+                                                        data-publishing_year="<%= list.publishing_year %>"
+                                                        data-product_type="<%= list.product_type %>"
+                                                        data-publisher="<%= list.publisher %>"
+                                                        data-language="<%= list.language %>"
+                                                        data-no_of_pages="<%= list.no_of_pages %>"
+                                                        data-weight="<%= list.weight %>" data-images="<%= list.image %>"
+                                                        data-author_details="<%= list.author_details %>"
+                                                        data-description="<%= list.description %>"
+                                                        data-meta_title="<%= list.meta_title %>"
+                                                        data-meta_description="<%= list.meta_description %>"
+                                                        data-status="<%= list.status %>"
+                                                        data-book_binding="<%= list.book_binding %>"
+                                                        data-target="#myModaledit" data-toggle="modal"><i
+                                                          class="fas fa-pencil-alt"></i>Edit</a>
+                                                      <% if(user.type !=2 && user.type !=3 && user.type !=5) { %>
+                                                        <a class="delete_products btn btn-danger btn-sm"
+                                                          id="<%= list.id %>"><i class="fas fa-trash"></i>Delete</a>
+                                                        <% } %>
+                                                    </td>
+                                                  </tr>
+                                                  <% }) %>
+                                                    <% } else { %>
+                                                      <tr>
+                                                        <td colspan="8" style="text-align:center">no product found</td>
+                                                      </tr>
+                                                      <% } %>
+                                            </tbody>
+                                            <tfoot>
+                                              <tr>
+                                                <th>#</th>
+                                                <th>Name</th>
+                                                <th>ISBN</th>
+                                                <th>Price</th>
+                                                <th>Discount</th>
+                                                <th>Status</th>
+                                                <th>Action</th>
+                                              </tr>
+                                            </tfoot>
+                                          </table>
+                                              </div>
+                                              </p>
+                                            </div>
+
+                                          </div> 
+                                        </div>
+                                      </div>
+
+                                      <div class="modal fade" id="modal-default">
+                                        <div class="modal-dialog modal-lg">
+                                          <div class="modal-content">
+                                            <div class="modal-header">
+                                              <h4 class="modal-title">Add Book</h4>
+                                              <button type="button" class="close" data-dismiss="modal"
+                                                aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                              </button>
+                                            </div>
+                                            <form action="/addproduct" method="post" enctype="multipart/form-data">
+                                              <div class="modal-body">
+                                                <div class="row mb-2">
+                                                  <div class="col-md-12">
+                                                    <label class="control-label label-margin"></label>
+                                                    <select class="form-control" name="product_type_id">
+                                                      <option value="1" selected="selected">Books</option>
+                                                    </select>
+                                                  </div>
+                                                </div>
+
+                                                <div class="row mb-2">
+                                                  <div class="col-md-6">
+                                                    <label class="control-label label-margin">Name</label>
+                                                    <input type="text" class="form-control" id="product_name"
+                                                      placeholder="Name" name="product_name"
+                                                      onkeypress="return lettersOnly(event)" required>
+                                                  </div>
+                                                  <div class="col-md-6">
+                                                    <label class="control-label label-margin">Authors</label>
+                                                    <input type="text" name="author" class="form-control" id="author"
+                                                      placeholder="Author" required>
+                                                  </div>
+                                                </div>
+                                                <div class="row mb-2">
+                                                  <div class="col-md-4">
+                                                    <label class="control-label label-margin">Publisher</label>
+                                                    <input type="text" class="form-control" id="publisher"
+                                                      placeholder="Publisher" name="publisher" required>
+                                                  </div>
+                                                  <div class="col-md-4">
+                                                    <label class="control-label label-margin">Book Edition</label>
+                                                    <input type="text" name="book_edition" class="form-control"
+                                                      id="book_edition" placeholder="book edition">
+                                                  </div>
+                                                  <div class="col-md-4">
+                                                    <label class="control-label label-margin">Publishing Year</label>
+                                                    <input type="text" name="publishing_year" class="form-control"
+                                                      id="publishing_year" placeholder="Publish Year" required>
+                                                  </div>
+                                                </div>
+                                                <div class="row mb-2">
+                                                  <div class="col-md-4">
+                                                    <label class="control-label label-margin">Price</label>
+                                                    <input type="number" class="form-control" id="price"
+                                                      placeholder="Price" name="price" required
+                                                      onkeypress="return isNumber(event)">
+                                                  </div>
+                                                  <div class="col-md-4">
+                                                    <label class="control-label label-margin">Unit</label>
+                                                    <input type="number" class="form-control" id="unit_price"
+                                                      placeholder="Unit Price" name="unit price"
+                                                      oninput="calculateDiscount(event)">
+                                                  </div>
+                                                  <div class="col-md-4">
+                                                    <label class="control-label label-margin">Discount</label>
+                                                    <input type="number" class="form-control" id="discount"
+                                                      placeholder="Discount" name="discount" step="0.01">
+                                                  </div>
+                                                </div>
+                                                <div class="row mb-2">
+                                                  <div class="col-md-4">
+                                                    <label class="control-label label-margin">Delivery Charges</label>
+                                                    <input type="number" class="form-control" id="delivery_charge"
+                                                      placeholder="Delivery Charge" name="delivery_charge" value="0">
+                                                  </div>
+                                                  <div class="col-md-4">
+                                                    <label class="control-label label-margin">Book Binding</label>
+                                                    <select name="book_binding" id="book_binding" class="form-control">
+                                                      <option value="0">-Select book binding-</option>
+                                                      <option value="Paperback">Paperback</option>
+                                                      <option value="Hardcover">Hardcover</option>
+                                                    </select>
+                                                  </div>
+                                                  <div class="col-md-4">
+                                                    <label class="control-label label-margin">Books Type</label>
+                                                    <select class="form-control" name="product_type" id="product_type"
+                                                      required>
+                                                      <option value="">-Please select product type-</option>
+                                                      <option value="1">Hot Deal</option>
+                                                      <option value="2">Featured Product</option>
+                                                      <option value="3">Today Offer</option>
+                                                      <option value="4">Pre-order</option>
+                                                      <option value="5" selected="selected">New Product</option>
+                                                      <option value="6">Old Product</option>
+                                                      <option value="7">Special Product</option>
+                                                    </select>
+                                                  </div>
+                                                </div>
+                                                <div class="row mb-2">
+                                                  <div class="col-md-4">
+                                                    <label class="control-label label-margin">Quantity</label>
+                                                    <input type="number" class="form-control" id="quantity"
+                                                      placeholder="Quantity" name="quantity" required
+                                                      onkeypress="return isNumber(event)">
+                                                  </div>
+
+                                                  <div class="col-md-4">
+                                                    <label class="control-label label-margin">ISBN-10</label>
+                                                    <input type="text" class="form-control" id="ISBN" placeholder="ISBN"
+                                                      name="ISBN" maxlength="10" onkeypress="return isNumber(event)">
+                                                  </div>
+
+                                                  <div class="col-md-4">
+                                                    <label class="control-label label-margin">ISBN-13</label>
+                                                    <input type="text" class="form-control" id="ISBN12"
+                                                      placeholder="ISBN13" name="ISBN13" maxlength="13"
+                                                      onkeypress="return isNumber(event)" required>
+                                                  </div>
+
+                                                </div>
+
+                                                <div class="row mb-2">
+                                                  <div class="col-md-4">
+                                                    <label class="control-label label-margin">Language</label>
+                                                    <select class="form-control" name="language" id="language" required>
+                                                      <option value="">-Please select Language-</option>
+                                                      <option value="1" selected="selected">English</option>
+                                                      <option value="2">Hindi</option>
+                                                      <option value="3">Bengali</option>
+                                                      <option value="4">Marathi</option>
+                                                      <option value="5">Kannada</option>
+                                                      <option value="6">Malayalam</option>
+                                                      <option value="7">Urdu</option>
+                                                    </select>
+                                                  </div>
+                                                  <div class="col-md-4">
+                                                    <label class="control-label label-margin">Categories</label>
+                                                    <select class="form-control" name="category" id="category" required>
+                                                      <option value="">-Please select category-</option>
+                                                      <% for(var i=0; i < categorylist?.length; i++){ %>
+                                                        <option value="<%= categorylist[i].id %>">
+                                                          <%= categorylist[i].name %>
+                                                        </option>
+                                                        <% }%>
+                                                    </select>
+                                                  </div>
+                                                  <div class="col-md-2">
+                                                    <label class="control-label label-margin">No of Pages</label>
+                                                    <input type="number" name="no_of_pages" class="form-control"
+                                                      id="no_of_pages">
+                                                  </div>
+                                                  <div class="col-md-2">
+                                                    <label class="control-label label-margin">Weight</label>
+                                                    <input type="text" name="weight" class="form-control" id="weight">
+                                                  </div>
+
+                                                </div>
+
+                                                <div class="row mb-2">
+
+                                                  <div class="col-md-4">
+                                                    <label class="control-label label-margin">Tax Included</label>
+                                                    <select class="form-control" name="status" required>
+                                                      <option value="0">Yes</option>
+                                                      <option value="1">No</option>
+                                                    </select>
+                                                  </div>
+                                                  <div class="col-md-4">
+                                                    <label class="control-label label-margin">Status</label>
+                                                    <select class="form-control" name="status" required>
+                                                      <option value="1">Active</option>
+                                                      <option value="0">Inactive</option>
+                                                    </select>
+                                                  </div>
+
+                                                  <div class="col-md-4">
+                                                    <label class="control-label label-margin">Images</label>
+                                                    <input type="file" name="product_images" class="form-control"
+                                                      accept="image/png, image/jpeg" required>
+                                                  </div>
+                                                </div>
+                                                <div class="row mb-2">
+                                                  <div class="col-md-12">
+                                                    <label class="control-label label-margin">About the Author</label>
+                                                    <textarea name="author_details" id="author_details" rows="5"
+                                                      class="form-control"></textarea>
+                                                  </div>
+                                                </div>
+
+                                                <div class="row mb-2">
+                                                  <div class="col-md-12">
+                                                    <label class="control-label label-margin">Descriptions</label>
+                                                    <textarea name="descriptions" id="descriptions"
+                                                      class="form-control textarea"></textarea>
+                                                  </div>
+                                                </div>
+
+                                                <div class="row mb-2">
+                                                  <div class="col-md-12">
+                                                    <label class="control-label label-margin">Meta Title</label>
+                                                    <textarea name="meta_title" id="meta_title"
+                                                      class="form-control"></textarea>
+                                                  </div>
+                                                </div>
+                                                <div class="row mb-2">
+                                                  <div class="col-md-12">
+                                                    <label class="control-label label-margin">Meta Description</label>
+                                                    <textarea name="meta_description" id="meta_description"
+                                                      class="form-control"></textarea>
+                                                  </div>
+                                                </div>
+
+                                              </div>
+                                              <div class="modal-footer justify-content-between">
+                                                <button type="button" class="btn btn-default"
+                                                  data-dismiss="modal">Close</button>
+                                                <button type="submit" class="btn btn-primary">Submit</button>
+                                              </div>
+                                            </form>
+                                          </div>
+                                          <!-- /.modal-content -->
+                                        </div>
+                                      </div>
+                                      <div class="row ">
+                                        <div class="col-sm-6">
+                                          <p align="left" class="left">
+                                            Showing <%= ((+query.count )*(+query.page-1))+1 %> to <%= total<
+                                                ((+query.count)*(+query.page))? total:
+                                                ((+query.count)*(+query.page))%> of <%= total %> entries
+                                          </p>
+                                        </div>
+
+                                        <div class="col-sm-6">
+                                          <p align="right" class="right">
+                                          <div class="pagination">
+                                            <span
+                                              onclick="changePage('previous','<%=(+query.page) %>',  '<%=(+totalpages) %>', '<%=(+query.count) %>', '<%=(query.search) %>')">
+                                              Previous
+                                            </span>
+                                            <span>
+                                              <%=(+query.page) %>
+                                            </span>
+                                            <span
+                                              onclick="changePage('next','<%=(+query.page) %>', '<%=(+totalpages) %>', '<%=(+query.count) %>', '<%=(query.search) %>')">
+                                              Next </span>
+                                            <p style="margin-left: 20px;margin-right: 20px;">Select Page</p>
+                                            <select
+                                              onchange="onPageChange('<%=(+query.count) %>', this.value,'<%=(+query.search) %>')"
+                                              <% for(var i=0; i <=totalpages; i++){ %>
+                                              <option value="<%= i %>">
+                                                <%= i %>
+                                              </option>
+                                              <% }%>
+                                            </select>
+                                            <input value="1" id="page" />
+                                              <button onclick="getcube('<%=(+query.count) %>', '<%=(+totalpages) %>', '<%=(query.search) %>')">Go</button>
+                                        <!-- /.modal-dialog -->
+                                      </div>
+
+                                      <div class="modal fade" id="myModaledit" tabindex="-1" role="dialog"
+                                        aria-hidden="true">
+                                        <div class="modal-dialog modal-lg">
+                                          <div class="modal-content animated bounceInRight">
+                                            <div class="modal-header">
+                                              <h5 class="modal-title">Edit Product [<span style="color: green;"
+                                                  id="get_edit_product_name"></span>]</h5>
+                                              <button type="button" class="close" data-dismiss="modal"
+                                                aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                              </button>
+                                            </div>
+                                            <!--end modal-header-->
+                                            <form action="/adminupdateproduct" method="post" id="updatefrm" enctype="multipart/form-data">
+                                              <input type="hidden" id="edit_id" name="edit_id" value="">
+                                              <div class="modal-body">
+                                                <div class="row mb-2">
+                                                  <div class="col-md-12">
+                                                    <label class="control-label label-margin">Products Type</label>
+                                                    <select class="form-control" name="edit_product_type_id"
+                                                      id="edit_product_type_id">
+                                                      <option value="">-Please Select Product Type-</option>
+                                                      <% for(var i=0; i < get_type_data.length; i++){ %>
+                                                        <option value="<%= get_type_data[i].id %>">
+                                                          <%= get_type_data[i].name %>
+                                                        </option>
+                                                        <% }%>
+                                                    </select>
+                                                  </div>
+                                                </div>
+                                                <div class="row mb-2">
+                                                  <div class="col-md-6">
+                                                    <label class="control-label label-margin">Name</label>
+                                                    <input type="text" class="form-control" id="edit_product_name"
+                                                      placeholder="Name" name="edit_product_name"
+                                                      onkeypress="return lettersOnly(event)" required>
+                                                  </div>
+                                                  <div class="col-md-6">
+                                                    <label class="control-label label-margin">Authors</label>
+                                                    <input type="text" name="edit_author" class="form-control"
+                                                      id="edit_author" placeholder="Author">
+                                                  </div>
+                                                </div>
+                                                <div class="row mb-2">
+                                                  <div class="col-md-3">
+                                                    <label class="control-label label-margin">Publisher</label>
+                                                    <input type="text" class="form-control" id="edit_publisher"
+                                                      placeholder="Publisher" name="edit_publisher">
+                                                  </div>
+                                                  <div class="col-md-3">
+                                                    <label class="control-label label-margin">Book Edition</label>
+                                                    <input type="text" name="edit_book_edition" class="form-control"
+                                                      id="edit_book_edition" placeholder="book edition">
+                                                  </div>
+                                                  <div class="col-md-3">
+                                                    <label class="control-label label-margin">Publishing Year</label>
+                                                    <input type="text" name="edit_publishing_year" class="form-control"
+                                                      id="edit_publishing_year" placeholder="Publish Year">
+                                                  </div>
+                                                  <div class="col-md-3">
+                                                    <label class="control-label label-margin">Books Type</label>
+                                                    <select class="form-control" name="edit_product_type"
+                                                      id="edit_product_type">
+                                                      <option value="0">-Please select product type-</option>
+                                                      <option value="1">Hot Deal</option>
+                                                      <option value="2">Featured Product</option>
+                                                      <option value="3">Today Offer</option>
+                                                      <option value="4">Pre-order</option>
+                                                      <option value="5">New Product</option>
+                                                      <option value="6">Old Product</option>
+                                                      <option value="7">Special Product</option>
+                                                    </select>
+                                                  </div>
+                                                </div>
+                                                <div class="row mb-2">
+                                                  <div class="col-md-3">
+                                                    <label class="control-label label-margin">Price</label>
+                                                    <input type="number" class="form-control" id="edit_price"
+                                                      placeholder="Price" name="edit_price" required>
+                                                  </div>
+                                                  <div class="col-md-3">
+                                                    <label class="control-label label-margin">Discount</label>
+                                                    <input type="number" class="form-control" id="edit_discount"
+                                                      placeholder="Discount" name="edit_discount">
+                                                  </div>
+
+                                                  <div class="col-md-3">
+                                                    <label class="control-label label-margin">Delivery Charge</label>
+                                                    <input type="number" class="form-control" id="edit_delivery_charge"
+                                                      placeholder="Delivery Charge" name="edit_delivery_charge">
+                                                  </div>
+
+                                                  <div class="col-md-3">
+                                                    <label class="control-label label-margin">Book Binding</label>
+                                                    <select name="edit_book_binding" id="edit_book_binding"
+                                                      class="form-control">
+                                                      <option value="0">-Select book binding-</option>
+                                                      <option value="Paperback">Paperback</option>
+                                                      <option value="Hardcover">Hardcover</option>
+                                                    </select>
+                                                  </div>
+
+                                                </div>
+                                                <div class="row mb-2">
+                                                  <div class="col-md-4">
+                                                    <label class="control-label label-margin">Quantity</label>
+                                                    <input type="number" class="form-control" id="edit_quantity"
+                                                      placeholder="Quantity" name="edit_quantity" required>
+                                                  </div>
+
+                                                  <div class="col-md-4">
+                                                    <label class="control-label label-margin">ISBN-10</label>
+                                                    <input type="text" class="form-control" id="edit_ISBN"
+                                                      placeholder="ISBN" name="edit_ISBN" maxlength="10"
+                                                      onkeypress="return isNumber(event)">
+                                                  </div>
+
+                                                  <div class="col-md-4">
+                                                    <label class="control-label label-margin">ISBN-13</label>
+                                                    <input type="text" class="form-control ISBN13" id="edit_ISBN13"
+                                                      placeholder="ISBN13" name="edit_ISBN13" onkeyup="checkISBM13()"
+                                                      maxlength="13" onkeypress="return isNumber(event)">
+                                                  </div>
+
+                                                </div>
+
+                                                <div class="row mb-2">
+                                                  <div class="col-md-4">
+                                                    <label class="control-label label-margin">Language</label>
+                                                    <select class="form-control" name="edit_language"
+                                                      id="edit_language">
+                                                      <option value="">-Please select Language-</option>
+                                                      <option value="1" selected="selected">English</option>
+                                                      <option value="2">Hindi</option>
+                                                      <option value="3">Bengali</option>
+                                                      <option value="4">Marathi</option>
+                                                      <option value="5">Kannada</option>
+                                                      <option value="6">Malayalam</option>
+                                                      <option value="7">Urdu</option>
+                                                    </select>
+                                                  </div>
+                                                  <div class="col-md-4">
+                                                    <label class="control-label label-margin">Category</label>
+                                                    <select class="form-control" name="edit_category"
+                                                      id="edit_category">
+                                                      <option value="">Select</option>
+                                                      <% for(var i=0; i < categorylist.length; i++){ %>
+                                                        <option value="<%= categorylist[i].id %>">
+                                                          <%= categorylist[i].name %>
+                                                        </option>
+                                                        <% }%>
+                                                    </select>
+                                                  </div>
+                                                  <div class="col-md-2">
+                                                    <label class="control-label label-margin">No of Pages</label>
+                                                    <input type="number" name="edit_no_of_pages" class="form-control"
+                                                      id="edit_no_of_pages">
+                                                  </div>
+                                                  <div class="col-md-2">
+                                                    <label class="control-label label-margin">Weight</label>
+                                                    <input type="text" name="edit_weight" class="form-control"
+                                                      id="edit_weight">
+                                                  </div>
+                                                </div>
+
+                                                <div class="row mb-2">
+
+                                                  <div class="col-md-4">
+                                                    <label class="control-label label-margin">Tax Included</label>
+                                                    <select class="form-control" name="edit_included" id="edit_included"
+                                                      required>
+                                                      <option value="0">Yes</option>
+                                                      <option value="1">No</option>
+                                                    </select>
+                                                  </div>
+                                                  <div class="col-md-4">
+                                                    <label class="control-label label-margin">Status</label>
+                                                    <select class="form-control" name="edit_status" id="edit_status"
+                                                      required>
+                                                      <option value="1">Active</option>
+                                                      <option value="0">Inactive</option>
+                                                    </select>
+                                                  </div>
+
+                                                  <div class="col-md-4">
+                                                    <label class="control-label label-margin">Images</label>
+                                                    <input type="file" name="edit_product_images"
+                                                      id="edit_product_images" class="form-control"
+                                                      accept="image/png, image/jpeg">
+                                                  </div>
+                                                </div>
+                                                <div class="row mb-2">
+                                                  <div class="col-md-12">
+                                                    <label class="control-label label-margin">About the Author</label>
+                                                    <textarea name="edit_author_details" id="edit_author_details"
+                                                      rows="5" class="form-control"></textarea>
+                                                  </div>
+                                                </div>
+
+                                                <div class="row mb-2">
+                                                  <div class="col-md-12">
+                                                    <label class="control-label label-margin">Descriptions</label>
+                                                    <textarea name="edit_descriptions" id="edit_descriptions"
+                                                      class="form-control textarea"></textarea>
+                                                  </div>
+                                                </div>
+
+                                                <div class="row mb-2">
+                                                  <div class="col-md-12">
+                                                    <label class="control-label label-margin">Meta Title</label>
+                                                    <textarea name="edit_meta_title" id="edit_meta_title"
+                                                      class="form-control"></textarea>
+                                                  </div>
+                                                </div>
+                                                <div class="row mb-2">
+                                                  <div class="col-md-12">
+                                                    <label class="control-label label-margin">Meta Description</label>
+                                                    <textarea name="edit_meta_description" id="edit_meta_description"
+                                                      class="form-control"></textarea>
+                                                  </div>
+                                                </div>
+
+                                              </div>
+                                              <div class="modal-footer">
+                                                <button type="button" class="btn btn-default"
+                                                  data-dismiss="modal">Close</button>
+                                                <button type="submit" class="btn btn-primary">Submit</button>
+                                              </div>
+                                            </form>
+                                          </div>
+                                        </div>
+                                      </div>
+                            </div>
+                          </div>
+                      </section>
+                    </div>
+                    <%- include ("../../common/footer") %>
+  </div>
+  <%- include ("../../common/js") %>
+    <script type="text/javascript">
+      $(function () {
+        "use strict";
+        $("#products_tbl").DataTable({
+          "responsive": true,
+          "autoWidth": false,
+          "pageLength": 25,
+        });
+
+        $('.textarea').summernote()
+
+      });
+      const changeCount = (count) => {
+        const $select = document.querySelector('#count-select');
+        $select.value = count
+        document.location.href = '/productlist?count=' + count + '&page=1&search='
+      }
+      const changePage = (type, no = 1, total, count, search) => {
+        if (type === 'previous' && +no > 1) {
+          document.location.href = '/productlist?count=' + count + '&page=' + (+no - 1) + '&search=' + search
+        }
+        if (type === 'next' && +no < +total) {
+          document.location.href = '/productlist?count=' + count + '&page=' + (+no + 1) + '&search=' + search
+
+        }
+      }
+      const onPageChange = (count, page, search) => {
+        let item = document.getElementById('searchitem').value
+        const urlParams = new URLSearchParams(window.location.search);
+        const myParam = urlParams.get('search');
+        document.location.href = '/productlist?search=' + myParam + '&page=' + page + '&count=' + count
+      }
+      function getcube(count, number, search) {
+        var number = document.getElementById("page").value;
+        if (!isNaN(number)) {
+          document.location.href = '/productlist?count=' + count + '&page=' + number + '&search=' + search
+        }
+      }
+      function calculateDiscount(evt) {
+        const price = $('#price').val()
+        const unitPrice = $('#unit_price').val()
+        const discountPer = ((price - unitPrice) / price) * 100
+        $('#discount').val(discountPer.toFixed(2));
+      }
+
+      function checkISBM13() {
+        var data = $('input[name=edit_ISBN13]').val();
+        $.ajax({
+          type: 'post',
+          url: '/checkuniqueISBM13',
+          data: { id: data },
+          dataType: 'text'
+        })
+          .done(function (data) {
+            $('h1').html(data.quote);
+          });
+      }
+      function handleValueChange(page, count) {
+        let item = document.getElementById('searchitem').value
+        document.location.href = '/productlist?search=' + item + '&page=' + page + '&count=' + count
+
+      }
+// $(document).ready(function(){
+//     $("form.ISBN13").on('keyup', function(e){
+//         e.preventDefault();
+//         var ISBN13 = $(".ISBN13").val();
+//         alert(ISBN13);
+//       });    	
+// });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Books Store | Order Page</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" href="/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+  <%- include ("../../common/css") %>
+</head>
+<body class="hold-transition sidebar-mini layout-fixed">
+<div class="wrapper">
+<%- include ("../../common/top_nav") %>
+<%- include ("../../common/sidebar") %>
+  <div class="content-wrapper">
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0 text-dark">Dashboard</h1>
+          </div>
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
+              <li class="breadcrumb-item active">Prime Membership</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="container">
+            <div class="card">
+              <div class="card-body">
+                <table id="order_tbl" class="table table-bordered table-striped">
+                  <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Paid Amount</th>
+                    <th>Order Id</th>
+                    <th>Payment Method</th>
+                    <th>Date</th>
+                    <th>Action</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                    <% if (orderlist.length > 0) { %>
+                    <% orderlist.forEach((list, index) => { %>
+                  <tr>
+                    <td><%= index+1 %></td>
+                    <td><%= list.username %></td>
+                    <td><%= list.useremail %></td>
+                    <td><%= list.paid_amount.toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,") %></td>
+                    <td><%= list.orderId %></td>
+                    <td><% if(list.payment_method==1) {%>
+                      <strong class="text-success">Online</strong>
+                    <% } else { %>
+                      <strong style="color: #e67a00;">POD</strong>
+                    <% } %></td>
+                    <td><%= moment(list.orderDate).format('llll') %></td>
+                   <td>
+                      <a href="/viewprimeorder?primeId=<%= list.orderId %>" class="btn btn-success btn-sm">View Order</a>
+                    </td>
+                  </tr>
+                  <% }) %>
+                  <% } else { %>
+                    <tr><td colspan="7" style="text-align:center">no membership found</td></tr>
+                    <% } %>
+                  </tbody>
+                  <tfoot>
+                  <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Paid Amount</th>
+                    <th>Order Id</th>
+                    <th>Payment Method</th>
+                    <th>Date</th>
+                    <th>Action</th>
+                  </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+        </div>
+
+        </div>
+      </div>
+    </section>
+  </div>
+<%- include ("../../common/footer") %>
+</div>
+<%- include ("../../common/js") %>
+<script type="text/javascript">
+$(function() { 
+  "use strict";  
+  $("#order_tbl").DataTable({
+        "responsive": true,
+        "autoWidth": false,
+  });
+});  
+</script>
+</body>
+</html>

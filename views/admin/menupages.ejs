@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Books Store | <%= title %></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" href="/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+  <%- include ("../../common/css") %>
+</head>
+<body class="hold-transition sidebar-mini layout-fixed">
+<div class="wrapper">
+<%- include ("../../common/top_nav") %>
+<%- include ("../../common/sidebar") %>
+  <div class="content-wrapper">
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0 text-dark">Dashboard</h1>
+          </div>
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
+              <li class="breadcrumb-item active">User</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="container">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title float-right">
+                  <button type="button" class="btn btn-default" data-toggle="modal" data-target="#modal-default">Add Menu</button>
+              </h3>
+              </div>
+              <!-- /.card-header -->
+                <% if(message.length > 0) {%>
+                    <div class="alert alert-success alert-dismissible show" role="alert">
+                    <%= message %> 
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    </div>
+                <% } %>
+              <div class="card-body">
+                <table id="products_tbl" class="table table-bordered table-striped">
+                  <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Action</th>
+                    <th>Status</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                    <% if (menuslist.length > 0) { %>
+                        <% menuslist.forEach((list, index) => { %>
+                  <tr>
+                    <td><%= index+1 %></td>
+                    <td><%= list.name %></td>
+                    <td><% if(list.status==1){ %>Active<% } else{ %>Inactive<% } %></td>
+                    <td>
+                      <a class="edit_menu btn btn-info btn-sm" data-id="<%= list.id %>" data-name="<%= list.name %>"  data-status="<%= list.status %>" data-target="#myModaledit" data-toggle="modal"><i class="fas fa-pencil-alt"></i>Edit</a>
+                      <a class="delete_customer btn btn-danger btn-sm" id="<%= list.id %>"><i class="fas fa-trash"></i>Delete</a></td>
+                  </tr>
+                  <% }) %>
+                  <% } else { %>
+                    <tr><td colspan="4" style="text-align:center; color: red;">No menu found</td></tr>
+                    <% } %>
+                  </tbody>
+                  <tfoot>
+                  <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Action</th>
+                    <th>Status</th>
+                  </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+        </div>
+        
+<div class="modal fade" id="modal-default">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Add Menu</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form action="/addmenu" method="post">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="modal-body">
+        <div class="form-group">
+        <div class="col-sm-12">
+          <label class="control-label label-margin">Name</label>
+          <input type="text" class="form-control" id="name" placeholder="Name" name="name">
+        </div>
+        <div class="col-sm-12">
+            <label class="control-label label-margin" name="">Status</label>
+            <select class="form-control" name="status" required>
+                <option value="1">Active</option>
+                <option value="0">Inactive</option>
+            </select>
+        </div>
+        </div>
+      </div>
+      <div class="modal-footer justify-content-between">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </div>
+    </form>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="myModaledit" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content animated bounceInRight">
+          <div class="modal-header">
+            <h4 class="modal-title">Edit Page</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+            <!--end modal-header-->
+            <form action="/updatemenu" method="post">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <input type="hidden" id="edit_id" name="edit_id" value="">
+                <div class="modal-body">
+                    <div class="example-box-wrapper">
+                        <div class="form-group">
+                            <div class="col-sm-12">
+                                <label class="control-label label-margin">Name</label>
+                                <input type="text" class="form-control" id="edit_menu_name" placeholder="Name" name="edit_menu_name" required>
+                            </div>
+                            <div class="col-sm-12">
+                                <label class="control-label label-margin">Status</label>
+                                <select class="form-control" name="edit_menu_status" id="edit_menu_status"required>
+                                    <option value="1">Active</option>
+                                    <option value="0">Inactive</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+        </div>
+      </div>
+    </section>
+  </div>
+<%- include ("../../common/footer") %>
+</div>
+<%- include ("../../common/js") %>
+<script type="text/javascript">
+$(function() { 
+  "use strict";  
+  $("#example1").DataTable({
+        "responsive": true,
+        "autoWidth": false,
+  });
+
+  $('#products_tbl').on('click','.edit_menu',function(){
+        var edit_id = $(this).data('id');
+        var name = $(this).data('name');
+        var status = $(this).data('status');
+        
+        $('#myModaledit').modal('show');
+        $("#edit_menu_name").val(name);
+        $('#edit_id').val(edit_id);
+        $('#edit_menu_status').val(status);
+    });
+
+});  
+</script>
+</body>
+</html>

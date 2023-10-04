@@ -1,0 +1,9 @@
+<div class="list-group" id="categorys">
+    <% if (categorylist.length > 0) {%>
+    <% categorylist.forEach((list, index) => { %>
+    <a href="<%= list.meta_canonical_tag %>" class="list-group-item Id<%= list.id %>"><h6><i class="fa fa-chevron-right" aria-hidden="true"></i> <%= list.name %></h6></a>
+    <% }) %>
+    <% } else { %>
+    <span>Categories not found.</span>
+    <% } %>
+</div> 

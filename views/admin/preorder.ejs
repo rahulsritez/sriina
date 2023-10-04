@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Books Store | <%= title %></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" href="/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+  <%- include ("../../common/css") %>
+</head>
+<body class="hold-transition sidebar-mini layout-fixed">
+<div class="wrapper">
+<%- include ("../../common/top_nav") %>
+<% if(user.type==5){ %>
+  <%- include ("../../common/seosidebar") %>
+<% } else if(user.type==2) { %>
+<%- include ("../../common/dataentrysidebar") %>
+<% } else { %>
+    <%- include ("../../common/sidebar") %>
+<% } %>
+<div class="content-wrapper">
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0 text-dark">Dashboard</h1>
+          </div>
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
+              <li class="breadcrumb-item active">Pre order</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="container">
+            <div class="card">
+              <!-- /.card-header -->
+              <div class="card-body">
+                <table id="example1" class="table table-bordered table-striped">
+                  <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Product Name</th>
+                    <th>ISBN 13</th>
+                    <th>Name</th>
+                    <th>Mobile</th>
+                    <th>Email</th>
+                    <th>Message</th>
+                    <th>Action</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                    <% if (preorderlist.length > 0) { %>
+                    <% preorderlist.forEach((list, index) => { %>
+                  <tr>
+                    <td><%= index+1 %></td>
+                    <td><%= list.productname %></td>
+                    <td><%= list.isbn13 %></td>
+                    <td><%= list.username %></td>
+                    <td><%= list.usermobile %></td>
+                    <td><%= list.useremail %></td>
+                    <td><%= list.usermessage %></td>
+                    <td>
+                      <a class="view_pre_order btn btn-success btn-sm" data-id="<%= list.id %>"><i class="fas fa-edit"></i>View</a>
+                      <a class="delete_pre_order btn btn-danger btn-sm" id="<%= list.id %>"><i class="fas fa-trash"></i>Delete</a>
+                    </td>
+                  </tr>
+                  <% }); %>
+                  <% } else { %>
+                    <tr><td colspan="7" style="text-align:center;color: red;">pre order not found</td></tr>
+                    <% } %>
+                  </tbody>
+                  <tfoot>
+                  <tr>
+                    <th>#</th>
+                    <th>Product Name</th>
+                    <th>ISBN 13</th>
+                    <th>Name</th>
+                    <th>Mobile</th>
+                    <th>Email</th>
+                    <th>Message</th>
+                    <th>Action</th>
+                  </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+        </div>
+        </div>
+      </div>
+    </section>
+  </div>
+<%- include ("../../common/footer") %>
+</div>
+<%- include ("../../common/js") %>
+<script type="text/javascript">
+$(function() { 
+  "use strict";  
+  $("#example1").DataTable({
+        "responsive": true,
+        "autoWidth": false,
+  });
+});  
+</script>
+</body>
+</html>

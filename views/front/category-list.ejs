@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <!-- Meta -->
+        <meta charset="utf-8" />
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <meta name="keywords" content="MediaCenter, Template, eCommerce" />
+        <meta name="robots" content="INDEX,FOLLOW"/>
+        <title>Sriina | <%= title %></title>
+        <link rel="stylesheet" href="<%= baseURL %>assets/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="<%= baseURL %>assets/css/main.css" />
+        <link rel="stylesheet" href="<%= baseURL %>assets/css/blue.css" />
+        <link rel="stylesheet" href="<%= baseURL %>assets/css/owl.carousel.css" />
+        <link rel="stylesheet" href="<%= baseURL %>assets/css/owl.transitions.css" />
+        <link rel="stylesheet" href="<%= baseURL %>assets/css/animate.min.css" />
+        <link rel="stylesheet" href="<%= baseURL %>assets/css/rateit.css" />
+        <link rel="stylesheet" href="<%= baseURL %>assets/css/bootstrap-select.min.css" />
+        <link rel="stylesheet" href="<%= baseURL %>assets/css/custom.css" />
+        <link rel="stylesheet" href="<%= baseURL %>assets/css/font-awesome.css" />
+        <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet" type="text/css" />
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,300,400italic,600,600italic,700,700italic,800" rel="stylesheet" type="text/css" />
+        <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
+    </head>
+    <body class="cnt-home">
+        <header class="header-style-1">
+            <%- include("../front/top_bar") -%>
+            <%- include("../front/search") -%>
+            <%- include("../front/navigation") -%>
+        </header>
+        <div class="breadcrumb">
+            <div class="container">
+                <div class="breadcrumb-inner">
+                    <ul class="list-inline list-unstyled">
+                        <li><a href="/">Home</a></li>
+                        <li class="active">Sitemap</li>
+                    </ul>
+                </div>
+                <!-- /.breadcrumb-inner -->
+            </div>
+            <!-- /.container -->
+        </div>
+        <!-- Page Content -->
+        <div class="container">
+            <div class="row">
+				    <% if (categorylist.length > 0) {%>
+				    <% categorylist.forEach((list, index) => { %>
+				   <div class="col-md-3"> <a title="<%= list.name %>" href="<%= list.meta_canonical_tag %>" class="list-group-item Id<%= list.id %>"><h6><i class="fa fa-chevron-right" aria-hidden="true"></i> <%= list.name %></h6></a></div>
+				    <% }) %>
+				    <% } else { %>
+				    <span>Categories not found.</span>
+				    <% } %>
+            </div>
+            <!-- /.row -->
+        </div>
+        <%- include("../front/book_footer") -%>
+        <script src="<%= baseURL %>assets/js/jquery-1.11.1.min.js"></script>
+        <script src="<%= baseURL %>assets/js/bootstrap.min.js"></script>
+        <script src="<%= baseURL %>assets/js/bootstrap-hover-dropdown.min.js"></script>
+        <script src="<%= baseURL %>assets/js/owl.carousel.min.js"></script>
+        <script src="<%= baseURL %>assets/js/echo.min.js"></script>
+        <script src="<%= baseURL %>assets/js/jquery.easing-1.3.min.js"></script>
+        <script src="<%= baseURL %>assets/js/bootstrap-slider.min.js"></script>
+        <script src="<%= baseURL %>assets/js/jquery.rateit.min.js"></script>
+        <script src="<%= baseURL %>assets/js/lightbox.min.js"></script>
+        <script src="<%= baseURL %>assets/js/bootstrap-select.min.js"></script>
+        <script src="<%= baseURL %>assets/js/wow.min.js"></script>
+        <script src="<%= baseURL %>assets/js/scripts.js"></script>
+    </body>
+</html>

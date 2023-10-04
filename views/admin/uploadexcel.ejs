@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Books Store | Upload Excel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" href="/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+  <%- include ("../../common/css") %>
+</head>
+<body class="hold-transition sidebar-mini layout-fixed">
+<div class="wrapper">
+<%- include ("../../common/top_nav") %>
+<%- include ("../../common/sidebar") %>
+  <div class="content-wrapper">
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0 text-dark">Dashboard</h1>
+          </div>
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
+              <li class="breadcrumb-item active">Upload Excel</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <% if(message.length > 0) {%>
+            <div class="alert alert-success alert-dismissible show col-md-12" role="alert">
+            <%= message %> 
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+          <% } %>
+          <% if(errors.length > 0) {%>
+            <div class="alert alert-danger alert-dismissible show" role="alert">
+               <%= errors %> 
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+          <% } %>
+          <div class="container">
+            <div class="card">
+              <div class="card-body">
+                <form method="POST" enctype="multipart/form-data" action="/uploadexcelfile">
+                    <input type="file" name="uploadexcel" id="uploadexcel" accept=".xlsx, .xls, .csv">
+                    <!-- <input type="submit" name="UPLOAD EXCEL"> -->
+                    <input type="button" name="UPLOAD EXCEL" value="UPLOAD EXCEL" class="map-books">
+                </form>
+              </div>
+            </div>
+        </div>
+
+        </div>
+      </div>
+    </section>
+    <div class="modal fade" id="map_books" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content animated bounceInRight">
+          <div class="modal-header">
+            <h5 class="modal-title">Map Books</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <!--end modal-header-->
+          <form action="/upload-xlsx" method="post" id="map-form-sub" class="map-form" enctype="multipart/form-data">
+            <div class="modal-body">
+              <div id="error_message"></div>
+              <div>
+                <input type="hidden" name="xlsx_file_name" id="xlsx_file_name" value="" />
+                <input type="hidden" name="mapped_fields" id="mapped_fields" value="" />
+                <input type="hidden" name="header" id="header" value="" />
+                <table class="table" id="map-table">
+                  <thead>
+                    <tr>
+                      <th>Import Fields</th>
+                      <th>DB Fields</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
+                <div class="col-12">
+                  <input type="submit" name="Submit" value="Submit" class="btn btn-success mb-2 float-right map-button">
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+<%- include ("../../common/footer") %>
+</div>
+<%- include ("../../common/js") %>
+<script type="text/javascript">
+$(function() { 
+  "use strict";  
+  $("#order_tbl").DataTable({
+        "responsive": true,
+        "autoWidth": false,
+  });
+
+  $('.map-books').on("click", function(e){
+    console.log('map books call');
+
+    var data = new FormData(this.form);
+    let formData = new FormData();
+    for (var pair of data.entries()) {
+      formData.append(pair[0], pair[1]);
+    }
+
+    $.ajax({
+      url: "/uploadexcelfile",
+      method: 'POST',
+      dataType: "json",
+      data: formData,
+      enctype: "multipart/form-data",
+      processData: false,
+      contentType: false,
+      cache: false,
+      success: function(response) {
+        if(response.status){
+          $('#error_message').html('');
+          $("table tbody").html('');
+          var fileName = response.file_name;
+          var headers = response.headers;
+          var db_fields = response.db_fields_books
+          $('#xlsx_file_name').val(fileName);
+          $('#header').val(JSON.stringify(headers));
+          $.each(headers, function (i, item) {
+            var html = '<tr id="'+ capitalizeFirstLetter(item) +'">';
+                html += '<td id="tdf_'+ capitalizeFirstLetter(item) +'" data-val="'+ capitalizeFirstLetter(item) +'">'+ capitalizeFirstLetter(item) +'</td>';
+                html += '<td>'+ `<select class="form-control fields" required id="db_${capitalizeFirstLetter(item)}" name="fields[${capitalizeFirstLetter(item)}]">`;
+                    $.each(db_fields, function (i, db_field) {
+                      html += `<option value="${db_field}">${db_field}</option>`;
+                    })
+                html += `</select>` +'</td>';
+                html += '<td><button type="button" class="btn delete-field" data-id="'+ capitalizeFirstLetter(item) +'"><i class="fa fa-trash"></i></button></td>'
+                html += '</tr>';
+            $("table tbody").append(html);
+          });
+          $('#map_books').modal("show");
+        } else {
+            $('#error_message').html('<div class="alert alert-danger">' + response.error +'</div>');
+        }
+      },
+      error: function(response) {
+        if(response.responseJSON){
+          errorsHtml = '<ul>';
+          $.each( response.responseJSON.errors, function( key, value ) {
+              errorsHtml += '<li>'+ value[0] + '</li>';
+          });
+          errorsHtml += '</ul>';
+          $('#error_message').html('<div class="alert alert-danger">' + errorsHtml + '</div>');
+        }
+      }
+    });
+  });
+
+  function capitalizeFirstLetter(string){
+    string = string.replaceAll(" ", "_").trim().toLowerCase();
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  }
+
+  $(document).on('click', '.delete-field', function() {
+    var rowCount = $('table#map-table tbody tr').length;
+    var trId = $(this).attr('data-id');
+    if (rowCount >= 8) {
+      $(this).closest('tr').children('td').addClass('deleteHighlight').animate({
+          padding: 0
+      }).wrapInner('<div />').children().slideUp(function() {
+          $('table#map-table tr#' + trId).remove();
+      });
+    } else {
+      alert('Minimum 8 fields are required');
+    }
+  });
+
+  function find_duplicate_in_array(fieldsArray) {
+    var object = {};
+    var result = [];
+    fieldsArray.forEach(item => {
+      if (!object[item])
+        object[item] = 0;
+      object[item] += 1;
+    })
+    for (var prop in object) {
+      if (object[prop] >= 2) {
+        result.push(prop);
+      }
+    }
+    return result;
+  }
+
+  $('.map-form').on("submit", function(){
+    var proceed = 1;
+
+    var rowCount = $('table#map-table tbody tr').length;
+    // if (rowCount > 12) {
+    //   proceed = 0;
+    //   alert('Maximun 12 fields are required');
+    // } 
+    if(rowCount <= 8){
+      proceed = 0;
+      alert('Minimum 8 fields are required');
+    }
+
+    var dbFields = $.map($('#map-table tbody .fields'), function(el) {
+      return el.value;
+    });
+
+    if (find_duplicate_in_array(dbFields).length > 0) {
+      var duplicateDbFields = find_duplicate_in_array(dbFields);
+
+      var attributesStr = $('#header').val();
+      var attributesArr = attributesStr.split(",");
+      attributesArr.forEach(function(item, index) {
+        var attrIndex = duplicateDbFields.indexOf(item.trim().toLowerCase());
+        if (attrIndex > -1) {
+            duplicateDbFields.splice(attrIndex, 1);
+        }
+      });
+
+      if (duplicateDbFields.length > 0) {
+        proceed = 0;
+        alert('Found duplicate mapping for fields: ' + duplicateDbFields.toString());
+      }
+    }
+
+    if (proceed) {
+      var fields = {};
+      $('#map-table > tbody > tr').each(function() {
+        var id = this.id;
+        var dbField = $('#db_' + id).val();
+        var mapField = $('#tdf_' + id).attr('data-val');
+        if (fields.hasOwnProperty(dbField)) {
+            var originalVal = fields[dbField];
+            var mapField = originalVal + ',' + mapField;
+        }
+        fields[dbField] = mapField;
+      });
+      $('#mapped_fields').val(JSON.stringify(fields));
+      return true;
+    } else {
+        return false;
+    }
+  });
+
+});  
+</script>
+</body>
+</html>

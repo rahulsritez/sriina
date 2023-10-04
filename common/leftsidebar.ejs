@@ -1,0 +1,75 @@
+<html lang="en">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Books Admin Panel</title>
+    </head>
+    <body>
+        <div id="page-sidebar">
+            <div class="scroll-sidebar">
+                <ul id="sidebar-menu">
+                    <li class="header"><span>Menu</span></li>
+                    <li class="divider"></li>
+
+                    <li>
+                        <a href="/dashboard" title="Admin Dashboard">
+                            <i class="glyph-icon icon-linecons-tv"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" title="Dashboard boxes">
+                            <i class="glyph-icon icon-linecons-diamond"></i>
+                            <span>Masters</span>
+                        </a>
+                        <div class="sidebar-submenu">
+                            <ul>
+                                <li>
+                                    <a href="/countrypage" title="Country"><span>Country</span></a>
+                                </li>
+                                <li>
+                                    <a href="/statepage" title="States"><span>States</span></a>
+                                </li>
+                                <!--<li><a href="{{ path('admin_item_list',{'itemType':'Villages'}) }}" title="State"><span>State</span></a></li>-->
+                                <li>
+                                    <a href="/citypage" title="City"><span>City</span></a>
+                                </li>
+                            </ul>
+                        </div>
+                        <!-- .sidebar-submenu -->
+                    </li>
+                    <!--<li><a href="{{ path('admin_item_salelist',{'itemType':'Sales'}) }}" title="Sales"><i class="glyph-icon icon-shopping-cart"></i><span>Sales</span></a></li>-->
+                    <!--<li><a href="{{ path('admin_item_orderlist',{'itemType':'Orders'}) }}" title="Orders"><i class="glyph-icon  icon-user"></i><span>Orders</span></a></li>-->
+                    <li>
+                        <a href="" title="Notifications"><i class="glyph-icon icon-envelope"></i><span>Notifications</span></a>
+                    </li>
+                    <li>
+                        <a href="#" title="Users"><i class="glyph-icon icon-user"></i><span>Users</span></a>
+                        <div class="sidebar-submenu">
+                            <ul>
+                                <li>
+                                    <a href="/customerpage" title="Customers"><span>Customers</span></a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li>
+                        <a href="#" title="Users"><i class="glyph-icon icon-user"></i><span>Products</span></a>
+                        <div class="sidebar-submenu">
+                            <ul>
+                                <li>
+                                    <a href="/categorypage" title="Category"><span>Product Category</span></a>
+                                </li>
+                                <li>
+                                    <a href="/subcategorypage" title="Category"><span>Product SubCategory</span></a>
+                                </li>
+                                <li>
+                                    <a href="/productpage" title="Category"><span>Products</span></a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </body>
+</html>

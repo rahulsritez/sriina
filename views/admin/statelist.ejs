@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Books Store | Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" href="/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+  <%- include ("../../common/css") %>
+</head>
+<body class="hold-transition sidebar-mini layout-fixed">
+<div class="wrapper">
+<%- include ("../../common/top_nav") %>
+<%- include ("../../common/sidebar") %>
+  <div class="content-wrapper">
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0 text-dark">Dashboard</h1>
+          </div>
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
+              <li class="breadcrumb-item active">State Delivery Charge</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="container">
+            <% if(message.length > 0) {%>
+              <div class="alert alert-success alert-dismissible show" role="alert">
+                 <%= message %> 
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <% } %>
+            <div class="card">
+              <!-- <div class="card-header">
+                <h3 class="card-title float-right">
+                  <button type="button" class="btn btn-default" data-toggle="modal" data-target="#modal-default"> Add Delivery Charge</button></h3>
+              </div> -->
+              <div class="card-body">
+                <table id="products_tbl" class="table table-bordered table-striped">
+                  <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Shipping Charge</th>
+                    <th>Status</th>
+                    <th width="15%">Action</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                    <% if (productlist.length > 0) { %>
+                    <% productlist.forEach((list, index) => { %>
+                  <tr>
+                    <td><%= index+1 %></td>
+                    <td><%= list.name %></td>
+                    <td>
+                      <% if(list.delivery_charges==null) { %>
+                      <span class="text-danger">0</span>
+                      <% } else { %>
+                      <span class="text-success"><%= list.delivery_charges %></span>
+                      <% } %>
+                    </td>
+                    <td><% if(list.status==1){ %><span class="text-success"><b>Active</b></span><% } else {  %><span class="text-danger"><b>Inactive</b></span><% } %></td>
+                    <td>
+                      <a class="edit_shipping_charge btn btn-info btn-sm" data-id="<%= list.id %>" data-name="<%= list.name %>" data-code="<%= list.code %>" data-country_id="<%= list.country_id %>" data-status="<%= list.status %>" data-delivery_charges="<%= list.delivery_charges %>" data-target="#myModaledit" data-toggle="modal"><i class="fas fa-pencil-alt"></i>Edit</a>
+                    </td>
+                  </tr>
+                  <% }) %>
+                  <% } else { %>
+                    <tr><td colspan="8" style="text-align:center">no product found</td></tr>
+                    <% } %>
+                  </tbody>
+                  <tfoot>
+                  <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Shipping Charge</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+        </div>
+        </div>
+      </div>
+    </section>
+    <div class="modal fade" id="myModaledit" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content animated bounceInRight">
+          <div class="modal-header">
+            <h5 class="modal-title">Edit Product [<span style="color: green;" id="get_edit_state_name"></span>]</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+            <!--end modal-header-->
+            <form action="/updatestatedeliverycharge" method="post" id="updatefrm">
+                <input type="hidden" id="edit_id" name="edit_id" value="">
+                <div class="modal-body">
+                  
+                  <div class="row mb-2">
+                    <div class="col-md-12">
+                      <label class="control-label label-margin">Name</label>
+                      <input type="text" class="form-control" id="edit_state_name" placeholder="Name" name="edit_state_name" onkeypress="return lettersOnly(event)" required readonly="readonly" style="cursor: no-drop;">
+                    </div>
+                  </div>
+                  
+                  <div class="row mb-2">
+                      <div class="col-md-12">
+                          <label class="control-label label-margin">Price</label>
+                          <input type="text" class="form-control" id="edit_shipping_charge" placeholder="Price" name="edit_shipping_charge" required>
+                      </div>
+                  </div>
+                
+                  <div class="row mb-2">
+                      <div class="col-md-12">
+                          <label class="control-label label-margin">Status</label>
+                          <select class="form-control" name="edit_status" id="edit_status" required>
+                              <option value="1">Active</option>
+                              <option value="0">Inactive</option>
+                          </select>
+                      </div>
+          
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+  </div>
+  
+<%- include ("../../common/footer") %>
+</div>
+<%- include ("../../common/js") %>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('#products_tbl').DataTable();
+} );
+</script>
+</body>
+</html>

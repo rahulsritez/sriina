@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="description" content="">
+<meta name="author" content="">
+<meta name="keywords" content="MediaCenter, Template, eCommerce">
+<meta name="robots" content="all">
+<title>Sriina | <%= title %></title>
+<link rel="stylesheet" href="../assets/css/bootstrap.min.css">
+<link rel="stylesheet" href="../assets/css/main.css">
+<link rel="stylesheet" href="../assets/css/blue.css">
+<link rel="stylesheet" href="../assets/css/owl.carousel.css">
+<link rel="stylesheet" href="../assets/css/owl.transitions.css">
+<link rel="stylesheet" href="../assets/css/animate.min.css">
+<link rel="stylesheet" href="../assets/css/rateit.css">
+<link rel="stylesheet" href="../assets/css/bootstrap-select.min.css">
+<link href="../assets/css/custom.css" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="../../assets/grocery/css/style.css">
+<script src="../../assets/grocery/js/jquery-1.8.3.min.js"></script>
+<!-- Icons/Glyphs -->
+<link rel="stylesheet" href="../assets/css/font-awesome.css">
+
+<!-- Fonts -->
+<link href='http://fonts.googleapis.com/css?family=Roboto:300,400,500,700' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,400italic,600,600italic,700,700italic,800' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
+<style>
+  #categorys{
+  max-height: 500px !important;
+  margin-bottom: 20px;
+  overflow-y: scroll;
+  }
+</style>
+</head>
+<body class="cnt-home">
+<!-- ============================================== HEADER ============================================== -->
+<header class="header-style-1">
+  <%- include("../front/top_bar") -%>
+  <%- include("../front/search") -%>
+  <%- include("../front/navigation") -%>
+</header>
+
+    <% if (viewlist) { 
+      var original_price = viewlist.price;
+      var discount = viewlist.discount || 0;
+      var discounted_price = original_price - (original_price * discount / 100);
+
+      var new_price = (viewlist.price)-(viewlist.price/100)*viewlist.discount;
+      var you_save_money = (original_price-discounted_price).toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,") 
+    %>
+    <section class="detail_wrap" style="background-color: #FFF;">
+    <div class="detail_container">
+      <div class="detail-full breadcrumbs">
+        <ul>
+          <li><a href="#">Home</a></li>
+          <li><a href="<%= baseURL%>grocery">All Categories</a></li>
+          <li><span><%= viewlist.name %></span></li>
+        </ul>
+      </div>
+      <div class="detail-full">
+        <div class="detail-half space-top">
+          <div class="pdp-image-gallery-block">
+            <!-- Gallery  Thumbnail Images-->
+            <div class="gallery_pdp_container">
+              <div id="gallery_pdp">
+                <% result_product_images.forEach((list, index) => { %>
+                <a href="#" data-image="<%= list.grocery_image %>" data-zoom-image="<%= list.grocery_image %>">
+                  <img id="" src="<%= list.grocery_image %>" width='100' height='67'/>
+                </a>
+                <% }) %>
+                <a href="#" data-image="../../assets/grocery/images/small/image1.png" data-zoom-image="../../assets/grocery/images/large/image1.jpg">
+                  <img id="" src="../../assets/grocery/images/thumb/image1.jpg" width='100' height='67'/>
+                </a>
+                <a href="#" data-image="../../assets/grocery/images/small/image1.png" data-zoom-image="../../assets/grocery/images/large/image1.jpg">
+                  <img id="" src="../../assets/grocery/images/thumb/image4.jpg" width='100' height='67'/>
+                </a>
+              </div>
+              <!-- Up and down button for vertical carousel -->
+              <a href="#" id="ui-carousel-next" style="display: inline;"></a>
+              <a href="#" id="ui-carousel-prev" style="display: inline;"></a>
+            </div>
+
+            <!-- Gallery -->
+
+            <!-- gallery Viewer medium image -->
+            <div class="gallery-viewer">
+              <img id="zoom_10" src="../../assets/grocery/images/small/image1.png" data-zoom-image="../../assets/grocery/images/large/image1.jpg" />
+              <!-- <p class="hint-pdp-img">Roll over the image to zoom in</p> -->
+            </div>
+
+            <!-- gallery Viewer -->
+          </div>
+        </div>
+        <div class="detail-half">
+          <div class="detail-veg"><img src="../../assets/grocery/images/new-veg.svg" alt="veg" width="24" height="24" /></div>
+          <div class="detail-product-info">
+            <h2><%= viewlist.name %></h2>
+            <div class="detail-full">
+              <span class="detail-price">` <%= discounted_price.toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,") %></span>
+              <span class="detail-price-mrp">M.R.P: <strike>` <%= original_price.toFixed(2) %></strike></span>
+            </div>
+            <p class="detail-saving">You Save: <span>` <%= you_save_money %> &nbsp;(<%= discount %>% OFF)</span> Inclusive of all taxes</p>
+            <div class="detail-full">
+              <% if(viewlist.quantity > 0) { %>
+                <span class="detail-price text-green">In Stock</span>
+              <% } else { %> 
+                <span class="detail-price" style="color: #dd0608">Out of Stock</span>
+              <% } %>
+              <!-- <span class="detail-price-mrp"><a class="favourite-inc" href="#"><img id="" src="../../assets/grocery/images/favourite.svg" /></a></span> -->
+            </div>
+            <p class="detail-saving" style="display:none">Sold by <a href="#">Reliance Retail</a></p>
+            <p class="detail-saving">
+              <strong>Free Shipping</strong>
+            </p>
+            <div class="detail-full"><button class="add-cart" type="button">Add to Cart</button></div>
+            <!-- <div class="detail-full">
+              <div class="delivery-hd">Delivery</div>
+              <div class="pincode-wrap">
+              <input class="pincode" type="text" id="fname" name="fname" value="" />
+              <button class="check-pin" type="button">Check</button>
+              </div>
+              <p class="est-date">Check for estimated delivery date</p>
+            </div> -->
+            <div class="delivery-hd space-bottom" style="display:none">Offers <span id="show-hidden-menu">See All</span></div>
+            <div class="detail-full offers" style="display:none">
+              <ul>
+                <li>Cashback T&C Apply</li>
+                <li>AU Bank - 10% Cashback* Up to Rs. 500/- T&C Apply.</li>                
+              </ul>
+            </div>
+            <div class="hidden-menu detail-full offers" style="display: none;">
+              <ul>
+                <li>Dhani Pay - 10% Cashback* Up to Rs. 600/- T&C Apply.</li>
+                <li>Simpl - Pay using Simpl & Get Upto Rs. 200/- Cashback* T&C Apply</li>
+                <li>Freecharge - Pay using Freecharge & Get 25% Cashback. T&C Apply.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="detail-full top-line">
+        <div class="delivery-hd">Description</div>
+        <div class="detail-full">
+          <p class="detail-saving"><%= viewlist.description.replace(/<[^>]+>/g, '').replace('&nbsp;',' ') %></p>
+        </div>
+        <!-- <div class="delivery-hd space-bottom"><span id="show-hidden-menu1">See More</span></div> -->
+        <!-- <div class="hidden-menu1 detail-full offers" style="display: none;">
+          <p class="detail-saving"><strong>Manufactured By:</strong></p>
+          <p class="detail-saving">Pa) Samarth Enterprice, 5/A, 63(2) Usarli, Panvel Mh- 410206 Lic No: 10013022002046|Y2) Kesari Food Products, 60A, Indl Area Dada Nagar, Kanpur, Up-208022. Lic No: 10014051001263|W2) Shree Balaji Sancks, 271, Aushapur Ghatkesar, Ranga Reddy, Ts 510301. Lic No: 10015047000398|Us) Chetson Food Products Pvt. Ltd., 7/12, Kalyan Ambernath Road, Ulhasnagar, Mh- 421003 Lic No: 10015022004414|Y3) Maruti Food Product 84/9, Fazal Ganj, Kanpur, Up- 208012 Lic No: 10013051000755|I8) Nimbus Foods Ltd., 86/A, 87, 137/B, Indl. Area, Rau Extension, Indore, Mp 453331 Lic No: 10012026000340|Ki) Shiv Shakti Balers, Khanav, Khambiwadi Khalapur , Raigad, Khopoli 410203 Lic No: 10016022005484|Nt) Sunshine Bakery Foods Pvt. Ltd., 333/1, Batlagundu Road, Nilakottai, Tn. 624208 Lic No: 10012042000348</p>
+          <p class="detail-saving"><strong>Customer Care Number & Email:</strong></p>
+          <p class="detail-saving">2266916929 cs@parle.biz</p>
+        </div> -->    
+      </div>
+    </div> 
+  </section>
+  <% } %> 
+<%- include ("../front/book_footer") %>
+<script src="../../assets/grocery/js/jquery-ui.min.js"></script>
+<script src="../../assets/grocery/js/jquery.fancybox.js"></script>
+<script src="../../assets/grocery/js/jquery.elevatezoom.js"></script>
+<script src="../../assets/grocery/js/ui-carousel.js"></script>
+
+<script src="../../assets/grocery/js/zoom.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+  $('#show-hidden-menu').click(function() {
+    $('.hidden-menu').slideToggle("fast");    
+  });
+  $('#show-hidden-menu1').click(function() {
+    $('.hidden-menu1').slideToggle("fast");    
+  });
+});      
+</script>
+
+<script src="../assets/js/jquery-1.11.1.min.js"></script> 
+<script src="../assets/js/bootstrap.min.js"></script> 
+<script src="../assets/js/bootstrap-hover-dropdown.min.js"></script> 
+<script src="../assets/js/owl.carousel.min.js"></script> 
+<script src="../assets/js/echo.min.js"></script> 
+<script src="../assets/js/jquery.easing-1.3.min.js"></script> 
+<script src="../assets/js/bootstrap-slider.min.js"></script> 
+<script src="../assets/js/jquery.rateit.min.js"></script> 
+<script type="text/javascript" src="../assets/js/lightbox.min.js"></script> 
+<script src="../assets/js/bootstrap-select.min.js"></script> 
+<script src="../assets/js/wow.min.js"></script> 
+<script src="../assets/js/scripts.js"></script>
+</body>
+</html>

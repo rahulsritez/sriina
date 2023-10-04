@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Books Store | <%= title %></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" href="/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+  <%- include ("../../common/css") %>
+</head>
+<body class="hold-transition sidebar-mini layout-fixed">
+<div class="wrapper">
+<%- include ("../../common/top_nav") %>
+<%- include ("../../common/sidebar") %>
+  <div class="content-wrapper">
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0 text-dark">Dashboard</h1>
+          </div>
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
+              <li class="breadcrumb-item active">User</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="container">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title float-right">
+                  <button type="button" class="btn btn-default" data-toggle="modal" data-target="#modal-default"> Add User </button>
+                  <button type="button" class="btn btn-default" data-toggle="modal" data-target="#reset-pwd">Reset Password</button>
+              </h3>
+              </div>
+              <% if(message.length > 0) {%>
+                <div class="alert alert-success alert-dismissible show" role="alert">
+                   <%= message %> 
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <% } %>
+              <!-- /.card-header -->
+              <div class="card-body">
+                <table id="example1" class="table table-bordered table-striped">
+                  <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Mobile</th>
+                    <th>Action</th>
+                    <th>Status</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                    <% for(var i=0; i < customerlist.length; i++){ %>
+                  <tr>
+                    <td><%= i+1 %></td>
+                    <td><%= customerlist[i].name %></td>
+                    <td><%= customerlist[i].email %></td>
+                    <td><%= customerlist[i].mobile %></td>
+                    <td><% if(customerlist[i].status==0){ %>Active<% } else{ %>Inactive<% } %></td>
+                    <td>
+                      <a class="edit_customer btn btn-info btn-sm" data-id="<%= customerlist[i].id %>"  data-name="<%= customerlist[i].name %>" data-email="<%= customerlist[i].email %>" data-mobile="<%= customerlist[i].mobile %>" data-status="<%= customerlist[i].status %>" data-target="#myModaledit" data-toggle="modal"><i class="fas fa-pencil-alt"></i>Edit</a>
+                      <a class="delete_customer btn btn-danger btn-sm" id="<%= customerlist[i].id %>"><i class="fas fa-trash"></i>Delete</a></td>
+                  </tr>
+                  <% } %>
+                  </tbody>
+                  <tfoot>
+                  <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Mobile</th>
+                    <th>Action</th>
+                    <th>Status</th>
+                  </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+        </div>
+
+<div class="modal fade" id="reset-pwd">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Reset Password</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form action="/userresetpwd" method="post">
+      <div class="modal-body">
+        <div class="form-group">
+        <div class="col-sm-12">
+          <label class="control-label label-margin">Email</label>
+          <input type="email" class="form-control" id="" placeholder="Email" name="email" required>
+        </div>
+        <div class="col-sm-12">
+          <label class="control-label label-margin">Password</label>
+          <input type="password" class="form-control" id="password" placeholder="password" name="password" required>
+        </div>
+        </div>
+      </div>
+      <div class="modal-footer justify-content-between">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Reset Password</button>
+      </div>
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    </form>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade" id="modal-default">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Add Customer</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form action="/addcustomer" method="post">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="modal-body">
+        <div class="form-group">
+        <div class="col-sm-12">
+          <label class="control-label label-margin">Name</label>
+          <input type="text" class="form-control" id="user_name" placeholder="Name" name="user_name" required>
+        </div>
+        <div class="col-sm-12">
+          <label class="control-label label-margin">Email</label>
+          <input type="email" class="form-control" id="user_email" placeholder="Email" name="user_email" required>
+        </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-12">
+                <label class="control-label label-margin">Mobile</label>
+                <input type="text" class="form-control" id="user_phone" placeholder="Phone" name="user_phone" required maxlength="10">
+            </div>
+            <div class="col-sm-12">
+                <label class="control-label label-margin" name="">Status</label>
+                <select class="form-control" name="user_status" id="user_status" required>
+                    <option value="0">Active</option>
+                    <option value="1">Inactive</option>
+                </select>
+            </div>
+        </div>
+      </div>
+      <div class="modal-footer justify-content-between">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </div>
+    </form>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade" id="myModaledit" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content animated bounceInRight">
+           
+          <div class="modal-header">
+            <h4 class="modal-title">Edit Customer</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+            <!--end modal-header-->
+            <form action="/updatecustomer" method="post">
+              <input type="hidden" id="edit_id" name="edit_id" value="">
+                <div class="modal-body">
+                    <div class="example-box-wrapper">
+                        <div class="form-group">
+                            <div class="col-sm-12">
+                                <label class="control-label label-margin">Name</label>
+                                <input type="text" class="form-control" id="edit_name" placeholder="Name" name="edit_name" required>
+                            </div>
+                            <div class="col-sm-12">
+                                <label class="control-label label-margin">Email</label>
+                                <input type="email" class="form-control" id="edit_email" placeholder="Email" name="edit_email" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-12">
+                                <label class="control-label label-margin">Mobile</label>
+                                <input type="text" class="form-control" id="edit_phone" placeholder="Mobile" name="edit_phone" maxlength="10" required>
+                            </div>
+                            <div class="col-sm-12">
+                                <label class="control-label label-margin">Status</label>
+                                <select class="form-control" name="edit_status" id="edit_status"required>
+                                    <option value="0">Active</option>
+                                    <option value="1">Inactive</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+        </div>
+      </div>
+    </section>
+  </div>
+<%- include ("../../common/footer") %>
+</div>
+<%- include ("../../common/js") %>
+<script type="text/javascript">
+$(function() { 
+  "use strict";  
+  $("#example1").DataTable({
+        "responsive": true,
+        "autoWidth": false,
+  });
+});  
+</script>
+</body>
+</html>

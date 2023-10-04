@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+	<meta name="description" content="">
+	<meta name="author" content="">
+    <meta name="keywords" content="MediaCenter, Template, eCommerce">
+    <meta name="robots" content="INDEX,FOLLOW"/>
+    <title>Sriina | Sriina Prime</title>
+    <link rel="stylesheet" href="../assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/css/blue.css">
+    <link rel="stylesheet" href="../assets/css/owl.carousel.css">
+	<link rel="stylesheet" href="../assets/css/owl.transitions.css">
+	<link rel="stylesheet" href="../assets/css/animate.min.css">
+	<link rel="stylesheet" href="../assets/css/rateit.css">
+	<link rel="stylesheet" href="../assets/css/bootstrap-select.min.css">
+    <link href="../assets/css/custom.css" rel="stylesheet" />
+    <link rel="stylesheet" href="../assets/css/font-awesome.css">
+	<link href='http://fonts.googleapis.com/css?family=Roboto:300,400,500,700' rel='stylesheet' type='text/css'>
+	<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,400italic,600,600italic,700,700italic,800' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
+</head>
+    <body class="cnt-home">
+        <header class="header-style-1">
+            <%- include("../front/top_bar") -%>
+            <%- include("../front/search") -%>
+            <%- include("../front/navigation") -%>
+        </header>
+
+<div class="breadcrumb">
+	<div class="container">
+		<div class="breadcrumb-inner">
+			<ul class="list-inline list-unstyled">
+				<li><a href="/">Home</a></li>
+				<li class='active'>Sriina Prime</li>
+			</ul>
+		</div><!-- /.breadcrumb-inner -->
+	</div><!-- /.container -->
+</div><!-- /.breadcrumb -->
+
+<div class="body-content">
+	<div class="container">
+		<div class="checkout-box faq-page">
+			<div class="row">
+				<% if(message.length > 0) {%>
+				<div class="alert alert-success alert-dismissible show" role="alert">
+					<%= message %> 
+					<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<% } %>
+				<div class="col-md-12">
+					<h2 class="heading-title">Welcome <%= user.name %> <a onclick="goBack()" class="btn btn-default" style="float: right;">Back</a></h2>
+				</div>
+				<div class="col-md-12">
+					<% if(getprimes) {%>
+					<div class="alert alert-success" role="alert">
+						<strong>Well done!</strong> You Prime Membership detail given below.
+					 </div>
+					<% } %>  
+					<table class="table table-hover">
+						<thead>
+						  <tr>
+								<th scope="col">#Plan ID</th>
+								<th scope="col">Plan Name</th>
+								<th scope="col">Plan Price</th>
+								<th scope="col">Total Months</th>
+								<th scope="col">Monthly Books</th>
+								<th scope="col">Buy Date</th>
+								<th scope="col">Expired Date</th>
+								<th>Action</th>
+						  </tr>
+						</thead>
+						<tbody>
+							<% if(getprimes) {%>	
+							<tr>
+								<th scope="row"><%= getprimes.order_id %></th>
+								<td><%= getprimes.plan_name %></td>
+								<td><%= getprimes.paid_amount.toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,") %></td>
+								<td><%= getprimes.total_month %></td>
+								<td><%= getprimes.total_book %></td>
+								<td><%= moment(getprimes.created_at).format('lll')  %></td>
+								<td><%= moment(getprimes.expired_date).format('lll') %></td>
+								<td style="padding: 0 !important;"><button class="btn btn-success">Upgrade</button> <button type="button" class="btn btn-success" data-toggle="modal" data-target="#myModaledit"> For Request </button></td>
+							</tr>
+							<% } else { %>
+							<tr><td colspan="8" align="center" style="color: red;"> Prime Membership not found. </td></tr>	
+							<% } %>
+						</tbody>
+					</table>
+					<p class="heading-title">Your Book Request given below</p>
+					<table class="table table-hover">
+						<thead>
+							<tr>
+								<th scope="col">#Plan ID</th>
+								<th scope="col">Book Name</th>
+								<th scope="col">Book Author</th>
+								<th scope="col">Publisher</th>
+								<th scope="col">ISBN</th>
+								<th scope="col">Message</th>
+								<th scope="col">Date</th>
+							</tr>
+						  </thead>
+						  <% if(getbook_request.length > 0) {%>
+							<% getbook_request.forEach((list, index) => { %>	
+						  <tr>
+							  <td><%= list.order_id %></td>
+							  <td><%= list.book_name %></td>
+							  <td><%= list.book_author %></td>
+							  <td><%= list.publisher %></td>
+							  <td><%= list.isbn_no %></td>
+							  <td><%= list.message %></td>
+							  <td><%= moment(list.created_at).format('lll') %></td>
+						  </tr>
+						  <% }); %>
+						  <% } else { %>
+							<tr><td colspan="7" align="center" style="color: red;"> No record found. </td></tr>	
+							<% } %>
+					</table>			
+				</div>
+			</div><!-- /.row -->
+		</div><!-- /.checkout-box -->
+	</div><!-- /.container -->
+</div><!-- /.body-content -->
+<% if(getprimes) {%>
+<div class="modal fade" id="myModaledit" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal-dialog">
+	<div class="modal-content animated bounceInRight">
+		<div class="modal-header">
+		<h5 class="modal-title">Request for Books</h5>
+		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			<span aria-hidden="true">&times;</span>
+		</button>
+		</div>
+		<!--end modal-header-->
+		<form action="/membership_book_request" method="post" id="updatefrm">
+			<input type="hidden" name="_csrf" value="<%= csrfToken %>">
+			<input type="hidden" value="<%= cryptr.encrypt(getprimes.order_id) %>" name="order_id">
+			<div class="modal-body">
+				<div class="row mb-2">
+				<div class="col-md-6">
+					<label class="control-label label-margin">Book Name</label>
+					<input type="text" class="form-control" id="book_name" placeholder="Enter book name" name="book_name" required >
+				</div>
+				<div class="col-md-6">
+					<label class="control-label label-margin">Authors</label>
+					<input type="text" name="book_author" class="form-control" id="book_author" placeholder="Enter Author name" required>
+				</div>
+				</div>
+				
+				<div class="row mb-2">
+				<div class="col-md-6">
+					<label class="control-label label-margin">Publisher</label>
+					<input type="text" class="form-control" id="publisher" placeholder="Enter Publisher name" name="publisher" required>
+				</div>
+				<div class="col-md-6">
+					<label class="control-label label-margin">ISBN-13</label>
+					<input type="text" class="form-control" id="isbn_no" placeholder="Enter ISBN no." name="isbn_no" maxlength="13" onkeypress="return isNumber(event)">
+				</div>
+				</div>
+				<div class="row mb-2">
+				<div class="col-md-12">
+					<label class="control-label label-margin">Message</label>
+					<textarea name="message" id="message" rows="5" class="form-control" required></textarea>
+				</div>
+				</div>
+				
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				<button type="submit" class="btn btn-primary">Submit</button>
+			</div>
+		</form>
+	</div>
+</div>
+</div>
+<% } %>
+<%- include('../front/book_footer') -%>
+	<script src="../assets/js/jquery-1.11.1.min.js"></script>	
+	<script src="../assets/js/bootstrap.min.js"></script>
+	<script src="../assets/js/bootstrap-hover-dropdown.min.js"></script>
+	<script src="../assets/js/owl.carousel.min.js"></script>
+	<script src="../assets/js/echo.min.js"></script>
+	<script src="../assets/js/jquery.easing-1.3.min.js"></script>
+	<script src="../assets/js/bootstrap-slider.min.js"></script>
+    <script src="../assets/js/jquery.rateit.min.js"></script>
+    <script type="text/javascript" src="../assets/js/lightbox.min.js"></script>
+    <script src="../assets/js/bootstrap-select.min.js"></script>
+    <script src="../assets/js/wow.min.js"></script>
+	<script src="../assets/js/scripts.js"></script>
+	<script>
+		function goBack() {
+  			window.history.back();
+		}
+	</script>
+</body>
+</html>

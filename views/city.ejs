@@ -1,0 +1,237 @@
+<!--<html lang="en">-->
+
+<%- include header %>
+<%- include ../common/leftsidebar %>
+<!-- Main component for a primary marketing message or call to action -->
+<div id="page-content-wrapper">
+    <div id="page-content" style="min-height: 1077px;">
+
+        <div class="containern test1">
+
+            <div id="page-title">
+                <h2>Cities
+
+                    <a href="#" class="btn btn-block btn-primary" data-target="#myModal" data-toggle="modal"
+                       style="width:auto;float:right;">Add Cities</a>
+                </h2>
+
+            </div>
+            <div class="panel">
+                <div class="panel-body">
+
+
+                    <div class="example-box-wrapper">
+                        <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered"
+                               id="datatable-example">
+                            <thead>
+                            <tr>
+                                <th>CITY</th>
+                                <th>CODE</th>
+                                <th>STATE</th>
+                                <th>COUNTRY</th>
+                                <th>STATUS</th>
+                                <th>ACTION</th>
+
+                            </tr>
+                            </thead>
+                            <tbody>
+                     <% for(var i=0; i < citylist.length; i++){ %>
+                            <tr class="gradeX">
+                                <td><%= citylist[i].name %></td>
+                                <td><%= citylist[i].code %></td>
+                                <td><%= citylist[i].statename %></td>
+                                <td><%= citylist[i].countryname %></td>
+                                <td><% if(citylist[i].status==1){ %>Active<% } else{ %>Inactive<% } %></td>
+                                <td>
+                                    <a  class="editcity" id="<%= citylist[i].id %>" data-target="#myModaledit" data-toggle="modal"><i
+                                                class="glyph-icon icon-pencil"
+                                                style="padding-left: 33px;"></i></a>
+                                    <a
+                                       class="delete_city" id="<%= citylist[i].id %>"><i class="glyph-icon icon-trash"
+                                                         style="padding-left: 33px;"></i></a>
+                                </td>
+                            </tr>
+                     <% }%>
+                            </tbody>
+
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade"
+     id="myModal"
+     tabindex="-1"
+     role="dialog"
+     aria-hidden="true">
+    <div
+            class="modal-dialog">
+        <div class="modal-content animated bounceInRight">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Add City</h4>
+            </div>
+            <!--end modal-header-->
+            <form action="/addcity" method="post">
+                <div class="modal-body">
+                    <div class="example-box-wrapper">
+                        <div class="form-group">
+                            <div class="col-sm-6">
+                                <label class="control-label label-margin">City</label>
+
+                                <input type="text" class="form-control" id="" placeholder="City" name="City" required>
+
+                            </div>
+
+                            <div class="col-sm-6">
+                                <label class="control-label label-margin">Code</label>
+
+                                <input type="text" class="form-control" id="" placeholder="City Code" name="cityCode" required>
+
+                            </div>
+
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-sm-6">
+                                <label class="control-label label-margin">Country</label>
+
+                                <select class="form-control" id="city_country" name="city_country" required>
+                                    <option value="">Select</option>
+                                    <% for(var i=0; i < countrylist.length; i++){ %>
+                                    <option value="<%= countrylist[i].id %>"><%= countrylist[i].name %></option>
+                                    <% }%>
+                                </select>
+                            </div>
+
+                            <div class="col-sm-6">
+                                <label class="control-label label-margin">State</label>
+
+                                <select class="form-control" id="city_state" name="city_state" required>
+
+                                </select>
+
+                            </div>
+
+                        </div>
+
+                    <div class="form-group">
+                        <div class="col-sm-6">
+                            <label class="control-label label-margin">Status</label>
+
+                            <select class="form-control" name="Status" required>
+                                <option value="1">Active</option>
+                                <option value="0">Inactive</option>
+
+                            </select>
+
+                        </div>
+
+                      </div>
+
+
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade"
+     id="myModaledit"
+     tabindex="-1"
+     role="dialog"
+     aria-hidden="true">
+    <div
+            class="modal-dialog">
+        <div class="modal-content animated bounceInRight">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Edit City</h4>
+            </div>
+            <!--end modal-header-->
+            <form action="/updatecity" method="post">
+                <input type="hidden" id="edit_city_id" name="edit_city_id" value="">
+                <div class="modal-body">
+                    <div class="example-box-wrapper">
+                        <div class="form-group">
+                            <div class="col-sm-6">
+                                <label class="control-label label-margin">City</label>
+
+                                <input type="text" class="form-control" id="edit_City" placeholder="City" name="edit_City" required>
+
+                            </div>
+
+                            <div class="col-sm-6">
+                                <label class="control-label label-margin">Code</label>
+
+                                <input type="text" class="form-control" id="edit_City_Code" placeholder="City Code" name="edit_City_Code" required>
+
+                            </div>
+
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-sm-6">
+                                <label class="control-label label-margin">Country</label>
+
+                                <select class="form-control" id="edit_City_Code_country" name="edit_City_Code_country" required>
+                                    <option value="">Select</option>
+                                    <% for(var i=0; i < countrylist.length; i++){ %>
+                                    <option value="<%= countrylist[i].id %>"><%= countrylist[i].name %></option>
+                                    <% }%>
+                                </select>
+                            </div>
+
+                            <div class="col-sm-6">
+                                <label class="control-label label-margin">State</label>
+
+                                <select class="form-control" id="edit_City_Code_state" name="edit_City_Code_state" required>
+
+                                </select>
+
+                            </div>
+
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-sm-6">
+                                <label class="control-label label-margin">Status</label>
+
+                                <select class="form-control" id="edit_City_Status" name="edit_City_Status" required>
+                                    <option value="1">Active</option>
+                                    <option value="0">Inactive</option>
+
+                                </select>
+
+                            </div>
+
+                        </div>
+
+
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<%- include footer %>
+</body>
+</html>

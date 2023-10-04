@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>Books Store | Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+<link rel="stylesheet" href="/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+<link rel="stylesheet" href="/plugins/css/invoice.css">
+<%- include ("../../common/css") %>
+</head>
+<body class="hold-transition sidebar-mini layout-fixed">
+<div class="wrapper">
+<%- include ("../../common/top_nav") %>
+<%- include ("../../common/sidebar") %>
+<div class="content-wrapper">
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0 text-dark">Dashboard</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
+                        <li class="breadcrumb-item active">Book</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+    <section class="content">
+        <div class="container-fluid">
+            <div class="">
+                <div class="">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="bootstrap snippets bootdeys">
+                                <div class="row">
+                                    <div class="col-sm-12" id="printableArea">
+                                        <div class="panel panel-default invoice" id="invoice">
+                                            <div class="panel-body">
+                                                <!-- <div class="invoice-ribbon"><div class="ribbon-inner">PAID</div></div> -->
+                                                <div class="row" style="background-color: #007bff;">
+                                                    <div class="col-sm-6 top-left">
+                                                        <img src="/assets/images/logo.png">
+                                                    </div>
+                                                    <div class="col-sm-6 top-right">
+                                                        <h3 class="marginright">Invoice No.#<%=orderId %></h3>
+                                                        <span class="marginright"><%= moment(created_at).format('lll') %></span>
+                                                    </div>
+                                                </div>
+                                                <hr />
+                                                <div class="row"> 
+                                                    <div class="col-sm-12 from pl-3">Payment Method: <strong style="font-size: 20px;"><%=result%></strong>
+                                                    </div>
+                                                </div>
+                                                <hr />
+                                                <div class="row">
+                                                    <div class="col-sm-4 from pl-3">
+                                                        <p class="lead marginbottom"><strong>Billing</strong></p>
+                                                        <% if(get_billing_address){ %>
+                                                        <p><%= get_billing_address.fullname %></p>
+                                                        <p><%= get_billing_address.house_address %>, <%= get_billing_address.colony_area %></p>
+                                                        <p><%= get_billing_address.landmark %> <%= get_billing_address.city_town %></p>
+                                                        <p>State:<%= get_billing_address.BillingState %> (<%= get_billing_address.pincode %>)</p>
+                                                        <p>Phone: <%= get_billing_address.mobile %></p>
+                                                        <% } %>
+                                                    </div>
+
+                                                    <div class="col-sm-4 to">
+                                                        <p class="lead marginbottom"><strong>Delivery Address</strong></p>
+                                                        <% if(get_shipping_address){ %>
+                                                        <p><%= get_shipping_address.fullname %></p>
+                                                        <p><%= get_shipping_address.house_address %>, <%= get_shipping_address.colony_area %></p>
+                                                        <p><%= get_shipping_address.landmark %> <%= get_shipping_address.city_town %></p>
+                                                        <p>State:<%= get_shipping_address.ShippingState %> (<%= get_shipping_address.pincode %>)</p>
+                                                        <p>Phone: <%= get_shipping_address.mobile %></p>
+                                                        <% } %>
+                                                    </div>
+
+                                                    <div class="col-sm-4 text-right payment-details pr-3">
+                                                        <p class="lead marginbottom payment-info">Payment details</p>
+                                                        <p>Date: <%= moment(created_at).format('lll') %></p>
+                                                        <p>Total Amount: <%= paid_amount %></p>
+                                                        <p>Email: <%= getEmail.email %></p>
+                                                        <p>Estimated time of delivery:withing 7 Days</p>
+                                                    </div>
+                                                </div>
+
+                                                <div class="">
+                                                    <table class="table table-striped">
+                                                        <thead>
+                                                            <tr>
+                                                                <th class="text-center" style="width: 5%;">#</th>
+                                                                <th style="width: 50%;">Item</th>
+                                                                <th class="text-right" style="width: 5%;">Quantity</th>
+                                                                <th class="text-right" style="width: 15%;">MRP</th>
+                                                                <th class="text-right" style="width: 10%;">Discount</th>
+                                                                <th class="text-right" style="width: 20%;">Total Price</th>
+                                                                <th class="text-right" style="width: 5%;">Download Invoice</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <% var total=0; var discount=0; var sub_total=0; %>
+                                                            <% if(get_orders.length>0) {%>
+                                                                <% get_orders.forEach((list, index) => { 
+                                                                    var newTotal = (list.price) * (list.cartquantity)
+                                               
+                                                                    let afterdiscount = (newTotal)-(newTotal/100)*list.discount;
+                                                                    total+= afterdiscount;
+                                                                     discount+= (newTotal - afterdiscount)
+                                                                     sub_total += newTotal;
+                                                                %>
+                                                            <tr id="invoice-print-<%= index %>">
+                                                                <td class="text-center"><%=index+1%></td>
+                                                                <td><%= list.name %></td>
+                                                                <td class="text-right"><%= list.cartquantity %></td>
+                                                                <td class="text-right">₹ <% if(list.price){ %><%= list.price.toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,") %><% } %></td>
+                                                                <!-- <td class="text-right"><%= ((newTotal/100)*list.discount).toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,") %></td> -->
+                                                                <td class="text-right"><%= list.discount %>%</td>
+                                                                <td class="text-right">₹ 
+                                                                	<% if(newTotal) {%>
+                                                                		<!-- <%= newTotal.toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,") %> -->
+                                                                		<%= afterdiscount.toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,") %>
+                                                                	<% } %> <%= //afterdiscount %>
+                                                                </td>
+                                                                <td class="text-right">
+                                                                    <button class="btn btn-success" onclick="printSingle('printableArea', 'invoice-print-<%= index %>')"><i class="fa fa-print"></i></button>
+                                                                </td>
+                                                            </tr>
+                                                            <% }) %>
+                                                            <% } else { %>
+                                                                <tr><td class="text-center" colspan="7">no record found</td></tr>
+                                                            <% } %>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="col-sm-6 margintop pl-3">
+                                                        <p class="lead marginbottom">THANK YOU!</p>
+
+                                                        <button class="btn btn-success" id="invoice-print" onclick="printDiv('printableArea')"><i class="fa fa-print"></i> Print Invoice</button>
+                                                        <button class="btn btn-danger" id="mail-invoice"><i class="fa fa-envelope-o"></i> Mail Invoice</button>
+                                                    </div>
+                                                    <div class="col-sm-6 text-right pull-right invoice-total pr-3" id="order-summary">
+                                                        <p>Subtotal : ₹ 
+                                                        <% if(sub_total) {%>
+                                                        	<%= sub_total.toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,") %>
+                                                        <% } %>
+                                                        </p>
+                                                        <p>You Save : ₹ 
+                                                        <% if(discount) {%>
+                                                        	<%= discount.toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,") %>
+                                                        <% } %>
+                                                        </p>
+                                                        <p>Total :₹ 
+                                                        <% if(paid_amount) {%>
+                                                        	<%= paid_amount.toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,") %>
+                                                        <% } %>		
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+<%- include ("../../common/footer") %>
+</div>
+<%- include ("../../common/js") %>
+<script type="text/javascript">
+$(function() { 
+  "use strict";  
+  $("#products_tbl").DataTable({
+        "responsive": true,
+        "autoWidth": false,
+  });
+
+  $('.textarea').summernote();
+
+});
+function printDiv(divName) {
+     var printContents = document.getElementById(divName).innerHTML;
+     var originalContents = document.body.innerHTML;
+     document.body.innerHTML = printContents;
+     document.getElementById('invoice-print').style.display="none";
+     document.getElementById('mail-invoice').style.display="none"; 
+     window.print();
+     document.body.innerHTML = originalContents;
+}
+
+function printSingle(divName, downloadBookId) {
+     var printContents = document.getElementById(divName).innerHTML;
+     var originalContents = document.body.innerHTML;
+     document.body.innerHTML = printContents;
+     document.getElementById('invoice-print').style.display="none";
+     document.getElementById('mail-invoice').style.display="none";
+     document.getElementById('order-summary').style.display="none";
+     var elems = document.querySelectorAll('table > tbody > tr');
+    for (var i=0;i<elems.length;i+=1){
+        console.log(elems[i].id)
+        if(elems[i].id != downloadBookId)
+        elems[i].style.display = 'none';
+    }
+    window.print();
+    document.body.innerHTML = originalContents;
+}
+</script>
+</body>
+</html>

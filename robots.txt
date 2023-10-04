@@ -1,0 +1,15 @@
+User-agent: *
+Disallow: /admin/
+
+# URL parameters blocking for SEO
+User-agent: *
+
+Disallow: /*?productId=
+Disallow: /*&productId=
+Disallow: /sign-in
+
+# AMP Pages
+User-agent: *
+Disallow: /amp/
+
+Sitemap: https://sriina.com/sitemap.xml

@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Books Store | <%= title %></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" href="/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+  <%- include ("../../common/css") %>
+</head>
+<body class="hold-transition sidebar-mini layout-fixed">
+<div class="wrapper">
+<%- include ("../../common/top_nav") %>
+<%- include ("../../common/sidebar") %>
+  <div class="content-wrapper">
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0 text-dark">Dashboard</h1>
+          </div>
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
+              <li class="breadcrumb-item active">User</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="container">
+            <% if(message.length > 0) {%>
+              <div class="alert alert-success alert-dismissible show" role="alert">
+                 <%= message %> 
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <% } %>
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title float-right"><button type="button" class="btn btn-default" data-toggle="modal" data-target="#modal-default">
+                  Add Membership Plan
+                </button></h3>
+              </div>
+              <div class="card-body">
+                <table id="example1" class="table table-bordered table-striped">
+                  <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Months</th>
+                    <th>Total Book</th>
+                    <th>Monthly Book</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                    <% for(var i=0; i < getplans.length; i++){ %>
+                  <tr>
+                    <td><%= i+1 %></td>
+                    <td><%= getplans[i].plan_name %></td>
+                    <td><%= getplans[i].plan_price %></td>
+                    <td><%= getplans[i].total_month %></td>
+                    <td><%= getplans[i].total_book %></td>
+                    <td><%= getplans[i].monthly_book %></td>
+                    <td><% if(getplans[i].is_deleted==0){ %>Active<% } else{ %>Inactive<% } %></td>
+                    <td>
+                      <a class="edit_plan btn btn-info btn-sm" data-id="<%= getplans[i].id %>" data-plan_name="<%= getplans[i].plan_name %>" data-plan_price="<%= getplans[i].plan_price %>" data-total_month="<%= getplans[i].total_month %>" data-total_book="<%= getplans[i].total_book %>" data-monthly_book="<%= getplans[i].monthly_book %>" data-is_active="<%= getplans[i].is_deleted %>" data-target="#myModaledit" data-toggle="modal"><i class="fas fa-pencil-alt"></i>Edit</a>
+                      <a class="delete_customer btn btn-danger btn-sm" id="<%= getplans[i].id %>"><i class="fas fa-trash"></i>Delete</a></td>
+                  </tr>
+                  <% } %>
+                  </tbody>
+                  <tfoot>
+                  <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Months</th>
+                    <th>Total Book</th>
+                    <th>Monthly Book</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+        </div>
+
+<div class="modal fade" id="modal-default">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Add Membership Plan</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form action="/addmembershipplan" method="post">
+      <div class="modal-body">
+        <div class="form-group">
+        <div class="col-sm-12">
+          <label class="control-label label-margin">Name</label>
+          <input type="text" class="form-control" placeholder="Plan name" name="plan_name" required>
+        </div>
+        <div class="col-sm-12">
+          <label class="control-label label-margin">Price</label>
+          <input type="number" class="form-control" placeholder="Plan price" name="plan_price" required>
+        </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-12">
+                <label class="control-label label-margin">Months</label>
+                <input type="number" class="form-control" placeholder="Plan month" name="plan_months" required>
+            </div>
+            <div class="col-sm-12">
+                <label class="control-label label-margin">Books</label>
+                <input type="number" class="form-control" placeholder="Plan books" name="total_book" required>
+            </div>
+            <div class="col-sm-12">
+                <label class="control-label label-margin">Status</label>
+                <select class="form-control" name="is_active" required>
+                    <option value="1" selected="selected">Active</option>
+                    <option value="0">Inactive</option>
+                </select>
+            </div>
+        </div>
+      </div>
+      <div class="modal-footer justify-content-between">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </div>
+    </form>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade" id="myModaledit" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content animated bounceInRight">
+          <div class="modal-header">
+            <h4 class="modal-title">Edit Membership Plan</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+            <!--end modal-header-->
+      <form action="/editmembershipplan" method="post" id="frmplan">
+      <div class="modal-body">
+        <div class="form-group">
+        <div class="col-sm-12">
+          <label class="control-label label-margin">Name</label>
+          <input type="text" class="form-control" id="edit_plan_name" placeholder="Plan name" name="plan_name" required>
+        </div>
+        <div class="col-sm-12">
+          <label class="control-label label-margin">Price</label>
+          <input type="number" class="form-control" id="edit_plan_price" placeholder="Plan price" name="plan_price" required>
+        </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-12">
+                <label class="control-label label-margin">Months</label>
+                <input type="number" class="form-control" id="edit_plan_months" placeholder="Plan month" name="plan_months" required>
+            </div>
+            <div class="col-sm-12">
+                <label class="control-label label-margin">Books</label>
+                <input type="number" class="form-control" id="edit_total_book" placeholder="Plan books" name="total_book" required>
+            </div>
+            <div class="col-sm-12">
+                <label class="control-label label-margin">Monthly Books</label>
+                <input type="number" class="form-control" id="edit_monthly_book" placeholder="Plan monthly books" name="monthly_book" required>
+            </div>
+            <div class="col-sm-12">
+                <label class="control-label label-margin">Status</label>
+                <select class="form-control" name="is_active" id="edit_is_active" required>
+                    <option value="1">Inactive</option>
+                    <option value="0">Active</option>
+                </select>
+            </div>
+        </div>
+      </div>
+      <div class="modal-footer justify-content-between">
+        <input type="hidden" name="edit_id" id="edit_id">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Update</button>
+      </div>
+    </form>
+        </div>
+    </div>
+</div>
+        </div>
+      </div>
+    </section>
+  </div>
+  
+<%- include ("../../common/footer") %>
+</div>
+
+<%- include ("../../common/js") %>
+<script type="text/javascript">
+$(document).ready(function(){
+  "use strict";  
+  $("#example1").DataTable({
+        "responsive": true,
+        "autoWidth": false,
+  });
+$('#example1').on('click','.edit_plan',function(){
+  var edit_id      = $(this).data('id');
+  var plan_name    = $(this).data('plan_name');
+  var plan_price   = $(this).data('plan_price');
+  var total_month  = $(this).data('total_month');
+  var total_book   = $(this).data('total_book');
+  var monthly_book = $(this).data('monthly_book');
+  var is_active    = $(this).data('is_active');
+  //$("#is_active option:selected").html();
+ 
+  $('#myModaledit').modal('show');
+  $('#edit_plan_name').val(plan_name);
+  $('#edit_plan_price').val(plan_price);
+  $('#edit_plan_months').val(total_month);
+  $('#edit_total_book').val(total_book);
+  $('#edit_monthly_book').val(monthly_book);
+  $('#edit_is_active').val(is_active);
+  $('#edit_id').val(edit_id);
+});
+});  
+</script>
+</body>
+</html>

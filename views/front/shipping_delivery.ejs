@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="description" content="">
+<meta name="author" content="">
+<meta name="keywords" content="MediaCenter, Template, eCommerce">
+<link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon.png">
+<meta name="robots" content="all">
+<title>Sriina: <%= title %></title>
+<link rel="stylesheet" href="assets/css/bootstrap.min.css">
+<link rel="stylesheet" href="assets/css/main.css">
+<link rel="stylesheet" href="assets/css/blue.css">
+<link rel="stylesheet" href="assets/css/owl.carousel.css">
+<link rel="stylesheet" href="assets/css/owl.transitions.css">
+<link rel="stylesheet" href="assets/css/animate.min.css">
+<link rel="stylesheet" href="assets/css/rateit.css">
+<link rel="stylesheet" href="assets/css/bootstrap-select.min.css">
+<link href="assets/css/lightbox.css" rel="stylesheet">
+<link href="assets/css/custom.css" rel="stylesheet" />
+<link rel="stylesheet" href="assets/css/font-awesome.css">
+<link href='http://fonts.googleapis.com/css?family=Roboto:300,400,500,700' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,400italic,600,600italic,700,700italic,800' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-184850763-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-184850763-1');
+</script>
+</head>
+    <body class="cnt-home">
+    <!-- ============================================== HEADER ============================================== -->
+        <header class="header-style-1">
+            <%- include("top_bar") -%>
+            <%- include("search") -%>
+            <%- include("navigation") -%>
+        </header>
+<!-- ============================================== HEADER : END ============================================== -->
+<div class="breadcrumb">
+  <div class="container">
+    <div class="breadcrumb-inner">
+      <ul class="list-inline list-unstyled">
+        <li><a href="/">Home</a></li>
+        <li><a href="about-us">About us</a></li>
+      </ul>
+    </div><!-- /.breadcrumb-inner -->
+  </div><!-- /.container -->
+</div><!-- /.breadcrumb -->
+<div class="body-content outer-top-xs">
+    <div class="container">
+        <div class="row single-product">
+            <div class="col-md-12">
+                <div class="detail-block">
+                    <div class="row wow fadeInUp" style="padding: 18px;line-height: 25px;font-size: 14px;">
+                        <p>
+                            <% if (getresult) { %>
+                                <%= //getresult.description %>
+                                <h4><strong>Shipping Policy</strong></h4>
+                                <p>Over the order 1000 get free delivery. Fast delivery in Delhi.</p>
+                                <p>We will deliver product with 5 to 7 working days.</p>
+                                <p>Cash On Delivery Available 70 rupees as shipping charges applicable on COD orders</p>
+                                <p>Easy Return Low Prices wide range of Books 100% Product Quality.</p>
+                                <p>if the customer receives product damage and if you receive a wrong product that conditions customer can return their product & apply for a refund.</p>
+                                <p>If in any case, a wrong book has been erroneously shipped to the customer, then only return will be accepted. In that case, it will be desirable that customer ships the books back to us via book packet service of India Post.</p> 
+
+                                <h4><strong>SHIPPING AND DELIVERY :</strong></h4>
+                                <p>All Products purchased from the Website shall be delivered to the User by standard courier services. All deliveries where applicable shall be made on a best efforts basis, and while the Website will endeavor to deliver the Products on the dates intimated, the Website disclaims any claims or liabilities arising from any delay in this regard. On behalf of the Seller, a nominal fee may be charged on all cash on delivery (“COD”) orders. </p>
+                                <p>The COD charge can be viewed at the time of placing the order and in all order related emails.</p>
+                                <p>This charge shall not be refunded if an item is returned or if the cancellation request is raised after the order is shipped.</p>
+                                <p>Sriina online book store shall not be responsible for any delay in the delivery of the Products. Sriina online book store shall not be liable for any damage to the Product in transit due to mishandling by the logistics partner.</p>
+                                <p>The estimated delivery time shall be displayed on the order summary page. On placing your order, you will receive an email containing a summary of the order and also the estimated delivery time to your location. Sometimes, the delivery may take longer due to inter alia: bad weather flight delays political disruptions other unforeseen circumstances In the event any delay in delivery of a Product is expected, the Website may, at its sole discretion, intimate the User who may have purchased the same, regarding such delay.</p>
+                                <p>The Website shall not be held responsible and will bear no liability in case of failure or delay of delivering the Products including any damage or loss caused to the Products. Where there is a likelihood of delay in delivery of the Products, the User may be notified of the same from time to time.</p>
+                                <p>However, no refunds may be claimed by the User for any delay in delivery of the Products, which was caused due to reasons beyond the control of the Website and/or the Seller. In case a User purchases multiple Products in one transaction, the Seller(s) may deliver the same together.</p>
+                                <p>However, this may not always be possible and shall be subject to the availability of stock with the relevant Sellers. If a User wishes to get delivery to different addresses, then the User shall be required to purchase the Products under separate transactions and provide separate delivery addresses for each transaction, as may be required.</p>
+                                <p>The User agrees that the delivery can be made to the person who is present at the shipping address provided by the User. Sriina online book store shall not compensate for any mental agony caused due to delay in delivery. Users can cancel the order at any moment of time even if the delivery time exceeds the expected delivery time.</p>
+                                <p>If it is a prepaid order, the Users will be refunded back the price of the product in the account or payment wallet, in accordance with the options chosen by you, as soon as the order is successfully canceled.</p>
+                            <% } else { %>
+                                <p class="text-center">Page data not found.</p>
+                            <% } %>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+  </div>
+</div>
+
+<%- include ("../front/book_footer") %>
+<script src="assets/js/jquery-1.11.1.min.js"></script>  
+<script src="assets/js/bootstrap.min.js"></script>
+<script src="assets/js/bootstrap-hover-dropdown.min.js"></script>
+<script src="assets/js/owl.carousel.min.js"></script>
+<script src="assets/js/echo.min.js"></script>
+<script src="assets/js/jquery.easing-1.3.min.js"></script>
+<script src="assets/js/bootstrap-slider.min.js"></script>
+<script src="assets/js/jquery.rateit.min.js"></script>
+<script type="text/javascript" src="assets/js/lightbox.min.js"></script>
+<script src="assets/js/bootstrap-select.min.js"></script>
+<script src="assets/js/wow.min.js"></script>
+<script src="assets/js/scripts.js"></script>
+</body>
+</html>

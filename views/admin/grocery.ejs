@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Books Store | Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" href="/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+  <%- include ("../../common/css") %>
+</head>
+<body class="hold-transition sidebar-mini layout-fixed">
+<div class="wrapper">
+  <%- include ("../../common/top_nav") %>
+  <% if(user.type==5){ %>
+  <%- include ("../../common/seosidebar") %>
+  <% } else if(user.type==2) { %>
+    <%- include ("../../common/dataentrysidebar") %>
+  <% } else {%>
+    <%- include ("../../common/sidebar") %>
+  <% } %>
+  <div class="content-wrapper">
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0 text-dark">Dashboard</h1>
+          </div>
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
+              <li class="breadcrumb-item active">Grocery</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="container">
+            <% if(message.length > 0) {%>
+              <div class="alert alert-success alert-dismissible show" role="alert">
+                 <%= message %> 
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <% } %><% if(errors.length > 0) {%>
+              <div class="alert alert-danger alert-dismissible show" role="alert">
+                 <%= errors %> 
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <% } %>
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title float-right">
+                  <button type="button" class="btn btn-default" data-toggle="modal" data-target="#modal-default"> Add Grocery</button></h3>
+              </div>
+              <div class="card-body">
+                <table id="products_tbl" class="table table-bordered table-striped">
+                  <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Discount</th>
+                    <th>Status</th>
+                    <th width="15%">Action</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                    <% if (productlist.length > 0) { %>
+                    <% productlist.forEach((list, index) => { %>
+                  <tr>
+                    <td><%= index+1 %></td>
+                    <td><%= list.name %></td>
+                    <td><%= list.price %></td>
+                    <td><%= list.discount %></td>
+                    <td><% if(list.status==1){ %>Active<% } else{ %>Inactive<% } %></td>
+                    <td>
+                      <a class="edit_grocery_products btn btn-info btn-sm" data-id="<%= list.id %>" data-price="<%= list.price %>" data-unit_id="<%= list.unit_id %>" data-grocery_category="<%= list.grocery_category %>" data-grocery_sub_category="<%= list.grocery_sub_category %>" data-product_type_id="<%= list.product_type_id %>" data-name="<%= list.name %>"  data-tax_included="<%= list.tax_included %>" data-weight="<%= list.weight %>" data-description="<%= list.description %>" data-status="<%= list.status %>" data-discount="<%= list.discount %>" data-quantity="<%= list.quantity %>" data-groceyimage="<%= list.groceyimage %>" data-weight="<%= list.weight %>"  data-target="#mygroceyModaledit" data-toggle="modal"><i class="fas fa-pencil-alt"></i>Edit</a>
+                      <a class="delete_products btn btn-danger btn-sm" id="<%= list.id %>"><i class="fas fa-trash"></i>Delete</a>
+                    </td>
+                  </tr>
+                  <% }) %>
+                  <% } else { %>
+                    <tr><td colspan="7" style="text-align:center">no product found</td></tr>
+                    <% } %>
+                  </tbody>
+                  <tfoot>
+                  <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Discount</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+        </div>
+
+<div class="modal fade" id="modal-default">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Add Grocery</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form action="/addgroceryproduct" method="post" id="productsfrm" enctype="multipart/form-data">
+      <div class="modal-body">
+        <div class="row mb-2">
+          <div class="col-md-12">
+            <label class="control-label label-margin"></label>
+            <select class="form-control" name="product_type_id" id="product_type_id">
+              <option value="2">Grocery</option>
+            </select>
+          </div>
+        </div>
+      
+      <div id="grocery_products">
+        <div class="row mb-2">
+          <div class="col-md-12">
+            <label class="control-label label-margin">Name</label>
+            <input type="text" class="form-control" id="grocery_product_name" placeholder="Name" name="grocery_product_name" onkeypress="return lettersOnly(event)">
+          </div>
+        </div>
+        
+        <div class="row mb-2">
+          <div class="col-md-6"> 
+            <label class="control-label label-margin">Unit</label>
+            <select class="form-control" name="get_units_data" id="get_units_data">
+              <option value="">-Please select unit-</option>
+              <% for(var i=0; i < get_units_data.length; i++){ %>
+                  <option value="<%= get_units_data[i].id %>"><%= get_units_data[i].name %></option>
+              <% } %>
+          </select>
+          </div>
+          
+            <div class="col-md-6">
+                <label class="control-label label-margin">Delivery Charges</label>
+                <input type="number" class="form-control" id="grocery_delivery_charge" placeholder="Delivery Charge" name="grocery_delivery_charge">
+            </div>
+        </div>
+          <div class="row mb-2">
+            <div class="col-md-3">
+              <label class="control-label label-margin">Price</label>
+              <input type="text" class="form-control" placeholder="Price" name='grocery_price[]'>
+            </div>
+         
+            <div class="col-md-3"> 
+              <label class="control-label label-margin">Inventory</label>
+                <input type="number" class="form-control" placeholder="inventory" name='grocery_inventory[]'>
+            </div>
+            <div class="col-md-2"> 
+              <label class="control-label label-margin">Weight</label>
+                <input type="number" class="form-control" placeholder="weight" name='grocery_weight[]'>
+            </div>
+            <div class="col-md-2"> 
+                <label class="control-label label-margin">Discount</label>
+                    <input type="number" class="form-control" placeholder="Discount" name='grocery_discount[]'>
+            </div>
+            <div class="col-md-1"> 
+                <label class="control-label label-margin"></label>
+                <i class="fa fa-plus" style="font-size: 34px; cursor: pointer;color: green; margin-top: 30px;" title="Add New Key Responsibility" onclick="javascript:add_new_kra()"></i> 
+            </div>
+            <div id="remove_kra_div" style="display:none;">
+                <div class="col-1">
+                    <i class="fa fa-minus" style="font-size: 34px; cursor: pointer;color: red; margin-top: 30px;" title="Remove Key Responsibility" onclick="javascript:remove_kra()"></i>
+                </div>
+            </div> 
+          </div>
+  
+          <div id="new_kra_div"></div>
+
+        <div class="row mb-2">
+            <div class="col-md-6">
+                <label class="control-label label-margin">Categories</label>
+                <select class="form-control" name="grocery_category" id="_grocery_category">
+                    <option value="">-Please select category-</option>
+                    <% for(var i=0; i < get_grocery_list.length; i++){ %>
+                        <option value="<%= get_grocery_list[i].id %>"><%= get_grocery_list[i].name %></option>
+                    <% } %>
+                </select>
+                </div>
+                <div class="col-md-6">
+                  <label class="control-label label-margin">Sub Categories</label>
+                <select class="form-control" name="grocery_sub_category" id="sub_category_grocery">
+                  <option value="">-Please select sub categories-</option>
+                </select>
+              </div>
+        </div>
+
+        <div class="row mb-2">
+          <div class="col-md-3">
+                <label class="control-label label-margin">Manufacturer</label>
+                <select class="form-control" name="manufacturer" id="_manufacturer">
+                    <option value="">-Please select manufacturer-</option>
+                    <% for(var i=0; i < manufacturer_data.length; i++){ %>
+                        <option value="<%= manufacturer_data[i].id %>"><%= manufacturer_data[i].name %></option>
+                    <% } %>
+                </select>
+            </div>
+
+            <div class="col-md-3">
+                <label class="control-label label-margin">Brand</label>
+                <select class="form-control" name="brand" id="brand">
+                </select>
+            </div>
+            
+
+            <div class="col-md-3">
+                <label class="control-label label-margin">Country of Origin</label>
+                <select class="form-control" name="food_country" id="food_country">
+                  <option value="1">India</option>
+                  <option value="2">Israel</option>
+                </select>
+            </div>
+
+            <div class="col-md-3">
+                <label class="control-label label-margin">Food Type</label>
+                <select class="form-control" name="food_type" id="food_type">
+                  <option value="1">Vegetables</option>
+                  <option value="2">Non-vegetables</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="row mb-2">
+            <div class="col-md-4">
+                <label class="control-label label-margin">Tax Included</label>
+                <select class="form-control" name="grocery_tax" required>
+                    <option value="0">Yes</option>
+                    <option value="1">No</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="control-label label-margin">Status</label>
+                <select class="form-control" name="grocery_status" required>
+                    <option value="1">Active</option>
+                    <option value="0">Inactive</option>
+                </select>
+            </div>
+
+            <div class="col-md-4">
+                <label class="control-label label-margin">Images</label>
+                <input type="file" name="grocery_product_images" class="form-control" accept="image/png, image/jpeg" multiple>
+            </div>
+        </div>
+
+        <div class="row mb-2">
+             <div class="col-md-12">
+                <label class="control-label label-margin">Descriptions</label>
+                <textarea name="grocery_descriptions" id="grocery_descriptions" class="form-control textarea"></textarea>
+            </div>
+        </div>
+        <div class="row mb-2">
+             <div class="col-md-12">
+                <label class="control-label label-margin">Features & Details</label>
+                <textarea name="features_details" id="features_details" class="form-control textarea"></textarea>
+            </div>
+        </div>
+        
+        <div class="row mb-2">
+             <div class="col-md-12">
+                <label class="control-label label-margin">Disclaimer</label>
+                <textarea name="grocery_disclaimer" id="grocery_disclaimer" class="form-control"></textarea>
+            </div>
+        </div>
+      </div>
+      </div> <!-- closed grocery div-->
+
+      <div class="modal-footer justify-content-between">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </div>
+    </form>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+
+
+<div class="modal fade" id="mygroceyModaledit" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content animated bounceInRight">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Product [<span style="color: green;" id="get_edit_product_name"></span>]</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <!--end modal-header-->
+            <form action="/updategroceyproducts" method="post" id="updatefrm" enctype="multipart/form-data">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+                <div class="modal-body">
+                    <div class="row mb-2">
+                        <div class="col-md-12">
+                            <label class="control-label label-margin"></label>
+                            <select class="form-control" name="product_type_id" id="product_type_id">
+                                <option value="2">Grocery</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="grocery_products">
+                        <div class="row mb-2">
+                            <div class="col-md-6">
+                                <label class="control-label label-margin">Name</label>
+                                <input type="text" class="form-control" id="edit_grocery_products" placeholder="Name" name="edit_grocery_products" onkeypress="return lettersOnly(event)" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="control-label label-margin">Unit</label>
+                                <select class="form-control" name="edit_grocery_unit_id" id="edit_grocery_unit_id">
+                                    <option value="">-Please select unit-</option>
+                                    <% for(var i=0; i < get_units_data.length; i++){ %>
+                                    <option value="<%= get_units_data[i].id %>"><%= get_units_data[i].name %></option>
+                                    <% } %>
+                                </select>
+                            </div>
+
+                        </div>
+
+                        <div class="row mb-2">
+                            <div class="col-md-3">
+                                <label class="control-label label-margin">Price</label>
+                                <input type="text" class="form-control" placeholder="Price" name="edit_grocery_price[]" id="edit_grocery_price" />
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="control-label label-margin">Inventory</label>
+                                <input type="number" class="form-control" placeholder="inventory" name="edit_grocery_quantity[]" id="edit_grocery_quantity" />
+                            </div>
+                            <div class="col-md-2">
+                                <label class="control-label label-margin">Weight</label>
+                                <input type="number" class="form-control" placeholder="weight" name="edit_grocery_weight[]" id="edit_grocery_weight" />
+                            </div>
+                            <div class="col-md-2">
+                                <label class="control-label label-margin">Discount</label>
+                                <input type="number" class="form-control" placeholder="Discount" name="edit_grocey_discount[]" id="edit_grocey_discount" />
+                            </div>
+                            <div class="col-md-1">
+                                <label class="control-label label-margin"></label>
+                                <i class="fa fa-plus" style="font-size: 34px; cursor: pointer; color: green; margin-top: 30px;" title="Add New Key Responsibility" onclick="javascript:add_new_kra()"></i>
+                            </div>
+                            <div id="remove_kra_div" style="display: none;">
+                                <div class="col-1">
+                                    <i class="fa fa-minus" style="font-size: 34px; cursor: pointer; color: red; margin-top: 30px;" title="Remove Key Responsibility" onclick="javascript:remove_kra()"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="new_kra_div"></div>
+
+                        <div class="row mb-2">
+                            <div class="col-md-6">
+                                <label class="control-label label-margin">Categories</label>
+                                <select class="form-control" name="edit_grocery_category" id="edit_grocery_category">
+                                    <option value="">-Please select category-</option>
+                                    <% for(var i=0; i < get_grocery_list.length; i++){ %>
+                                    <option value="<%= get_grocery_list[i].id %>"><%= get_grocery_list[i].name %></option>
+                                    <% } %>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="control-label label-margin">Sub Categories</label>
+                                <select class="form-control" name="edit_grocery_sub_category" id="edit_grocery_sub_category">
+                                    <option value="">-Please select sub categories-</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row mb-2">
+                            <div class="col-md-4">
+                                <label class="control-label label-margin">Tax Included</label>
+                                <select class="form-control" name="grocery_tax" required>
+                                    <option value="0">Yes</option>
+                                    <option value="1">No</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="control-label label-margin">Status</label>
+                                <select class="form-control" name="grocery_status" required>
+                                    <option value="1">Active</option>
+                                    <option value="0">Inactive</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="control-label label-margin">Images</label>
+                                <input type="file" name="grocery_product_images" class="form-control" accept="image/png, image/jpeg" multiple />
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+          <img src="//www.tutsmake.com/wp-content/uploads/2019/08/How-to-Encode-Decode-a-URL-Using-JavaScript.jpeg" width="100" id="edit_grocery_images" alt="Poker Card">
+        </div> 
+
+                        <div class="row mb-2">
+                            <div class="col-md-12">
+                                <label class="control-label label-margin">Descriptions</label>
+                                <textarea name="edit_grocery_descriptions" id="edit_grocery_descriptions" class="form-control textarea"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- closed grocery div-->
+
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+        </div>
+      </div>
+    </section>
+  </div>
+  <%- include ("../../common/footer") %>
+</div>
+<%- include ("../../common/js") %>
+<script type="text/javascript" src="<%= baseURL %>admin/assets/grocery.js"></script>
+<script type="text/javascript">
+$(function() { 
+  "use strict";  
+  $("#products_tbl").DataTable({
+        "responsive": true,
+        "autoWidth": false,
+  });
+});  
+</script>
+</body>
+</html>

@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Catalog | Dashboard</title>
+  <meta name="_csrf" content="#{csrfToken}">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" href="/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+  <%- include ("../../common/css") %>
+</head>
+
+<body class="hold-transition sidebar-mini layout-fixed">
+  <div class="wrapper">
+    <%- include ("../../common/top_nav") %>
+      <% if(user.type==5){ %>
+        <%- include ("../../common/seosidebar") %>
+          <% } else if(user.type==2) { %>
+            <%- include ("../../common/dataentrysidebar") %>
+              <% } else {%>
+                <%- include ("../../common/sidebar") %>
+                  <% } %>
+                    <div class="content-wrapper">
+                      <div class="content-header">
+                        <div class="container-fluid">
+                          <div class="row mb-2">
+                            <div class="col-sm-6">
+                              <h1 class="m-0 text-dark">Catalog</h1>
+                            </div>
+                            <div class="col-sm-6">
+                              <ol class="breadcrumb float-sm-right">
+                                <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
+                                <li class="breadcrumb-item active">Catalog</li>
+                              </ol>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <section class="content">
+                        <div class="container-fluid">
+                          <div class="row">
+                            <div class="container">
+                              <% if(message.length> 0) {%>
+                                <div class="alert alert-success alert-dismissible show" role="alert">
+                                  <%= message %>
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                      <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <% } %>
+                                  <div class="card">
+                                    <div class="card-header">
+                                      <h3 class="card-title float-right"><a href="/catalogcondition" class="btn btn-default"
+                                        >
+                                        Add Condition
+                                      </a></h3>
+                                      &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+                                      <h3 class="card-title float-right"><button type="button" class="btn btn-default"
+                                          data-toggle="modal" data-target="#modal-default">
+                                          Add Catalog
+                                        </button></h3>
+                                    </div>
+                                    <!-- /.card-header -->
+                                    <div class="card-body">
+                                      <table id="example1" class="table table-bordered table-striped">
+                                        <thead>
+                                          <tr>
+                                            <th>#</th>
+                                            <th>Name</th>
+                                            <th>Publisher Name</th>
+                                            <th>Author Name</th>
+                                            <th>ISBN 13</th>
+                                            <th>ISBN 10</th>
+                                            <th>Publishing Year</th>
+                                            <th>Country</th>
+                                            <th>Discount</th>
+                                            <th>Status</th>
+                                            <th>Action</th>
+                                          </tr>
+                                        </thead>
+                                        <tbody>
+                                          <% for(var i=0; i < cataloglist.length; i++){ %>
+                                            <tr>
+                                              <td>
+                                                <%= i+1 %>
+                                              </td>
+                                              <td>
+                                                <%= cataloglist[i].name %>
+                                              </td>
+                                              <td>
+                                                <%= cataloglist[i].publisher %>
+                                              </td>
+                                              <td>
+                                                <%= cataloglist[i].author %>
+                                              </td>
+                                              <td>
+                                                <%= cataloglist[i].ISBN13 %>
+                                              </td>
+                                              <td>
+                                                <%= cataloglist[i].ISBN10 %>
+                                              </td>
+                                              <td>
+                                                <%= cataloglist[i].publishing_year %>
+                                              </td>
+                                              <td>
+                                                <%= cataloglist[i].country %>
+                                              </td>
+                                              <td>
+                                                <%= cataloglist[i].discount %>
+                                              </td>
+
+                                              <td>Active</td>
+                                              <td>
+                                                <a class="edit_catalog btn btn-info btn-sm"
+                                                  data-id="<%= cataloglist[i].id %>"
+                                                  data-name="<%= cataloglist[i].name %>"
+                                                  data-publisher="<%= cataloglist[i].publisher %>"
+                                                  data-author="<%= cataloglist[i].author %>"
+                                                  data-isbn13="<%= cataloglist[i].ISBN13 %>"
+                                                  data-isbn10="<%= cataloglist[i].ISBN10 %>"
+                                                  data-publishing_year="<%= cataloglist[i].publishing_year %>"
+                                                  data-country="<%= cataloglist[i].country %>"
+                                                  data-discount="<%= cataloglist[i].discount %>"
+                                                  data-target="#myModaledit" data-toggle="modal"><i
+                                                    class="fas fa-pencil-alt"></i>Edit</a>
+                                                <a class="btn btn-danger btn-sm"
+                                                  href="/deletecatalog/<%= cataloglist[i].id %>" id=""><i
+                                                    class="fas fa-trash"></i>Delete</a>
+                                              </td>
+                                            </tr>
+                                            <% } %>
+                                        </tbody>
+                                        <tfoot>
+                                          <tr>
+                                            <th>#</th>
+                                            <th>Name</th>
+                                            <th>Publisher Name</th>
+                                            <th>Author Name</th>
+                                            <th>ISBN 13</th>
+                                            <th>ISBN 10</th>
+                                            <th>Publishing Year</th>
+                                            <th>Country</th>
+                                            <th>Discount</th>
+                                            <th>Status</th>
+                                            <th>Action</th>
+                                          </tr>
+                                        </tfoot>
+                                      </table>
+                                    </div>
+                                  </div>
+                            </div>
+
+                            <div class="modal fade" id="modal-default">
+                              <div class="modal-dialog">
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <h4 class="modal-title">Add Catalog</h4>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                      <span aria-hidden="true">&times;</span>
+                                    </button>
+                                  </div>
+                                  <form action="addcatalog" method="post" enctype="multipart/form-data">
+                                    <div class="modal-body">
+                                      <div class="form-group">
+                                        <div class="col-sm-12">
+                                          <label class="control-label label-margin">Name</label>
+                                          <input type="text" class="form-control" id="name" placeholder="Name"
+                                            name="name" required />
+                                        </div>
+                                        <div class="col-sm-12">
+                                          <label class="control-label label-margin">Publisher Name </label>
+                                          <% if (publisher && publisher.length > 0) { %>
+                                            <select class="form-control" name="pub_name" required>
+                                              <% for (var i = 0; i < publisher.length; i++) { %>
+                                                <option value="<%= publisher[i].publisher %>">
+                                                  <%= publisher[i].publisher %>
+                                                </option>
+                                              <% } %>
+                                            </select>
+                                          <% } %>
+                                        </div>
+                                        <div class="col-sm-12">
+                                          <label class="control-label label-margin">Author Name</label>
+                                          <% if (author && author.length > 0) { %>
+                                          <select class="form-control" name="auth_name" required>
+                                            <% for(var i=0; i < author.length; i++){ %>
+                                              <option value="<%= author[i].author%>">
+                                                <%= author[i].author%>
+                                              </option>
+                                              <% } %>
+                                          </select>
+                                          <% } %>
+                                        </div>
+                                        <div class="col-sm-12">
+                                          <label class="control-label label-margin">ISBN 13</label>
+                                          <input type="number" class="form-control" id="isbn13" placeholder="ISBN 13"
+                                            name="isbn13" required min="13" />
+                                        </div>
+                                        <div class="col-sm-12">
+                                          <label class="control-label label-margin">ISBN 10</label>
+                                          <input type="number" class="form-control" id="isbn10" placeholder="ISBN 10"
+                                            name="isbn10" required min="10" />
+                                        </div>
+                                        <div class="col-sm-12">
+                                          <label class="control-label label-margin">Publishing Year</label>
+                                          <input type="number" class="form-control" id="publishing_year"
+                                            placeholder="Publishing Year" name="publishing_year" required />
+                                        </div>
+                                        <div class="col-sm-12">
+                                          <label class="control-label label-margin">Book Binding</label>
+                                          <input type="text" class="form-control" id="book_binding"
+                                            placeholder="Book Binding" name="book_binding" required />
+                                        </div>
+                                        <div class="col-sm-12">
+                                          <label class="control-label label-margin">Discount</label>
+                                          <input type="text" class="form-control" id="discount" placeholder="Discount"
+                                            name="discount" required />
+                                        </div>
+                                        <div class="col-sm-12">
+                                          <label class="control-label label-margin">Country</label>
+                                          <select class="form-control" name="country" required>
+                                            <option value="usa">USA</option>
+                                          </select>
+                                        </div>
+                                        <div class="col-sm-12">
+                                          <label class="control-label label-margin">Currency</label>
+                                          <select class="form-control" name="currency" required>
+                                            <option value="INR">INR</option>
+                                            <option value="USD">USD</option>
+                                            <option value="EURO">EURO</option>
+                                          </select>
+
+                                        </div>
+                                        <div class="col-sm-12">
+                                          <label class="control-label label-margin">From</label>
+                                          <input type="date" class="form-control" id="edit_valid_from"
+                                            name="edit_valid_from" required />
+                                        </div>
+                                        <div class="col-sm-12">
+                                          <label class="control-label label-margin">To</label>
+                                          <input type="date" class="form-control" id="edit_valid_to"
+                                            name="edit_valid_to" required />
+                                        </div>
+                                        <div class="col-sm-12">
+                                          <label class="control-label label-margin">Limit to a single customer</label>
+                                          <select class="form-control" name="limit" required>
+                                            <option value="Yes">Yes</option>
+                                            <option value="No">No</option>
+
+                                          </select>
+
+                                        </div>
+                                        <div class="col-sm-12">
+                                          <label class="control-label label-margin">Group</label>
+                                          <select class="form-control" name="group" required>
+                                            <option value="visitor">Visitor</option>
+                                            <option value="customer">Customer</option>
+                                          </select>
+                                        </div>
+
+                                        <div class="col-sm-12">
+                                          <label class="control-label label-margin">Language</label>
+                                          <select class="form-control" name="lang" required>
+                                            <option value="english">English</option>
+                                            <option value="hindi">Hindi</option>
+                                          </select>
+                                        </div>
+
+                                      </div>
+
+                                    </div>
+                                    <div class="modal-footer justify-content-between">
+                                      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                      <button type="submit" class="btn btn-primary">Submit</button>
+                                    </div>
+                                  </form>
+                                </div>
+                              </div>
+                            </div>
+
+
+                            <div class="modal fade" id="myModaledit" tabindex="-1" role="dialog" aria-hidden="true">
+                              <div class="modal-dialog">
+                                <div class="modal-content animated bounceInRight">
+                                  <div class="modal-header">
+                                    <h4 class="modal-title">Edit Categroy</h4>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                      <span aria-hidden="true">&times;</span>
+                                    </button>
+                                  </div>
+                                  <!--end modal-header-->
+                                  <form action="/updatecatalog" method="post" enctype="multipart/form-data"
+                                    id="updatecategory">
+                                    <input type="hidden" id="edit_id" name="edit_id" value="" />
+                                    <div class="modal-body">
+                                      <div class="example-box-wrapper">
+                                        <div class="form-group">
+                                          <div class="col">
+                                            <label class="control-label label-margin">Name</label>
+                                            <input type="text" class="form-control" id="edit_name" placeholder="Name"
+                                              name="edit_name" />
+                                          </div>
+                                          <div class="col-sm-12">
+                                            <label class="control-label label-margin">Publisher Name </label>
+                                            <% if (publisher && publisher.length > 0) { %>
+                                            <select class="form-control" name="pub_name" required>
+                                              <% for(var i=0; i < publisher.length; i++){ %>
+                                                <option value="<%= publisher[i].publisher%>">
+                                                  <%= publisher[i].publisher%>
+                                                </option>
+                                                <% } %>
+                                            </select>
+                                            <% } %>
+                                          </div>
+                                          <div class="col-sm-12">
+                                            <label class="control-label label-margin">Author Name</label>
+                                            <% if (author && author.length > 0) { %>
+                                            <select class="form-control" name="auth_name" required>
+                                              <% for(var i=0; i < author.length; i++){ %>
+                                                <option value="<%= author[i].author%>">
+                                                  <%= author[i].author%>
+                                                </option>
+                                                <% } %>
+                                            </select>
+                                            <% } %>
+                                          </div>
+                                          <div class="col-sm-12">
+                                            <label class="control-label label-margin">ISBN 13</label>
+                                            <input type="number" class="form-control" id="edit_isbn13"
+                                              placeholder="ISBN 13" name="edit_isbn13" required min="13" />
+                                          </div>
+                                          <div class="col-sm-12">
+                                            <label class="control-label label-margin">ISBN 10</label>
+                                            <input type="number" class="form-control" id="edit_isbn10"
+                                              placeholder="ISBN 10" name="edit_isbn10" required min="10" />
+                                          </div>
+                                          <div class="col-sm-12">
+                                            <label class="control-label label-margin">Publishing Year</label>
+                                            <input type="number" class="form-control" id="edit_publishing_year"
+                                              placeholder="Publishing Year" name="edit_publishing_year" required />
+                                          </div>
+
+                                          <div class="col-sm-12">
+                                            <label class="control-label label-margin">Discount</label>
+                                            <input type="text" class="form-control" id="edit_discount"
+                                              placeholder="Discount" name="edit_discount" required />
+                                          </div>
+                                          <div class="col-sm-12">
+                                            <label class="control-label label-margin">Country</label>
+                                            <select class="form-control" name="country" required>
+                                              <option value="usa">USA</option>
+                                            </select>
+                                          </div>
+
+                                          <div class="col-sm-12">
+                                            <label class="control-label label-margin">Currency</label>
+                                            <select class="form-control" name="currency" required>
+                                              <option value="INR">INR</option>
+                                              <option value="USD">USD</option>
+                                              <option value="EURO">EURO</option>
+                                            </select>
+
+                                          </div>
+                                          <div class="col-sm-12">
+                                            <label class="control-label label-margin">From</label>
+                                            <input type="date" class="form-control" id="edit_valid_from"
+                                              name="edit_valid_from" required />
+                                          </div>
+                                          <div class="col-sm-12">
+                                            <label class="control-label label-margin">To</label>
+                                            <input type="date" class="form-control" id="edit_valid_to"
+                                              name="edit_valid_to" required />
+                                          </div>
+                                          <div class="col-sm-12">
+                                            <label class="control-label label-margin">Limit to a single customer</label>
+                                            <select class="form-control" name="limit" required>
+                                              <option value="Yes">Yes</option>
+                                              <option value="No">No</option>
+
+                                            </select>
+
+                                          </div>
+                                          <div class="col-sm-12">
+                                            <label class="control-label label-margin">Group</label>
+                                            <select class="form-control" name="group" required>
+                                              <option value="visitor">Visitor</option>
+                                              <option value="customer">Customer</option>
+                                            </select>
+                                          </div>
+
+                                          <div class="col-sm-12">
+                                            <label class="control-label label-margin">Language</label>
+                                            <select class="form-control" name="lang" required>
+                                              <option value="english">English</option>
+                                              <option value="hindi">Hindi</option>
+                                            </select>
+                                          </div>
+
+
+
+
+                                        </div>
+
+                                        <div class="form-group">
+                                          <div class="col">
+                                            <label class="control-label label-margin">Status</label>
+                                            <select class="form-control" id="edit_status" name="edit_status" required>
+                                              <option value="1">Active</option>
+                                              <option value="0">Inactive</option>
+                                            </select>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                      <button type="submit" class="btn btn-primary">Submit</button>
+                                    </div>
+                                  </form>
+                                </div>
+                              </div>
+                            </div>
+
+                          </div>
+                        </div>
+                      </section>
+                    </div>
+                    <%- include ("../../common/footer") %>
+  </div>
+  <%- include ("../../common/js") %>
+    <script type="text/javascript">
+      $(function () {
+        "use strict";
+        $("#example1").DataTable({
+          "responsive": true,
+          "autoWidth": false,
+          "pageLength": 25,
+        });
+      });  
+    </script>
+</body>
+
+</html>

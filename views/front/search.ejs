@@ -1,0 +1,54 @@
+<div class="main-header">
+    <div class="container">
+      <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-3 logo-holder">
+            <div class="logo"> <a href="/">
+              <img src="/assets/images/logo.png" alt="logo sriina"> </a>
+            </div>
+          </div>
+        <!-- /.logo-holder -->
+
+        <div class="col-xs-12 col-sm-12 col-md-5 top-search-holder">
+          <div class="search-area">
+            <form action="/search" class="search-header" method="get">
+              <div class="control-group">
+                <input class="search-field" placeholder="Search by ISBN, title or author's name..." name="q" autocomplete="off"/>
+                <button type="submit" class="search-button"></button>
+               </div>
+            </form>
+          </div>
+        </div>
+
+        <div class="col-xs-12 col-sm-12 col-md-4 animate-dropdown top-cart-row">
+          <div class="top-bar animate-dropdown">
+                <div class="header-top-inner">
+                  <div class="cnt-account">
+                    <ul class="list-unstyled">
+                      <% if(user) { %>
+                        <li><a href="/myaccount"><i class="icon fa fa-user"></i><%= user.name %></a></li>
+                      <% } %>
+                      <% if(user) { %>
+                        <li><a href="/addtocart"><i class="icon fa fa-shopping-cart"></i>My Cart</a></li>
+                      <% } %>
+                      <li><a href="/membership"><i class="icon fa fa-user"></i>Membership</a></li>
+                      <% if(user) { %>
+                        <li><a href="/userlogout"><i class="icon fa fa-lock"></i>Logout</a></li>
+                      <% } else { %>
+                        <li><a href="/sign-in"><i class="icon fa fa-lock"></i>Login / Sign up</a></li>
+                      <% } %>
+                    </ul>
+                  </div>
+                  <div class="clearfix"></div>
+                </div>
+          </div>
+
+        </div>
+        <!-- /.top-cart-row -->
+      </div>
+      <!-- /.row -->
+
+    </div>
+    <!-- /.container -->
+
+  </div>
+  <!-- /.main-header -->

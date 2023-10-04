@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="description" content="">
+<meta name="author" content="">
+<meta name="keywords" content="MediaCenter, Template, eCommerce">
+<link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon.png">
+<meta name="robots" content="all">
+<title>Sriina: <%= title %></title>
+<link rel="stylesheet" href="assets/css/bootstrap.min.css">
+<link rel="stylesheet" href="assets/css/main.css">
+<link rel="stylesheet" href="assets/css/blue.css">
+<link rel="stylesheet" href="assets/css/owl.carousel.css">
+<link rel="stylesheet" href="assets/css/owl.transitions.css">
+<link rel="stylesheet" href="assets/css/animate.min.css">
+<link rel="stylesheet" href="assets/css/rateit.css">
+<link rel="stylesheet" href="assets/css/bootstrap-select.min.css">
+<link href="assets/css/lightbox.css" rel="stylesheet">
+<link href="assets/css/custom.css" rel="stylesheet" />
+<link rel="stylesheet" href="assets/css/font-awesome.css">
+<link href='http://fonts.googleapis.com/css?family=Roboto:300,400,500,700' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,400italic,600,600italic,700,700italic,800' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-184850763-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-184850763-1');
+</script>
+</head>
+    <body class="cnt-home">
+    <!-- ============================================== HEADER ============================================== -->
+        <header class="header-style-1">
+            <%- include("top_bar") -%>
+            <%- include("search") -%>
+            <%- include("navigation") -%>
+        </header>
+<!-- ============================================== HEADER : END ============================================== -->
+<div class="breadcrumb">
+  <div class="container">
+    <div class="breadcrumb-inner">
+      <ul class="list-inline list-unstyled">
+        <li><a href="/">Home</a></li>
+        <li><a href="about-us">About us</a></li>
+      </ul>
+    </div><!-- /.breadcrumb-inner -->
+  </div><!-- /.container -->
+</div><!-- /.breadcrumb -->
+<div class="body-content outer-top-xs">
+    <div class="container">
+        <div class="row single-product">
+            <div class="col-md-12">
+                <div class="detail-block">
+                    <div class="row wow fadeInUp" style="padding: 18px;line-height: 25px;font-size: 14px;">
+                        <p>
+                            <% if (getresult) { %>
+                                <%= //getresult.description %>
+                                <h4><strong>Return Policy</strong></h4>
+<h4><strong>Examples of Information Collected</strong></h4>
+<h5><strong>Information You Give Us</strong></h5>
+
+<p>You provide most such information when you open an account, use the Services, or communicate with customer service. For example, to open an Sriina.COM Payments Account, you must provide your name, address, and an e-mail address. To make certain payments through us, you must provide credit card or bank account information. We also may ask you to choose security questions to answer before we process transactions, issue you a new password or provide you with customer service. When you use our Services to send money to someone else or request money from someone else, we may ask you to provide information related to each transaction, including the amount of the transaction, the type of transaction (purchase of goods, purchase of services, or simple money transfer) and the e-mail address of the third party. We also collect information that may be necessary for us to verify your identity and comply with the India. Patriot Act and Bank Secrecy Act. </p>
+<p>Such information may include name, address, date of birth, social security number, and/or driver’s license number. We may ask you to send us additional information (such as a credit card statement and/or a recent utility bill or other information linking you to an address in your account). We also may ask you to answer additional questions online to help verify your identity. We may also require additional information if you send or receive certain high-value transactions or high aggregate payment volumes through our Services. We may sometimes offer optional questionnaires and surveys to our users to collect information for analytical purposes, such as demographic information. If we collect personally identifiable information from our users in these questionnaires and surveys, the users will be given notice of how the information will be used prior to their participation in the survey or questionnaire.</p>
+
+<h4><strong>Automatic Information</strong></h4>
+<p>Examples of the information we collect and analyze include the Internet protocol (IP) address used to connect your computer to the Internet; login; e-mail address; password; computer and connection information such as browser type and version, operating system, and platform; transaction history, which we sometimes aggregate with similar information from other users or website visitors; the full Uniform Resource Locator (URL) click-stream to, through, and from our website, including date and time; cookie number; and the phone number you used to call our toll free number. We may also use browser data such as cookies, Flash cookies (also known as Flash Local Shared Objects), or similar data on certain parts of our website for fraud prevention and other purposes. During some visits we may use software tools such as JavaScript to measure and collect session information, including page response times, download errors, length of visits to certain pages, page interaction information (such as scrolling, clicks, and mouse-overs), and methods used to browse away from the page. When you visit a third-party website that uses one of our Services, your browser may send information such as your page request, URL, IP address, browser type, browser language, the date and time of your request, and your cookie information.</p>
+
+<h4><strong>Mobile</strong></h4>
+<p>Most mobile devices provide users with the ability to disable location services. Most likely, these controls are located in the device’s settings menu. For information about specific devices,  If you have questions about how to disable your device’s location services, we recommend you contact your mobile service carrier or your device manufacturer.</p>
+
+<h4><strong>Information from Other Sources</strong></h4>
+
+<p>We might receive information about you from other sources and add it to our account information. For example, in order to protect against potential fraud, we may verify with third party services the information you provide. During the verification process we receive personally identifiable information about you from such services. For example, if you register a credit card or debit card with us, we will use card authorization and fraud screening services to verify that your card information and address matches the information that you supplied to us, and that the card has not been reported as lost or stolen. In addition, we, at our sole discretion and subject to applicable law, reserve the right periodically to retrieve and review a credit report or other credit history information from credit bureaus for any account.</p>
+
+<h4><strong>Information You Can Access</strong></h4>
+
+<p>Examples of information you can access easily at our site include up-to-date information regarding recent transactions; personally identifiable information (including name, e-mail, password, communications preferences); payment settings (including credit card information and bank account information); e-mail notification settings; and your Profile.</p>
+                            <% } else { %>
+                                <p class="text-center">Page data not found.</p>
+                            <% } %>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+  </div>
+</div>
+
+<%- include ("../front/book_footer") %>
+<script src="assets/js/jquery-1.11.1.min.js"></script>  
+<script src="assets/js/bootstrap.min.js"></script>
+<script src="assets/js/bootstrap-hover-dropdown.min.js"></script>
+<script src="assets/js/owl.carousel.min.js"></script>
+<script src="assets/js/echo.min.js"></script>
+<script src="assets/js/jquery.easing-1.3.min.js"></script>
+<script src="assets/js/bootstrap-slider.min.js"></script>
+<script src="assets/js/jquery.rateit.min.js"></script>
+<script type="text/javascript" src="assets/js/lightbox.min.js"></script>
+<script src="assets/js/bootstrap-select.min.js"></script>
+<script src="assets/js/wow.min.js"></script>
+<script src="assets/js/scripts.js"></script>
+</body>
+</html>
