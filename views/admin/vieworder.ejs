@@ -58,7 +58,7 @@
                                                 </div>
                                                 <hr />
                                                 <div class="row">
-                                                    <div class="col-sm-4 from pl-3">
+                                                    <!-- <div class="col-sm-4 from pl-3">
                                                         <p class="lead marginbottom"><strong>Billing</strong></p>
                                                         <% if(get_billing_address){ %>
                                                         <p><%= get_billing_address.fullname %></p>
@@ -67,9 +67,9 @@
                                                         <p>State:<%= get_billing_address.BillingState %> (<%= get_billing_address.pincode %>)</p>
                                                         <p>Phone: <%= get_billing_address.mobile %></p>
                                                         <% } %>
-                                                    </div>
+                                                    </div> -->
 
-                                                    <div class="col-sm-4 to">
+                                                    <div class="col-sm-6 to pl-3">
                                                         <p class="lead marginbottom"><strong>Delivery Address</strong></p>
                                                         <% if(get_shipping_address){ %>
                                                         <p><%= get_shipping_address.fullname %></p>
@@ -80,7 +80,7 @@
                                                         <% } %>
                                                     </div>
 
-                                                    <div class="col-sm-4 text-right payment-details pr-3">
+                                                    <div class="col-sm-6 text-right payment-details pr-3">
                                                         <p class="lead marginbottom payment-info">Payment details</p>
                                                         <p>Date: <%= moment(created_at).format('lll') %></p>
                                                         <p>Total Amount: <%= paid_amount %></p>

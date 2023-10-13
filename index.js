@@ -48,7 +48,7 @@ var parseForm = bodyParser.urlencoded({ extended: true });
 var connection = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "Nk@w9r9geZ6xOo;PD.l",
+  password: process.env.DB_PASSWORD,
   database: "sriina",
 });
 
@@ -311,11 +311,11 @@ app.post(
 app.get("/delete_shipping_address", signin.deleteShippingAddress);
 app.get("/delete_billing_address", signin.deleteBillingAddress);
 
-app.post('/create-checkout-session', signin.stripePayment)
+app.post("/create-checkout-session", signin.stripePayment);
 
 /* razorpay */
-app.post('/razorpay-checkout', signin.razorpayPaymentStatus)
-app.get('/payment_status', signin.orderPaymentStatus)
+app.post("/razorpay-checkout", signin.razorpayPaymentStatus);
+app.get("/payment_status", signin.orderPaymentStatus);
 
 app.post("/confim_order", signin.confimOrder);
 app.post(
@@ -326,8 +326,8 @@ app.post(
 );
 
 /* razorpay for membership plan */
-app.post('/razorpay-membership-checkout', signin.razorpayMembershipPayment)
-app.get('/payment_membership_status', signin.membershipPaymentStatus)
+app.post("/razorpay-membership-checkout", signin.razorpayMembershipPayment);
+app.get("/payment_membership_status", signin.membershipPaymentStatus);
 
 app.post(
   "/register_user_plan",
@@ -400,18 +400,22 @@ app.post("/editmembershipplan", order.editMembershipPlan);
 app.get("/uploadexcel", csrfProtection, uploadcsv.uploadExcel);
 
 const __basedir = path.resolve();
-const multer = require('multer')
+const multer = require("multer");
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, __basedir + '/exceldata/')
+    cb(null, __basedir + "/exceldata/");
   },
   filename: (req, file, cb) => {
-    cb(null, file.fieldname + '-' + Date.now() + '-' + file.originalname)
+    cb(null, file.fieldname + "-" + Date.now() + "-" + file.originalname);
   },
-})
-const uploadFile = multer({ storage: storage })
+});
+const uploadFile = multer({ storage: storage });
 
-app.post("/uploadexcelfile", uploadFile.single('uploadexcel'), uploadcsv.uploadExcelFile);
+app.post(
+  "/uploadexcelfile",
+  uploadFile.single("uploadexcel"),
+  uploadcsv.uploadExcelFile
+);
 app.post("/upload-xlsx", uploadcsv.saveExcelFileData);
 app.get("/:slug/:id", csrfProtection, product.viewProduct);
 
@@ -419,6 +423,6 @@ app.get("/:id", pages.getCategories);
 
 //Middleware
 app.listen(port, () => {
-  console.log("First COmmit")
+  console.log("First COmmit");
   console.log(`Server running on port: ${port}`);
 });
