@@ -280,7 +280,7 @@ exports.saveExcelFileData = (req, res, next) => {
         //     is_valid_record = false;
         //     failed_by_image += 1;
         // }
-        console.log("data", data,data["book_language"]);
+        console.log("data", data, data["book_language"]);
         if (data["book_language"]) {
           const language = {
             english: 1,
@@ -295,6 +295,45 @@ exports.saveExcelFileData = (req, res, next) => {
           console.log("bookLanguage", bookLanguage);
           data["language"] = language[bookLanguage] || null;
         }
+
+        if (data["image"]) {
+          data["image"] = data["image"];
+        }
+        if (data["author"]) {
+          data["author"] = data["author"];
+        }
+
+        if (data["publisher"]) {
+          data["publisher"] = data["publisher"];
+        }
+
+        if (data["weight"]) {
+          data["weight"] = data["weight"];
+        }
+
+        if (data["publishing_year"]) {
+          data["publishing_year"] = data["publishing_year"];
+        }
+
+        if (data["cat_id"]) {
+          data["cat_id"] = data["cat_id"];
+        }
+
+        if (data["discount"]) {
+          data["discount"] = data["discount"];
+        }
+
+        if (data["book_edition"]) {
+          data["book_edition"] = data["book_edition"];
+        }
+        if (data["author_details"]) {
+          data["author_details"] = data["author_details"];
+        }
+        if (data["book_binding"]) {
+          data["book_binding"] = data["book_binding"];
+        }
+
+        data["product_type"] = 1;
 
         // make it optional
         if (data.isbn && (data.isbn.length > 10 || data.isbn.length < 10)) {
