@@ -1,132 +1,166 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon.png">
-<meta name="description" content="<%= M_description %>">
-<meta name="keywords" content="<%= M_title %>">
-<link rel="canonical" href="http://sriina.com/<%= viewlist.slug %>/<%= viewlist.id %>">
-<meta name="robots" content="index, follow">
-<meta name="googlebot" content="index, follow"/> 
-<meta name="bingbot" content=" index, follow " >
-<title>Sriina.com | <%= M_title %></title>
-<link rel="stylesheet" href="<%= baseURL %>assets/css/bootstrap.min.css">
-<link rel="stylesheet" href="<%= baseURL %>assets/css/main.css">
-<link rel="stylesheet" href="<%= baseURL %>assets/css/blue.css">
-<link rel="stylesheet" href="<%= baseURL %>assets/css/owl.carousel.css">
-<link rel="stylesheet" href="<%= baseURL %>assets/css/owl.transitions.css">
-<link rel="stylesheet" href="<%= baseURL %>assets/css/animate.min.css">
-<link rel="stylesheet" href="<%= baseURL %>assets/css/rateit.css">
-<link rel="stylesheet" href="<%= baseURL %>assets/css/bootstrap-select.min.css">
-<link href="<%= baseURL %>assets/css/lightbox.css" rel="stylesheet">
-<link href="<%= baseURL %>assets/css/custom.css" rel="stylesheet" />
-<link href="<%= baseURL %>assets/css/product.css" rel="stylesheet" />
-<link rel="stylesheet" href="<%= baseURL %>assets/css/font-awesome.css">
-<link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700' rel='stylesheet' type='text/css'>
-<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,400italic,600,600italic,700,700italic,800' rel='stylesheet' type='text/css'>
-<link href='https://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
-<!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-RE308ZH3ZZ"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  
-  gtag('config', 'G-RE308ZH3ZZ');
-</script>
-<style>
-    .addReadMore.showlesscontent .SecSec,
-    .addReadMore.showlesscontent .readLess {
-        display: none;
-    }
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon.png">
+    <meta name="description" content="<%= M_description %>">
+    <meta name="keywords"
+        content="<%= M_title %> | cheap books online | buy books online cheap | order books online cheap | purchase books online cheap | buy cheap novels online | buy books at cheap price | buy books cheap | books buy cheap | books at cheapest price online | books at lowest price online | websites to buy books cheap | best website to buy books cheap | cheap sites to buy books | cheap online bookstores | cheapest novels online | cheap books online shopping | places to buy cheap books | cheapest website to buy books | online medical books | medical textbooks online | book medicine online | buy medical books online | order medical books online | medical books online purchase | online medical book shop | rent books online in delhi | books on rent in delhi | textbook rental | book rental in delhi | bookstore rental in delhi | books on rent near me | rent books near me | online books rental library | textbook rental websites | online books membership plan in Delhi | best membership for books online | online library membership in Delhi | buy law books online | cheap law books online | law books online low price | low price law books in delhi | best price law books online | best buy CA books online | best buy online books in delhi  | low price CA books online  | best price CA books online">
+    <link rel="canonical" href="http://sriina.com/<%= viewlist.slug %>/<%= viewlist.id %>">
+    <meta name="robots" content="index, follow">
+    <meta name="googlebot" content="index, follow" />
+    <meta name="bingbot" content=" index, follow ">
+    <title>Sriina.com | <%= M_title %>
+    </title>
+    <link rel="stylesheet" href="<%= baseURL %>assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="<%= baseURL %>assets/css/main.css">
+    <link rel="stylesheet" href="<%= baseURL %>assets/css/blue.css">
+    <link rel="stylesheet" href="<%= baseURL %>assets/css/owl.carousel.css">
+    <link rel="stylesheet" href="<%= baseURL %>assets/css/owl.transitions.css">
+    <link rel="stylesheet" href="<%= baseURL %>assets/css/animate.min.css">
+    <link rel="stylesheet" href="<%= baseURL %>assets/css/rateit.css">
+    <link rel="stylesheet" href="<%= baseURL %>assets/css/bootstrap-select.min.css">
+    <link href="<%= baseURL %>assets/css/lightbox.css" rel="stylesheet">
+    <link href="<%= baseURL %>assets/css/custom.css" rel="stylesheet" />
+    <link href="<%= baseURL %>assets/css/product.css" rel="stylesheet" />
+    <link rel="stylesheet" href="<%= baseURL %>assets/css/font-awesome.css">
+    <link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,400italic,600,600italic,700,700italic,800'
+        rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-RE308ZH3ZZ"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
 
-    .addReadMore.showmorecontent .readMore {
-        display: none;
-    }
+        gtag('config', 'G-RE308ZH3ZZ');
+    </script>
+    <style>
+        .addReadMore.showlesscontent .SecSec,
+        .addReadMore.showlesscontent .readLess {
+            display: none;
+        }
 
-    .addReadMore .readMore,
-    .addReadMore .readLess {
-        margin-left: 2px;
-        color: #e67b01;
-        cursor: pointer;
-    }
+        .addReadMore.showmorecontent .readMore {
+            display: none;
+        }
 
-    .addReadMoreWrapTxt.showmorecontent .SecSec,
-    .addReadMoreWrapTxt.showmorecontent .readLess {
-        display: block;
-    }
+        .addReadMore .readMore,
+        .addReadMore .readLess {
+            margin-left: 2px;
+            color: #e67b01;
+            cursor: pointer;
+        }
+
+        .addReadMoreWrapTxt.showmorecontent .SecSec,
+        .addReadMoreWrapTxt.showmorecontent .readLess {
+            display: block;
+        }
     </style>
 </head>
+
 <body class="cnt-home">
-<header class="header-style-1">
-  <%- include("top_bar") -%>
-  <%- include("search") -%>
-  <%- include("navigation") -%>
-</header>
+    <header class="header-style-1">
+        <%- include("top_bar") -%>
+            <%- include("search") -%>
+                <%- include("navigation") -%>
+    </header>
 
-<div class="breadcrumb">
-    <div class="container">
-        <div class="breadcrumb-inner">
-            <ul class="list-inline list-unstyled">
-                <li><a href="/">Home</a></li>
-                <li><a href="/products">Books</a></li>
-                <li class='active'><%= viewlist.name %></li>
-            </ul>
-        </div><!-- /.breadcrumb-inner -->
-    </div><!-- /.container -->
-</div><!-- /.breadcrumb -->
-<div class="body-content outer-top-xs">
-    <div class='container'>
-        <div class='row single-product'>
-            <div class='col-md-12'>
-              <% if(message.length > 0) {%>
-                <div class="alert alert-success alert-dismissible show" role="alert">
-                  <%= message %>
-                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                </div>
-              <% } %>
-            <div class="detail-block">
-            <% if (viewlist) { 
-            var original_price = viewlist.price;
-            var discount = viewlist.discount;
-            var discounted_price = original_price - (original_price * discount / 100);
-
-            var new_price = (viewlist.price)-(viewlist.price/100)*viewlist.discount;
-            var you_save_money = (original_price-discounted_price).toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,") 
-            %>   
-            <div class="row  wow fadeInUp">
-                <div class="col-xs-12 col-sm-6 col-md-5 gallery-holder">
-                  <div class="col-xs-12 col-sm-6 col-md-5 gallery-holder">
-                        <div class="large-5 column">
-                            <div class="xzoom-container">
-                                <% if(viewlist.image) {%>
-                                    <% if(/(http(s?)):\/\//i.test(viewlist.image)) {%>
-                                        <img alt="<%= viewlist.name %>" class="xzoom" id="xzoom-default" src="<%= viewlist.image %>" xoriginal="<%= viewlist.image %>" style="max-width: 450px;" />
-                                    <% } else { %>
-                                        <img alt="<%= viewlist.name %>" class="xzoom" id="xzoom-default" src="<%= process.env.IMAGE_URL %><%= viewlist.image %>" xoriginal="<%= process.env.IMAGE_URL %><%= viewlist.image %>" style="max-width:450px;width: 300px;" />
-                                    <% } %>
-                                <% } else { %>
-                                    <img class="xzoom" id="xzoom-default" src="<%= baseURL %>assets/images/404.jpg" xoriginal="<%= baseURL %>assets/images/404.jpg" />
-                                <% } %>
-
-                                <div class="xzoom-thumbs">
-                                    <% if(viewlist.image) {%>
-                                        <% if(/(http(s?)):\/\//i.test(viewlist.image)) {%>
-                                            <a  href="<%= process.env.IMAGE_URL %><%= viewlist.image %>"><img alt="<%= viewlist.name %>" class="xzoom-gallery" width="80" src="<%= viewlist.image %>" xpreview="<%= viewlist.image %>" title="<%= viewlist.name %>"></a>
-                                        <% } else { %>
-                                            <a href="<%= process.env.IMAGE_URL %><%= viewlist.image %>"><img alt="<%= viewlist.name %>" class="xzoom-gallery" width="80" src="<%= process.env.IMAGE_URL %><%= viewlist.image %>" xpreview="<%= process.env.IMAGE_URL %><%= viewlist.image %>" title="<%= viewlist.name %>"></a>
-                                        <% } %>
-                                <% } else {%>
-                                    <a href="<%= baseURL %>assets/images/404.jpg"><img class="xzoom-gallery" width="80" src="<%= baseURL %>assets/images/404.jpg" xpreview="<%= baseURL %>assets/images/404.jpg" title="<%= viewlist.name %>"></a>
-                                <% } %>
-                                </div>
-                            </div>
+    <div class="breadcrumb">
+        <div class="container">
+            <div class="breadcrumb-inner">
+                <ul class="list-inline list-unstyled">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/products">Books</a></li>
+                    <li class='active'>
+                        <%= viewlist.name %>
+                    </li>
+                </ul>
+            </div><!-- /.breadcrumb-inner -->
+        </div><!-- /.container -->
+    </div><!-- /.breadcrumb -->
+    <div class="body-content outer-top-xs">
+        <div class='container'>
+            <div class='row single-product'>
+                <div class='col-md-12'>
+                    <% if(message.length> 0) {%>
+                        <div class="alert alert-success alert-dismissible show" role="alert">
+                            <%= message %>
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
                         </div>
-                        </div>
-                    <!-- <div class="product-item-holder size-big single-product-gallery small-gallery">
+                        <% } %>
+                            <div class="detail-block">
+                                <% if (viewlist) { var original_price=viewlist.price; var discount=viewlist.discount;
+                                    var discounted_price=original_price - (original_price * discount / 100); var
+                                    new_price=(viewlist.price)-(viewlist.price/100)*viewlist.discount; var
+                                    you_save_money=(original_price-discounted_price).toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"
+                                    ) %>
+                                    <div class="row  wow fadeInUp">
+                                        <div class="col-xs-12 col-sm-6 col-md-5 gallery-holder">
+                                            <div class="col-xs-12 col-sm-6 col-md-5 gallery-holder">
+                                                <div class="large-5 column">
+                                                    <div class="xzoom-container">
+                                                        <% if(viewlist.image) {%>
+                                                            <% if(/(http(s?)):\/\//i.test(viewlist.image)) {%>
+                                                                <img alt="<%= viewlist.name %>" class="xzoom"
+                                                                    id="xzoom-default" src="<%= viewlist.image %>"
+                                                                    xoriginal="<%= viewlist.image %>"
+                                                                    style="max-width: 450px;" />
+                                                                <% } else { %>
+                                                                    <img alt="<%= viewlist.name %>" class="xzoom"
+                                                                        id="xzoom-default"
+                                                                        src="<%= process.env.IMAGE_URL %><%= viewlist.image %>"
+                                                                        xoriginal="<%= process.env.IMAGE_URL %><%= viewlist.image %>"
+                                                                        style="max-width:450px;width: 300px;" />
+                                                                    <% } %>
+                                                                        <% } else { %>
+                                                                            <img class="xzoom" id="xzoom-default"
+                                                                                src="<%= baseURL %>assets/images/404.jpg"
+                                                                                xoriginal="<%= baseURL %>assets/images/404.jpg" />
+                                                                            <% } %>
+
+                                                                                <div class="xzoom-thumbs">
+                                                                                    <% if(viewlist.image) {%>
+                                                                                        <% if(/(http(s?)):\/\//i.test(viewlist.image))
+                                                                                            {%>
+                                                                                            <a
+                                                                                                href="<%= process.env.IMAGE_URL %><%= viewlist.image %>"><img
+                                                                                                    alt="<%= viewlist.name %>"
+                                                                                                    class="xzoom-gallery"
+                                                                                                    width="80"
+                                                                                                    src="<%= viewlist.image %>"
+                                                                                                    xpreview="<%= viewlist.image %>"
+                                                                                                    title="<%= viewlist.name %>"></a>
+                                                                                            <% } else { %>
+                                                                                                <a
+                                                                                                    href="<%= process.env.IMAGE_URL %><%= viewlist.image %>"><img
+                                                                                                        alt="<%= viewlist.name %>"
+                                                                                                        class="xzoom-gallery"
+                                                                                                        width="80"
+                                                                                                        src="<%= process.env.IMAGE_URL %><%= viewlist.image %>"
+                                                                                                        xpreview="<%= process.env.IMAGE_URL %><%= viewlist.image %>"
+                                                                                                        title="<%= viewlist.name %>"></a>
+                                                                                                <% } %>
+                                                                                                    <% } else {%>
+                                                                                                        <a
+                                                                                                            href="<%= baseURL %>assets/images/404.jpg"><img
+                                                                                                                class="xzoom-gallery"
+                                                                                                                width="80"
+                                                                                                                src="<%= baseURL %>assets/images/404.jpg"
+                                                                                                                xpreview="<%= baseURL %>assets/images/404.jpg"
+                                                                                                                title="<%= viewlist.name %>"></a>
+                                                                                                        <% } %>
+                                                                                </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- <div class="product-item-holder size-big single-product-gallery small-gallery">
                         <div id="owl-single-product">
                             <div class="single-product-gallery-item" id="slide1">
                                 <a data-lightbox="image-1" data-title="Gallery" href="<%= process.env.IMAGE_URL %><%= viewlist.image %>">
@@ -146,13 +180,16 @@
                             </div>
                         </div>
                     </div> -->
-                </div><!-- /.gallery-holder -->                 
-                    <div class='col-sm-6 col-md-7 product-info-block'>
-                        <div class="product-info">
-                            <h1 class="name" id="product_name"><%= viewlist.name %></h1>
-                            <% if(viewlist.product_type==6) {%> <small>Old Book</small> <% } %>
-                            <div class="rating-reviews m-t-20">
-                                <!-- <div class="row">
+                                        </div><!-- /.gallery-holder -->
+                                        <div class='col-sm-6 col-md-7 product-info-block'>
+                                            <div class="product-info">
+                                                <h1 class="name" id="product_name">
+                                                    <%= viewlist.name %>
+                                                </h1>
+                                                <% if(viewlist.product_type==6) {%> <small>Old Book</small>
+                                                    <% } %>
+                                                        <div class="rating-reviews m-t-20">
+                                                            <!-- <div class="row">
                                     <div class="col-sm-3">
                                         <div class="rating rateit-small"></div>
                                     </div>
@@ -162,110 +199,211 @@
                                         </div>
                                     </div>
                                 </div> -->
-                                <!-- /.row -->        
-                            </div><!-- /.rating-reviews -->
+                                                            <!-- /.row -->
+                                                        </div><!-- /.rating-reviews -->
 
-                            <div class="stock-container info-container m-t-10">
-                                <div class="row">
-                                    <div class="col-sm-2">
-                                        <div class="stock-box">
-                                            <span class="label">Availability :</span>
-                                        </div>  
-                                    </div>
-                                    <div class="col-sm-9">
-                                        <div class="stock-box">
-                                            <% if(viewlist.quantity > 0) { %>
-                                              <span class="value text-green" style="color: green">In Stock</span>
-                                            <% } else { %> 
-                                              <span class="value text-red">Out of Stock</span>
-                                            <% } %>
-                                        </div>  
-                                    </div>
-                                </div><!-- /.row -->    
-                            </div><!-- /.stock-container -->
+                                                        <div class="stock-container info-container m-t-10">
+                                                            <div class="row">
+                                                                <div class="col-sm-2">
+                                                                    <div class="stock-box">
+                                                                        <span class="label">Availability :</span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-9">
+                                                                    <div class="stock-box">
+                                                                        <% if(viewlist.quantity> 0) { %>
+                                                                            <span class="value text-green"
+                                                                                style="color: green">In Stock</span>
+                                                                            <% } else { %>
+                                                                                <span class="value text-red">Out of
+                                                                                    Stock</span>
+                                                                                <% } %>
+                                                                    </div>
+                                                                </div>
+                                                            </div><!-- /.row -->
+                                                        </div><!-- /.stock-container -->
 
-                            <div class="description-container m-t-20">
-                                
-                            </div><!-- /.description-container -->
+                                                        <div class="description-container m-t-20">
 
-                            <div class="price-container info-container m-t-20">
-                                <div class="row">
+                                                        </div><!-- /.description-container -->
 
-                                    <div class="col-sm-12">
-                                        <div class="price-box">
-                                               <span class="price">
-                                                   <% if (new_price < 0) { %>
-                                                       ₹&nbsp;0.00
-                                                   <% } else { %>
-                                                       ₹&nbsp;<%= new_price.toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,") %>
-                                                   <% } %>
-                                               </span>
-                                            <span class="mrp">M.R.P.:</span><span class="price-strike">₹&nbsp;<%= viewlist.price %></span>
-                                            <span class="a-size-base a-color-secondary">You Save: ₹<%= you_save_money %> &nbsp;(<%= viewlist.discount %>% OFF)</span>
-                                        </div>
-                                        <% if(viewlist.tax_included=='0'){%>
-                                            <div class="normalText">&nbsp;&nbsp;(Inclusive of all taxes)</div>
-                                            <% } else { %>
-                                            <div class="normalText">&nbsp;&nbsp;(Taxes not include)</div>
-                                        <% } %>
-                                    </div>
+                                                        <div class="price-container info-container m-t-20">
+                                                            <div class="row">
 
-                                    <div class="col-sm-12">
-                                        <div class="favorite-button m-t-10">
-                                            <span class="a-color-base buyboxShippingLabel"> 
-                                                <% if(viewlist.delivery_charge) {%>
-                                                    ₹&nbsp;<%= viewlist.delivery_charge %> Delivery charge
-                                                <% } else { %> <strong>FREE Delivery</strong> <% } %>  </span>
-                                        <!-- <% if(viewlist.categoryname){%>
+                                                                <div class="col-sm-12">
+                                                                    <div class="price-box">
+                                                                        <span class="price">
+                                                                            <% if (new_price < 0) { %>
+                                                                                ₹&nbsp;0.00
+                                                                                <% } else { %>
+                                                                                    ₹&nbsp;<%=
+                                                                                        new_price.toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"
+                                                                                        ) %>
+                                                                                        <% } %>
+                                                                        </span>
+                                                                        <span class="mrp">M.R.P.:</span><span
+                                                                            class="price-strike">₹&nbsp;<%=
+                                                                                viewlist.price %></span>
+                                                                        <span class="a-size-base a-color-secondary">You
+                                                                            Save: ₹<%= you_save_money %> &nbsp;(<%=
+                                                                                    viewlist.discount %>% OFF)</span>
+                                                                    </div>
+                                                                    <% if(viewlist.tax_included=='0' ){%>
+                                                                        <div class="normalText">&nbsp;&nbsp;(Inclusive
+                                                                            of all taxes)</div>
+                                                                        <% } else { %>
+                                                                            <div class="normalText">&nbsp;&nbsp;(Taxes
+                                                                                not include)</div>
+                                                                            <% } %>
+                                                                </div>
+
+                                                                <div class="col-sm-12">
+                                                                    <div class="favorite-button m-t-10">
+                                                                        <span class="a-color-base buyboxShippingLabel">
+                                                                            <% if(viewlist.delivery_charge) {%>
+                                                                                ₹&nbsp;<%= viewlist.delivery_charge %>
+                                                                                    Delivery charge
+                                                                                    <% } else { %> <strong>FREE
+                                                                                            Delivery</strong>
+                                                                                        <% } %>
+                                                                        </span>
+                                                                        <!-- <% if(viewlist.categoryname){%>
                                         <h6 class="text_title_page"><strong>Category:</strong> <%= viewlist.categoryname %></h6>
                                         <% } %> -->
-                                        <% if(viewlist.author){%>
-                                        <h6 class="text_title_page"><strong>Author:</strong> <%= viewlist.author %></h6> 
-                                        <% } %>
-                                        <% if(viewlist.publisher){%>
-                                        <h6 class="text_title_page"><strong>Publisher:</strong> <%= viewlist.publisher %></h6>
-                                        <% } else {%>
-                                        <h6 class="text_title_page"><strong>Publisher:</strong> <%= viewlist.imprint_name %>(<%= viewlist.book_edition %>)</h6>
-                                        <% } %>
-                                        <% if(viewlist.book_edition && viewlist.imprint_name=="HarperCollins") {%>
-                                          <h6 class="text_title_page"><strong>Edition: </strong>
-                                             <%= viewlist.book_edition.slice(0, 4)+'-'+viewlist.book_edition.slice(4, 6)+'-'+viewlist.book_edition.slice(6, 8) %>
-                                           </h6>
-                                        <% } else {%>
-                                        <% if(viewlist.book_edition) {%>
-                                             <h6 class="text_title_page"><strong>Edition: </strong><%= viewlist.book_edition %></h6><% } %>
-                                        <% } %>
+                                                                        <% if(viewlist.author){%>
+                                                                            <h6 class="text_title_page">
+                                                                                <strong>Author:</strong>
+                                                                                <%= viewlist.author %>
+                                                                            </h6>
+                                                                            <% } %>
+                                                                                <% if(viewlist.publisher){%>
+                                                                                    <h6 class="text_title_page">
+                                                                                        <strong>Publisher:</strong>
+                                                                                        <%= viewlist.publisher %>
+                                                                                    </h6>
+                                                                                    <% } else {%>
+                                                                                        <h6 class="text_title_page">
+                                                                                            <strong>Publisher:</strong>
+                                                                                            <%= viewlist.imprint_name %>
+                                                                                                (<%= viewlist.book_edition
+                                                                                                    %>)
+                                                                                        </h6>
+                                                                                        <% } %>
+                                                                                            <% if(viewlist.book_edition
+                                                                                                &&
+                                                                                                viewlist.imprint_name=="HarperCollins"
+                                                                                                ) {%>
+                                                                                                <h6
+                                                                                                    class="text_title_page">
+                                                                                                    <strong>Edition:
+                                                                                                    </strong>
+                                                                                                    <%= viewlist.book_edition.slice(0,
+                                                                                                        4)+'-'+viewlist.book_edition.slice(4,
+                                                                                                        6)+'-'+viewlist.book_edition.slice(6,
+                                                                                                        8) %>
+                                                                                                </h6>
+                                                                                                <% } else {%>
+                                                                                                    <% if(viewlist.book_edition)
+                                                                                                        {%>
+                                                                                                        <h6
+                                                                                                            class="text_title_page">
+                                                                                                            <strong>Edition:
+                                                                                                            </strong>
+                                                                                                            <%= viewlist.book_edition
+                                                                                                                %>
+                                                                                                        </h6>
+                                                                                                        <% } %>
+                                                                                                            <% } %>
 
-                                        <% if(viewlist.isbn) {%>
-                                          <h6 class="text_title_page"><strong>ISBN-10:</strong> <%= viewlist.isbn %></h6>
-                                        <% } %>
+                                                                                                                <% if(viewlist.isbn)
+                                                                                                                    {%>
+                                                                                                                    <h6
+                                                                                                                        class="text_title_page">
+                                                                                                                        <strong>ISBN-10:</strong>
+                                                                                                                        <%= viewlist.isbn
+                                                                                                                            %>
+                                                                                                                    </h6>
+                                                                                                                    <% }
+                                                                                                                        %>
 
-                                        <% if(viewlist.isbn13) { %>
-                                          <h6 class="text_title_page"><strong>ISBN-13:</strong> <%= viewlist.isbn13 %></h6>
-                                        <% } %>
+                                                                                                                        <% if(viewlist.isbn13)
+                                                                                                                            {
+                                                                                                                            %>
+                                                                                                                            <h6
+                                                                                                                                class="text_title_page">
+                                                                                                                                <strong>ISBN-13:</strong>
+                                                                                                                                <%= viewlist.isbn13
+                                                                                                                                    %>
+                                                                                                                            </h6>
+                                                                                                                            <% }
+                                                                                                                                %>
 
-                                        <% if(viewlist.publishing_year) {%>
-                                          <h6 class="text_title_page"><strong>Publishing year:</strong> <%= viewlist.publishing_year %></h6>
-                                        <% } %>
+                                                                                                                                <% if(viewlist.publishing_year)
+                                                                                                                                    {%>
+                                                                                                                                    <h6
+                                                                                                                                        class="text_title_page">
+                                                                                                                                        <strong>Publishing
+                                                                                                                                            year:</strong>
+                                                                                                                                        <%= viewlist.publishing_year
+                                                                                                                                            %>
+                                                                                                                                    </h6>
+                                                                                                                                    <% }
+                                                                                                                                        %>
 
-                                        <% if(viewlist.no_of_pages) {%>
-                                          <h6 class="text_title_page"><strong>No of pages:</strong> <%= viewlist.no_of_pages %></h6>
-                                        <% } %>
+                                                                                                                                        <% if(viewlist.no_of_pages)
+                                                                                                                                            {%>
+                                                                                                                                            <h6
+                                                                                                                                                class="text_title_page">
+                                                                                                                                                <strong>No
+                                                                                                                                                    of
+                                                                                                                                                    pages:</strong>
+                                                                                                                                                <%= viewlist.no_of_pages
+                                                                                                                                                    %>
+                                                                                                                                            </h6>
+                                                                                                                                            <% }
+                                                                                                                                                %>
 
-                                        <% if(viewlist.weight && viewlist.weight !="undefined") {%>
-                                          <h6 class="text_title_page"><strong>Weight:</strong> <%= viewlist.weight %></h6>
-                                        <% } %>
+                                                                                                                                                <% if(viewlist.weight
+                                                                                                                                                    &&
+                                                                                                                                                    viewlist.weight
+                                                                                                                                                    !="undefined"
+                                                                                                                                                    )
+                                                                                                                                                    {%>
+                                                                                                                                                    <h6
+                                                                                                                                                        class="text_title_page">
+                                                                                                                                                        <strong>Weight:</strong>
+                                                                                                                                                        <%= viewlist.weight
+                                                                                                                                                            %>
+                                                                                                                                                    </h6>
+                                                                                                                                                    <% }
+                                                                                                                                                        %>
 
-                                        <% if(viewlist.book_language) {%>
-                                          <h6 class="text_title_page"><strong>Language:</strong> <%= viewlist.book_language %></h6>
-                                        <% } %>
+                                                                                                                                                        <% if(viewlist.book_language)
+                                                                                                                                                            {%>
+                                                                                                                                                            <h6
+                                                                                                                                                                class="text_title_page">
+                                                                                                                                                                <strong>Language:</strong>
+                                                                                                                                                                <%= viewlist.book_language
+                                                                                                                                                                    %>
+                                                                                                                                                            </h6>
+                                                                                                                                                            <% }
+                                                                                                                                                                %>
 
-                                        <% if(viewlist.book_binding) {%>
-                                          <h6 class="text_title_page"><strong>Book binding:</strong> <%= viewlist.book_binding %></h6>
-                                        <% } %>
+                                                                                                                                                                <% if(viewlist.book_binding)
+                                                                                                                                                                    {%>
+                                                                                                                                                                    <h6
+                                                                                                                                                                        class="text_title_page">
+                                                                                                                                                                        <strong>Book
+                                                                                                                                                                            binding:</strong>
+                                                                                                                                                                        <%= viewlist.book_binding
+                                                                                                                                                                            %>
+                                                                                                                                                                    </h6>
+                                                                                                                                                                    <% }
+                                                                                                                                                                        %>
 
-                                        <hr class="a-divider-normal" />
-                                        <!-- <div class="row">
+                                                                                                                                                                        <hr
+                                                                                                                                                                            class="a-divider-normal" />
+                                                                                                                                                                        <!-- <div class="row">
                                           <div class="col-sm-6">
                                             <input type="text" id="pincode" name="pincode" maxlength="6" class="form-control" placeholder="Enter delivery pincode" onkeypress="return isNumberKey(event)" >
                                           </div>
@@ -274,406 +412,525 @@
                                           </div>
 
                                         </div> -->
+                                                                    </div>
+
+                                                                </div><!-- /.row -->
+                                                            </div><!-- /.price-container -->
+                                                            <% if(viewlist.product_type==4){%>
+                                                                <form action="/preorderdata" method="post">
+                                                                    <div class="quantity-container info-container">
+                                                                        <div class="row">
+                                                                            <% if(usersdata.totalrecord>0) {%>
+                                                                                <button type="button"
+                                                                                    class="btn btn-primary outer-right-xs">Pre
+                                                                                    Ordered</button>
+                                                                                <% } else { %>
+                                                                                    <button type="button"
+                                                                                        class="btn btn-primary outer-right-xs"
+                                                                                        data-toggle="modal"
+                                                                                        data-target="#preOrderModal">Pre-order
+                                                                                        now</button>
+                                                                                    <% } %>
+                                                                        </div>
+                                                                    </div>
+                                                                </form>
+                                                                <% } else {%>
+                                                                    <form action="/saveaddtocart" method="post">
+                                                                        <% if(settingData && settingData.permission==1)
+                                                                            {%>
+                                                                            <input type="hidden" name="_csrf"
+                                                                                value="<%= csrfToken %>">
+                                                                            <div
+                                                                                class="quantity-container info-container">
+                                                                                <div class="row">
+                                                                                    <% if(viewlist.quantity> 0) {%>
+                                                                                        <div class="col-sm-2">
+                                                                                            <span class="label">Qty
+                                                                                                :</span>
+                                                                                        </div>
+                                                                                        <div class="col-sm-2">
+                                                                                            <div
+                                                                                                class="cart-quantity input-group">
+                                                                                                <div
+                                                                                                    class="quant-input">
+                                                                                                    <div class="arrows">
+                                                                                                        <div
+                                                                                                            class="arrow btn-plus gradient">
+                                                                                                            <span
+                                                                                                                class="ir"><i
+                                                                                                                    class="icon fa fa-sort-asc"></i></span>
+                                                                                                        </div>
+                                                                                                        <div
+                                                                                                            class="arrow btn-minus gradient">
+                                                                                                            <span
+                                                                                                                class="ir"><i
+                                                                                                                    class="icon fa fa-sort-desc"></i></span>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                    <input
+                                                                                                        class="form-control quantity"
+                                                                                                        min="1"
+                                                                                                        max="<%= viewlist.quantity %>"
+                                                                                                        name="quantity"
+                                                                                                        value="1"
+                                                                                                        type="number">
+                                                                                                    <input type="hidden"
+                                                                                                        name="product_id"
+                                                                                                        value="<%= viewlist.id %>">
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <% } %>
+                                                                                            <div class="col-sm-7">
+                                                                                                <% if(viewlist.quantity>
+                                                                                                    0) {%>
+                                                                                                    <button
+                                                                                                        type="submit"
+                                                                                                        class="btn btn-primary"><i
+                                                                                                            class="fa fa-shopping-cart inner-right-vs"></i>
+                                                                                                        ADD TO
+                                                                                                        CART</button>
+                                                                                                    <!-- <a href="/add-to-cart/<%= viewlist.id %>" class="btn btn-primary"><i class="fa fa-shopping-cart inner-right-vs"></i> ADD TO CART </a> -->
+                                                                                                    <% } else {%>
+                                                                                                        <div
+                                                                                                            class="row">
+                                                                                                            <div
+                                                                                                                class="col-sm-6">
+                                                                                                                <span
+                                                                                                                    class="comingsoon">Coming
+                                                                                                                    Soon</span>
+                                                                                                            </div>
+                                                                                                            <div
+                                                                                                                class="col-sm-6">
+                                                                                                                <button
+                                                                                                                    type="button"
+                                                                                                                    class="btn btn-primary outer-right-xs"
+                                                                                                                    data-toggle="modal"
+                                                                                                                    data-target="#myModal">Request
+                                                                                                                    a
+                                                                                                                    Call
+                                                                                                                    Back</button>
+                                                                                                            </div>
+                                                                                                        </div>
+
+                                                                                                        <% } %>
+                                                                                            </div>
+
+                                                                                </div><!-- /.row -->
+                                                                            </div><!-- /.quantity-container -->
+                                                                            <% } else {%>
+                                                                                <h5>
+                                                                                    <p class="text-danger">Please wait a
+                                                                                        few minutes before you try
+                                                                                        again.</p>
+                                                                                </h5>
+                                                                                <% } %>
+                                                                    </form>
+                                                                    <% } %>
+                                                        </div><!-- /.product-info -->
+                                            </div><!-- /.col-sm-7 -->
+                                        </div><!-- /.row -->
                                     </div>
 
-                                </div><!-- /.row -->
-                            </div><!-- /.price-container -->
-                            <% if(viewlist.product_type == 4){%>
-                            <form action="/preorderdata" method="post">
-                                <div class="quantity-container info-container">
-                                    <div class="row">
-                                        <% if(usersdata.totalrecord>0) {%>
-                                            <button type="button" class="btn btn-primary outer-right-xs">Pre Ordered</button>
-                                        <% } else { %>
-                                            <button type="button" class="btn btn-primary outer-right-xs" data-toggle="modal" data-target="#preOrderModal">Pre-order now</button>
-                                        <% } %>    
-                                    </div>
-                                </div>
-                            </form>
-                        <% } else {%>
-                            <form action="/saveaddtocart" method="post">
-                                <% if(settingData && settingData.permission==1) {%>
-                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                            <div class="quantity-container info-container">
-                                <div class="row">
-                                    <% if(viewlist.quantity > 0) {%>
-                                    <div class="col-sm-2">
-                                        <span class="label">Qty :</span>
-                                    </div>
-                                    <div class="col-sm-2">
-                                        <div class="cart-quantity input-group">
-                                            <div class="quant-input">
-                                                <div class="arrows">
-                                                  <div class="arrow btn-plus gradient"><span class="ir"><i class="icon fa fa-sort-asc"></i></span></div>
-                                                  <div class="arrow btn-minus gradient"><span class="ir"><i class="icon fa fa-sort-desc"></i></span></div>
-                                                </div>
-                                                <input class="form-control quantity" min="1" max="<%= viewlist.quantity %>" name="quantity" value="1" type="number">
-                                                <input type="hidden" name="product_id" value="<%= viewlist.id %>">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <% } %>
-                                    <div class="col-sm-7">
-                                      <% if(viewlist.quantity > 0) {%>
-                                      <button type="submit" class="btn btn-primary"><i class="fa fa-shopping-cart inner-right-vs"></i> ADD TO CART</button>
-                                        <!-- <a href="/add-to-cart/<%= viewlist.id %>" class="btn btn-primary"><i class="fa fa-shopping-cart inner-right-vs"></i> ADD TO CART </a> -->
-                                      <% } else {%>
-                                      <div class="row">
-                                        <div class="col-sm-6"><span class="comingsoon">Coming Soon</span></div>
-                                        <div class="col-sm-6">
-                                        <button type="button" class="btn btn-primary outer-right-xs" data-toggle="modal" data-target="#myModal">Request a Call Back</button></div>
-                                      </div>
-                                        
-                                      <% } %>  
-                                    </div>
-
-                                </div><!-- /.row -->
-                            </div><!-- /.quantity-container -->
-                            <% } else {%>
-                                <h5><p class="text-danger">Please wait a few minutes before you try again.</p></h5>
-                            <% } %>
-                            </form>
-                            <% } %>
-                        </div><!-- /.product-info -->
-                    </div><!-- /.col-sm-7 -->
-                </div><!-- /.row -->
-                </div>
-
-                <% if(viewlist.description!="" || viewlist.author_details!="") {%>
-                <div class="product-tabs inner-bottom-xs  wow fadeInUp">
-                    <div class="row">
-                        <div class="col-sm-3">
-                            <ul id="product-tabs" class="nav nav-tabs nav-tab-cell">
-                                <li class="active"><a data-toggle="tab" href="#review">About the Author</a></li>
-                                <li><a data-toggle="tab" href="#description">DESCRIPTION</a></li>
-                                <!-- <li><a data-toggle="tab" href="#review">REVIEW</a></li>
+                                    <% if(viewlist.description!="" || viewlist.author_details!="" ) {%>
+                                        <div class="product-tabs inner-bottom-xs  wow fadeInUp">
+                                            <div class="row">
+                                                <div class="col-sm-3">
+                                                    <ul id="product-tabs" class="nav nav-tabs nav-tab-cell">
+                                                        <li class="active"><a data-toggle="tab" href="#review">About the
+                                                                Author</a></li>
+                                                        <li><a data-toggle="tab" href="#description">DESCRIPTION</a>
+                                                        </li>
+                                                        <!-- <li><a data-toggle="tab" href="#review">REVIEW</a></li>
                                 <li><a data-toggle="tab" href="#tags">TAGS</a></li> -->
-                            </ul><!-- /.nav-tabs #product-tabs -->
-                        </div>
-                        <div class="col-sm-9">
-                            <div class="tab-content">
-                                <div id="review" class="tab-pane in active">
-                                    <div class="product-tab">
-                                        <% if(viewlist.author_details) {%>
-                                            <p class="text addReadMore showlesscontent"><%= viewlist.author_details %></p>
-                                        <% } else { %>
-                                            <p class="text">no information available</p>
+                                                    </ul><!-- /.nav-tabs #product-tabs -->
+                                                </div>
+                                                <div class="col-sm-9">
+                                                    <div class="tab-content">
+                                                        <div id="review" class="tab-pane in active">
+                                                            <div class="product-tab">
+                                                                <% if(viewlist.author_details) {%>
+                                                                    <p class="text addReadMore showlesscontent">
+                                                                        <%= viewlist.author_details %>
+                                                                    </p>
+                                                                    <% } else { %>
+                                                                        <p class="text">no information available</p>
+                                                                        <% } %>
+                                                            </div>
+                                                        </div>
+
+                                                        <div id="description" class="tab-pane">
+                                                            <div class="product-tab">
+                                                                <% if(viewlist.description) {%>
+                                                                    <p class="text addReadMore showlesscontent">
+                                                                        <%= viewlist.description %>
+                                                                    </p>
+                                                                    <% } else { %>
+                                                                        <p class="text">no information available</p>
+                                                                        <% } %>
+                                                            </div>
+                                                        </div>
+                                                    </div><!-- /.tab-content -->
+                                                </div><!-- /.col -->
+                                            </div><!-- /.row -->
+                                        </div><!-- /.product-tabs -->
                                         <% } %>
-                                    </div>  
-                                </div>
 
-                                <div id="description" class="tab-pane">
-                                    <div class="product-tab">
-                                        <% if(viewlist.description) {%>
-                                            <p class="text addReadMore showlesscontent"><%= viewlist.description %></p>
-                                        <% } else { %>
-                                            <p class="text">no information available</p>
-                                        <% } %>    
-                                    </div>  
-                                </div>
-                            </div><!-- /.tab-content -->
-                        </div><!-- /.col -->
-                    </div><!-- /.row -->
-                </div><!-- /.product-tabs -->
-                <% } %>
+                                            <% } else { %>
+                                                <p class="text-center">Record Not Found.</p>
+                                                <% } %>
 
-                <% } else { %>
-                    <p class="text-center">Record Not Found.</p>
-                <% } %>
+                                                    <!-- ============================================== UPSELL PRODUCTS ============================================== -->
+                                                    <section class="section featured-product wow fadeInUp">
+                                                        <h3 class="section-title">Related to Items You've Viewed</h3>
+                                                        <div
+                                                            class="owl-carousel home-owl-carousel upsell-product custom-carousel owl-theme outer-top-xs">
+                                                            <% if (get_products.length> 0) {%>
+                                                                <% get_products.forEach((list, index)=> { %>
+                                                                    <% var
+                                                                        main_price=(list.price)-(list.price/100)*list.discount;
+                                                                        %>
+                                                                        <div class="item item-carousel">
+                                                                            <div class="products">
+                                                                                <div class="product">
+                                                                                    <div class="product-image_view_pro">
+                                                                                        <% if(list.image){%>
+                                                                                            <div class="image">
+                                                                                                <% if(/(http(s?)):\/\//i.test(list.image))
+                                                                                                    {%>
+                                                                                                    <a target="_blank"
+                                                                                                        href="<%= baseURL %><%= list.slug %>/<%= list.id %>"><img
+                                                                                                            src="<%= list.image %>"
+                                                                                                            alt="<%= list.name %>"></a>
+                                                                                                    <% } else { %>
+                                                                                                        <a target="_blank"
+                                                                                                            href="<%= baseURL %><%= list.slug %>/<%= list.id %>"><img
+                                                                                                                src="<%= process.env.IMAGE_URL %><%= list.image %>"
+                                                                                                                alt="<%= list.name %>"></a>
+                                                                                                        <% } %>
+                                                                                            </div>
+                                                                                            <% } else {%>
+                                                                                                <div class="image"> <a
+                                                                                                        target="_blank"
+                                                                                                        href="<%= baseURL %><%= list.slug %>/<%= list.id %>"><img
+                                                                                                            src="<%= baseURL %>assets/images/404.jpg"
+                                                                                                            alt="<%= list.name %>"></a>
+                                                                                                </div>
+                                                                                                <% } %>
+                                                                                    </div>
+                                                                                    <div class="product-info text-left">
+                                                                                        <h3 class="name"><a
+                                                                                                target="_blank"
+                                                                                                href="<%= baseURL %><%= list.slug %>/<%= list.id %>">
+                                                                                                <%= list.name.substring(0,
+                                                                                                    60) %>
+                                                                                            </a></h3>
+                                                                                        <div>by:<%= list.author %>
+                                                                                        </div>
+                                                                                        <div
+                                                                                            class="rating rateit-small">
+                                                                                        </div>
+                                                                                        <div class="description"></div>
+                                                                                        <div class="product-price">
+                                                                                            <span class="price">
+                                                                                                ₹<% if(main_price){%>
+                                                                                                    <%= main_price.toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"
+                                                                                                        ) %>
+                                                                                                        <% } %>
+                                                                                            </span> <span
+                                                                                                class="price-before-discount">₹
+                                                                                                <% if(list.price) {%>
+                                                                                                    <%= (list.price).toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"
+                                                                                                        ) %>
+                                                                                                        <% } %></span>
+                                                                                            <span>
+                                                                                                <%= list.discount %>%
+                                                                                                    off
+                                                                                            </span>
+                                                                                        </div>
+                                                                                        <% if( maxplan[0].MaxPlanPrice>=
+                                                                                            list.price ) { %>
+                                                                                            <div class="on_rent"><a
+                                                                                                    href="<%= baseURL %>membership?productId=<%= list.id %>">On
+                                                                                                    Rent</a></div>
+                                                                                            <% } %>
+                                                                                                <div class="add_cart">
+                                                                                                    <a target="_blank"
+                                                                                                        href="<%= baseURL %><%= list.slug %>/<%= list.id %>"><i
+                                                                                                            class="fa fa-shopping-cart"></i>
+                                                                                                        View Product</a>
+                                                                                                </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <% }) %>
+                                                                            <% } else { %>
+                                                                                <span>not record found.</span>
+                                                                                <% } %>
+                                                        </div><!-- /.home-owl-carousel -->
+                                                    </section><!-- /.section -->
+                                                    <!-- ============================================== UPSELL PRODUCTS : END ============================================== -->
 
-                <!-- ============================================== UPSELL PRODUCTS ============================================== -->
-<section class="section featured-product wow fadeInUp">
-    <h3 class="section-title">Related to Items You've Viewed</h3>
-    <div class="owl-carousel home-owl-carousel upsell-product custom-carousel owl-theme outer-top-xs">
-       <% if (get_products.length > 0) {%>
-        <% get_products.forEach((list, index) => { %>
-        <%
-        var main_price = (list.price)-(list.price/100)*list.discount;
-        %>
-            <div class="item item-carousel">
-                <div class="products">
-                    <div class="product">
-                        <div class="product-image_view_pro">
-                            <% if(list.image){%>
-                                <div class="image"> 
-                                    <% if(/(http(s?)):\/\//i.test(list.image)) {%>
-                                        <a target="_blank" href="<%= baseURL %><%= list.slug %>/<%= list.id %>"><img src="<%= list.image %>" alt="<%= list.name %>"></a>
-                                    <% } else { %>
-                                        <a target="_blank" href="<%= baseURL %><%= list.slug %>/<%= list.id %>"><img src="<%= process.env.IMAGE_URL %><%= list.image %>" alt="<%= list.name %>"></a>
-                                    <% } %>
-                                </div>
-                            <% } else {%>
-                                <div class="image"> <a target="_blank" href="<%= baseURL %><%= list.slug %>/<%= list.id %>"><img src="<%= baseURL %>assets/images/404.jpg" alt="<%= list.name %>"></a> </div>
-                            <% } %>
+                            </div><!-- /.col -->
+                            <div class="clearfix"></div>
+                </div><!-- /.row -->
+            </div><!-- /.container -->
+        </div><!-- /.body-content -->
+        <!-- Modal -->
+        <div class="modal fade" id="preOrderModal" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form action="/preorder" method="post" autocomplete="off">
+                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                        <input type="hidden" name="product_id" value="<%= cryptr.encrypt(viewlist.id) %>">
+                        <input type="hidden" name="product_name" value="<%=viewlist.name %>">
+                        <input type="hidden" name="product_slug" value="<%= cryptr.encrypt(viewlist.slug) %>">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Book name: [ <strong>
+                                    <%= viewlist.name %>
+                                </strong>]</h4>
                         </div>
-                        <div class="product-info text-left">
-                            <h3 class="name"><a target="_blank" href="<%= baseURL %><%= list.slug %>/<%= list.id %>"><%= list.name.substring(0, 60) %></a></h3>
-                            <div>by:<%= list.author %></div>
-                            <div class="rating rateit-small"></div>
-                            <div class="description"></div>
-                            <div class="product-price"> 
-                                <span class="price">
-                             ₹<% if(main_price){%><%= main_price.toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,") %> <% } %>
-                         </span> <span class="price-before-discount">₹ <% if(list.price) {%><%= (list.price).toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,") %><% } %></span>  <span><%= list.discount %>% off</span></div>
-                            <% if( maxplan[0].MaxPlanPrice >= list.price ) { %>
-                                <div class="on_rent"><a href="<%= baseURL %>membership?productId=<%= list.id %>">On Rent</a></div>
-                            <% } %>
-                            <div class="add_cart">
-                                <a target="_blank" href="<%= baseURL %><%= list.slug %>/<%= list.id %>"><i class="fa fa-shopping-cart"></i> View Product</a>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label>Your Name: </label>
+                                <% if(data) {%>
+                                    <%= data.name %>
+                                        <% } else { %>
+                                            <input type="text" name="username" class="form-control"
+                                                placeholder="Please enter name" required>
+                                            <% } %>
+                            </div>
+                            <div class="form-group">
+                                <label>Your Mobile: </label>
+                                <% if(data) {%>
+                                    <%= data.mobile %>
+                                        <% } else {%>
+                                            <input type="text" name="userphone" class="form-control"
+                                                placeholder="Please enter phone no." required=""
+                                                onkeypress="return isNumberKey(event)" maxlength="10" minlength="10">
+                                            <% } %>
+                            </div>
+                            <div class="form-group">
+                                <label>Your Message:</label>
+                                <textarea name="message" id="message" class="form-control"
+                                    placeholder="Please enter message" rows="3" maxlength="160"
+                                    onkeydown="limitText(this.form.message,this.form.countdown,160);"
+                                    onkeyup='limitText(this.form.message,this.form.countdown,160);'></textarea>
+                                You have<input readonly type="text" name="countdown" size="3" value="160"> chars left
                             </div>
                         </div>
-                    </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-success">Submit</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                    </form>
                 </div>
             </div>
-    <% }) %>
-    <% } else { %>
-        <span>not record found.</span>
-    <% } %>
-    </div><!-- /.home-owl-carousel -->
-</section><!-- /.section -->
-<!-- ============================================== UPSELL PRODUCTS : END ============================================== -->
-            
-            </div><!-- /.col -->
-            <div class="clearfix"></div>
-        </div><!-- /.row -->
-      </div><!-- /.container -->
-</div><!-- /.body-content -->
-<!-- Modal -->
-<div class="modal fade" id="preOrderModal" role="dialog">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <form action="/preorder" method="post" autocomplete="off">
-        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-        <input type="hidden" name="product_id" value="<%= cryptr.encrypt(viewlist.id) %>">  
-        <input type="hidden" name="product_name" value="<%=viewlist.name %>">
-        <input type="hidden" name="product_slug" value="<%= cryptr.encrypt(viewlist.slug) %>">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h4 class="modal-title">Book name: [ <strong><%= viewlist.name %> </strong>]</h4>
         </div>
-        <div class="modal-body">
-            <div class="form-group">
-                <label>Your Name: </label>
-                <% if(data) {%><%= data.name %><% } else { %>
-                    <input type="text" name="username" class="form-control" placeholder="Please enter name" required>
-                <% } %>
-            </div>
-            <div class="form-group">
-                <label>Your Mobile: </label>
-                <% if(data) {%><%= data.mobile %> <% } else {%>
-                <input type="text" name="userphone" class="form-control" placeholder="Please enter phone no." required="" onkeypress="return isNumberKey(event)" maxlength="10" minlength="10" >
-                <% } %>
-            </div>
-            <div class="form-group">
-                <label>Your Message:</label>
-                <textarea name="message" id="message" class="form-control" placeholder="Please enter message" rows="3" maxlength="160" onkeydown="limitText(this.form.message,this.form.countdown,160);" onkeyup='limitText(this.form.message,this.form.countdown,160);'></textarea>
-                You have<input readonly type="text" name="countdown" size="3" value="160"> chars left
+        <div class="modal fade" id="myModal" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form action="/addcallback" method="post">
+                        <input type="hidden" name="product_id" value="<%= viewlist.id %>">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">
+                                <%= viewlist.name %>
+                            </h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label>Enter Name.</label>
+                                <input type="text" name="username" class="form-control" placeholder="Please enter name."
+                                    required="">
+                            </div>
+                            <div class="form-group">
+                                <label>Enter Phone No.</label>
+                                <input type="text" name="userphone" class="form-control"
+                                    placeholder="Please enter phone no." required=""
+                                    onkeypress="return isNumberKey(event)" maxlength="10" minlength="10">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-success">Submit</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
-        <div class="modal-footer">
-          <button type="submit" class="btn btn-success">Submit</button>
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        </div>
-        </form>
-      </div>
-    </div>
-</div>
-<div class="modal fade" id="myModal" role="dialog">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <form action="/addcallback" method="post">
-        <input type="hidden" name="product_id" value="<%= viewlist.id %>">  
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h4 class="modal-title"><%= viewlist.name %></h4>
-        </div>
-        <div class="modal-body">
-          <div class="form-group">
-            <label>Enter Name.</label>
-            <input type="text" name="username" class="form-control" placeholder="Please enter name." required="">
-           </div>
-          <div class="form-group">
-            <label>Enter Phone No.</label>
-            <input type="text" name="userphone" class="form-control" placeholder="Please enter phone no." required="" onkeypress="return isNumberKey(event)" maxlength="10" minlength="10" >
-           </div>
-        </div>
-        <div class="modal-footer">
-          <button type="submit" class="btn btn-success">Submit</button>
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        </div>
-        </form>
-      </div>
-    </div>
-  </div>
-<%- include ("../front/book_footer") %>
-    <script src="<%= baseURL %>assets/js/jquery-1.11.1.min.js"></script>
-    <script src="<%= baseURL %>assets/js/bootstrap.min.js"></script>
-    <script src="<%= baseURL %>assets/js/bootstrap-hover-dropdown.min.js"></script>
-    <script src="<%= baseURL %>assets/js/owl.carousel.min.js"></script>
-    <script src="<%= baseURL %>assets/js/echo.min.js"></script>
-    <script src="<%= baseURL %>assets/js/jquery.easing-1.3.min.js"></script>
-    <script src="<%= baseURL %>assets/js/bootstrap-slider.min.js"></script>
-    <script src="<%= baseURL %>assets/js/jquery.rateit.min.js"></script>
-    <script src="<%= baseURL %>assets/js/lightbox.min.js"></script>
-    <script src="<%= baseURL %>assets/js/bootstrap-select.min.js"></script>
-    <script src="<%= baseURL %>assets/js/wow.min.js"></script>
-    <script src="<%= baseURL %>assets/js/scripts.js"></script>
-    <script src="<%= baseURL %>assets/js/readmore.js"></script>
-    <script src="<%= baseURL %>assets/js/product_details.js"></script>
-    <script src='https://unpkg.com/xzoom/dist/xzoom.min.js'></script>
-    <script src='https://hammerjs.github.io/dist/hammer.min.js'></script>
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/foundation/6.3.1/js/foundation.min.js'></script>
-        <script>
-            (function ($) {
-                $(document).ready(function () {
-                    $('.xzoom, .xzoom-gallery').xzoom({ zoomWidth: 400, title: true, tint: '#333', Xoffset: 15 });
-                    $('.xzoom2, .xzoom-gallery2').xzoom({ position: '#xzoom2-id', tint: '#ffa200' });
-                    $('.xzoom3, .xzoom-gallery3').xzoom({ position: 'lens', lensShape: 'circle', sourceClass: 'xzoom-hidden' });
-                    $('.xzoom4, .xzoom-gallery4').xzoom({ tint: '#006699', Xoffset: 15 });
-                    $('.xzoom5, .xzoom-gallery5').xzoom({ tint: '#006699', Xoffset: 15 });
+        <%- include ("../front/book_footer") %>
+            <script src="<%= baseURL %>assets/js/jquery-1.11.1.min.js"></script>
+            <script src="<%= baseURL %>assets/js/bootstrap.min.js"></script>
+            <script src="<%= baseURL %>assets/js/bootstrap-hover-dropdown.min.js"></script>
+            <script src="<%= baseURL %>assets/js/owl.carousel.min.js"></script>
+            <script src="<%= baseURL %>assets/js/echo.min.js"></script>
+            <script src="<%= baseURL %>assets/js/jquery.easing-1.3.min.js"></script>
+            <script src="<%= baseURL %>assets/js/bootstrap-slider.min.js"></script>
+            <script src="<%= baseURL %>assets/js/jquery.rateit.min.js"></script>
+            <script src="<%= baseURL %>assets/js/lightbox.min.js"></script>
+            <script src="<%= baseURL %>assets/js/bootstrap-select.min.js"></script>
+            <script src="<%= baseURL %>assets/js/wow.min.js"></script>
+            <script src="<%= baseURL %>assets/js/scripts.js"></script>
+            <script src="<%= baseURL %>assets/js/readmore.js"></script>
+            <script src="<%= baseURL %>assets/js/product_details.js"></script>
+            <script src='https://unpkg.com/xzoom/dist/xzoom.min.js'></script>
+            <script src='https://hammerjs.github.io/dist/hammer.min.js'></script>
+            <script src='https://cdnjs.cloudflare.com/ajax/libs/foundation/6.3.1/js/foundation.min.js'></script>
+            <script>
+                (function ($) {
+                    $(document).ready(function () {
+                        $('.xzoom, .xzoom-gallery').xzoom({ zoomWidth: 400, title: true, tint: '#333', Xoffset: 15 });
+                        $('.xzoom2, .xzoom-gallery2').xzoom({ position: '#xzoom2-id', tint: '#ffa200' });
+                        $('.xzoom3, .xzoom-gallery3').xzoom({ position: 'lens', lensShape: 'circle', sourceClass: 'xzoom-hidden' });
+                        $('.xzoom4, .xzoom-gallery4').xzoom({ tint: '#006699', Xoffset: 15 });
+                        $('.xzoom5, .xzoom-gallery5').xzoom({ tint: '#006699', Xoffset: 15 });
 
-                    //Integration with hammer.js
-                    var isTouchSupported = 'ontouchstart' in window;
+                        //Integration with hammer.js
+                        var isTouchSupported = 'ontouchstart' in window;
 
-                    if (isTouchSupported) {
-                        //If touch device
-                        $('.xzoom, .xzoom2, .xzoom3, .xzoom4, .xzoom5').each(function () {
-                            var xzoom = $(this).data('xzoom');
-                            xzoom.eventunbind();
-                        });
-
-                        $('.xzoom, .xzoom2, .xzoom3').each(function () {
-                            var xzoom = $(this).data('xzoom');
-                            $(this).hammer().on("tap", function (event) {
-                                event.pageX = event.gesture.center.pageX;
-                                event.pageY = event.gesture.center.pageY;
-                                var s = 1, ls;
-
-                                xzoom.eventmove = function (element) {
-                                    element.hammer().on('drag', function (event) {
-                                        event.pageX = event.gesture.center.pageX;
-                                        event.pageY = event.gesture.center.pageY;
-                                        xzoom.movezoom(event);
-                                        event.gesture.preventDefault();
-                                    });
-                                }
-
-                                xzoom.eventleave = function (element) {
-                                    element.hammer().on('tap', function (event) {
-                                        xzoom.closezoom();
-                                    });
-                                }
-                                xzoom.openzoom(event);
+                        if (isTouchSupported) {
+                            //If touch device
+                            $('.xzoom, .xzoom2, .xzoom3, .xzoom4, .xzoom5').each(function () {
+                                var xzoom = $(this).data('xzoom');
+                                xzoom.eventunbind();
                             });
-                        });
 
-                        $('.xzoom4').each(function () {
-                            var xzoom = $(this).data('xzoom');
-                            $(this).hammer().on("tap", function (event) {
-                                event.pageX = event.gesture.center.pageX;
-                                event.pageY = event.gesture.center.pageY;
-                                var s = 1, ls;
+                            $('.xzoom, .xzoom2, .xzoom3').each(function () {
+                                var xzoom = $(this).data('xzoom');
+                                $(this).hammer().on("tap", function (event) {
+                                    event.pageX = event.gesture.center.pageX;
+                                    event.pageY = event.gesture.center.pageY;
+                                    var s = 1, ls;
 
-                                xzoom.eventmove = function (element) {
-                                    element.hammer().on('drag', function (event) {
-                                        event.pageX = event.gesture.center.pageX;
-                                        event.pageY = event.gesture.center.pageY;
-                                        xzoom.movezoom(event);
-                                        event.gesture.preventDefault();
-                                    });
-                                }
-
-                                var counter = 0;
-                                xzoom.eventclick = function (element) {
-                                    element.hammer().on('tap', function () {
-                                        counter++;
-                                        if (counter == 1) setTimeout(openfancy, 300);
-                                        event.gesture.preventDefault();
-                                    });
-                                }
-
-                                function openfancy() {
-                                    if (counter == 2) {
-                                        xzoom.closezoom();
-                                        $.fancybox.open(xzoom.gallery().cgallery);
-                                    } else {
-                                        xzoom.closezoom();
+                                    xzoom.eventmove = function (element) {
+                                        element.hammer().on('drag', function (event) {
+                                            event.pageX = event.gesture.center.pageX;
+                                            event.pageY = event.gesture.center.pageY;
+                                            xzoom.movezoom(event);
+                                            event.gesture.preventDefault();
+                                        });
                                     }
-                                    counter = 0;
-                                }
-                                xzoom.openzoom(event);
+
+                                    xzoom.eventleave = function (element) {
+                                        element.hammer().on('tap', function (event) {
+                                            xzoom.closezoom();
+                                        });
+                                    }
+                                    xzoom.openzoom(event);
+                                });
                             });
-                        });
 
-                        $('.xzoom5').each(function () {
-                            var xzoom = $(this).data('xzoom');
-                            $(this).hammer().on("tap", function (event) {
-                                event.pageX = event.gesture.center.pageX;
-                                event.pageY = event.gesture.center.pageY;
-                                var s = 1, ls;
+                            $('.xzoom4').each(function () {
+                                var xzoom = $(this).data('xzoom');
+                                $(this).hammer().on("tap", function (event) {
+                                    event.pageX = event.gesture.center.pageX;
+                                    event.pageY = event.gesture.center.pageY;
+                                    var s = 1, ls;
 
-                                xzoom.eventmove = function (element) {
-                                    element.hammer().on('drag', function (event) {
-                                        event.pageX = event.gesture.center.pageX;
-                                        event.pageY = event.gesture.center.pageY;
-                                        xzoom.movezoom(event);
-                                        event.gesture.preventDefault();
-                                    });
-                                }
+                                    xzoom.eventmove = function (element) {
+                                        element.hammer().on('drag', function (event) {
+                                            event.pageX = event.gesture.center.pageX;
+                                            event.pageY = event.gesture.center.pageY;
+                                            xzoom.movezoom(event);
+                                            event.gesture.preventDefault();
+                                        });
+                                    }
 
-                                var counter = 0;
-                                xzoom.eventclick = function (element) {
-                                    element.hammer().on('tap', function () {
-                                        counter++;
-                                        if (counter == 1) setTimeout(openmagnific, 300);
-                                        event.gesture.preventDefault();
-                                    });
-                                }
+                                    var counter = 0;
+                                    xzoom.eventclick = function (element) {
+                                        element.hammer().on('tap', function () {
+                                            counter++;
+                                            if (counter == 1) setTimeout(openfancy, 300);
+                                            event.gesture.preventDefault();
+                                        });
+                                    }
 
-                                function openmagnific() {
-                                    if (counter == 2) {
-                                        xzoom.closezoom();
-                                        var gallery = xzoom.gallery().cgallery;
-                                        var i, images = new Array();
-                                        for (i in gallery) {
-                                            images[i] = { src: gallery[i] };
+                                    function openfancy() {
+                                        if (counter == 2) {
+                                            xzoom.closezoom();
+                                            $.fancybox.open(xzoom.gallery().cgallery);
+                                        } else {
+                                            xzoom.closezoom();
                                         }
-                                        $.magnificPopup.open({ items: images, type: 'image', gallery: { enabled: true } });
-                                    } else {
-                                        xzoom.closezoom();
+                                        counter = 0;
                                     }
-                                    counter = 0;
-                                }
-                                xzoom.openzoom(event);
+                                    xzoom.openzoom(event);
+                                });
                             });
-                        });
 
-                    } else {
-                        //If not touch device
+                            $('.xzoom5').each(function () {
+                                var xzoom = $(this).data('xzoom');
+                                $(this).hammer().on("tap", function (event) {
+                                    event.pageX = event.gesture.center.pageX;
+                                    event.pageY = event.gesture.center.pageY;
+                                    var s = 1, ls;
 
-                        //Integration with fancybox plugin
-                        $('#xzoom-fancy').bind('click', function (event) {
-                            var xzoom = $(this).data('xzoom');
-                            xzoom.closezoom();
-                            $.fancybox.open(xzoom.gallery().cgallery, { padding: 0, helpers: { overlay: { locked: false } } });
-                            event.preventDefault();
-                        });
+                                    xzoom.eventmove = function (element) {
+                                        element.hammer().on('drag', function (event) {
+                                            event.pageX = event.gesture.center.pageX;
+                                            event.pageY = event.gesture.center.pageY;
+                                            xzoom.movezoom(event);
+                                            event.gesture.preventDefault();
+                                        });
+                                    }
 
-                        //Integration with magnific popup plugin
-                        $('#xzoom-magnific').bind('click', function (event) {
-                            var xzoom = $(this).data('xzoom');
-                            xzoom.closezoom();
-                            var gallery = xzoom.gallery().cgallery;
-                            var i, images = new Array();
-                            for (i in gallery) {
-                                images[i] = { src: gallery[i] };
-                            }
-                            $.magnificPopup.open({ items: images, type: 'image', gallery: { enabled: true } });
-                            event.preventDefault();
-                        });
-                    }
-                });
-            })(jQuery);
-        </script>
+                                    var counter = 0;
+                                    xzoom.eventclick = function (element) {
+                                        element.hammer().on('tap', function () {
+                                            counter++;
+                                            if (counter == 1) setTimeout(openmagnific, 300);
+                                            event.gesture.preventDefault();
+                                        });
+                                    }
+
+                                    function openmagnific() {
+                                        if (counter == 2) {
+                                            xzoom.closezoom();
+                                            var gallery = xzoom.gallery().cgallery;
+                                            var i, images = new Array();
+                                            for (i in gallery) {
+                                                images[i] = { src: gallery[i] };
+                                            }
+                                            $.magnificPopup.open({ items: images, type: 'image', gallery: { enabled: true } });
+                                        } else {
+                                            xzoom.closezoom();
+                                        }
+                                        counter = 0;
+                                    }
+                                    xzoom.openzoom(event);
+                                });
+                            });
+
+                        } else {
+                            //If not touch device
+
+                            //Integration with fancybox plugin
+                            $('#xzoom-fancy').bind('click', function (event) {
+                                var xzoom = $(this).data('xzoom');
+                                xzoom.closezoom();
+                                $.fancybox.open(xzoom.gallery().cgallery, { padding: 0, helpers: { overlay: { locked: false } } });
+                                event.preventDefault();
+                            });
+
+                            //Integration with magnific popup plugin
+                            $('#xzoom-magnific').bind('click', function (event) {
+                                var xzoom = $(this).data('xzoom');
+                                xzoom.closezoom();
+                                var gallery = xzoom.gallery().cgallery;
+                                var i, images = new Array();
+                                for (i in gallery) {
+                                    images[i] = { src: gallery[i] };
+                                }
+                                $.magnificPopup.open({ items: images, type: 'image', gallery: { enabled: true } });
+                                event.preventDefault();
+                            });
+                        }
+                    });
+                })(jQuery);
+            </script>
 </body>
+
 </html>
