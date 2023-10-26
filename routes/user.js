@@ -863,8 +863,9 @@ exports.Deletecustomer = function (req, res) {
         req.flash('message', 'Customer has been successfully deleted.');
         res.redirect("/customerpage");
     }); */
-  req.flash("message", "Customer has been successfully deleted.");
-  res.redirect("/customerpage");
+  res.send("ok");
+  //req.flash("message", "Customer has been successfully deleted.");
+  //res.redirect("/customerpage");
 };
 
 exports.Addcategory = function (req, res) {
@@ -2063,7 +2064,7 @@ exports.AdminUpdateProduct = (req, res, next) => {
 
 exports.Deleteproduct = function (req, res) {
   var id = req.body.id;
-  //console.log(id); return;
+  console.log(id); return;
   var data = "";
   var sql1 =
     "UPDATE `products` set is_deleted=1, status=0 where id='" + id + "'";

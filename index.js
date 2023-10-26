@@ -140,30 +140,30 @@ app.post("/updatecity", user.Updatecity);
 app.post("/deletecity", user.Deletecity);
 app.post("/addcustomer", parseForm, csrfProtection, user.Addcustomer);
 //app.post('/editcustomer', user.Editcustomer);
-app.post("/updatecustomer", user.Updatecustomer);
-app.post("/deletecustomer", user.Deletecustomer);
-app.post("/addcategory", user.Addcategory);
-app.post("/addcatalog", user.Addcatalog);
-app.post("/addcatalogcondition", user.Addcatalogcondition);
+app.post("/updatecustomer",routes.authGaurd, user.Updatecustomer);
+app.post("/deletecustomer", routes.authGaurd, user.Deletecustomer);
+app.post("/addcategory",routes.authGaurd, user.Addcategory);
+app.post("/addcatalog",routes.authGaurd, user.Addcatalog);
+app.post("/addcatalogcondition",routes.authGaurd, user.Addcatalogcondition);
 app.post("/addcarts", user.Addcart);
-app.post("/editcategory", user.Editcategory);
-app.post("/updatecategory", user.Updatecategory);
+app.post("/editcategory",routes.authGaurd, user.Editcategory);
+app.post("/updatecategory",routes.authGaurd, user.Updatecategory);
 app.post("/updatecartts", user.Updatecartts);
-app.post("/updatecatalog", user.Updatecatalog);
-app.post("/deletecategory", user.Deletecategory);
-app.get("/deletecatalog/:id", user.Deletecatalog);
-app.get("/deletecatalogcondition/:id", user.Deletecatalogcondition);
+app.post("/updatecatalog",routes.authGaurd, user.Updatecatalog);
+app.post("/deletecategory",routes.authGaurd, user.Deletecategory);
+app.get("/deletecatalog/:id",routes.authGaurd, user.Deletecatalog);
+app.get("/deletecatalogcondition/:id",routes.authGaurd, user.Deletecatalogcondition);
 app.get("/deletecarts/:id", user.Deletecarts);
-app.post("/addsubcategory", user.Addsubcategory);
-app.post("/editsubcategory", user.Editsubcategory);
-app.post("/updatesubcategory", user.Updatesubcategory);
-app.post("/deletesubcategory", user.Deletesubcategory);
-app.post("/categorywisesubcategory", user.Categorywisesubactegory);
-app.post("/addproduct", user.Addproduct);
-app.post("/adminupdateproduct", user.AdminUpdateProduct);
-app.post("/editproduct", user.Editproduct);
-app.post("/updateproduct", user.Updateproduct);
-app.post("/deleteproduct", user.Deleteproduct);
+app.post("/addsubcategory",routes.authGaurd, user.Addsubcategory);
+app.post("/editsubcategory",routes.authGaurd, user.Editsubcategory);
+app.post("/updatesubcategory",routes.authGaurd, user.Updatesubcategory);
+app.post("/deletesubcategory",routes.authGaurd, user.Deletesubcategory);
+app.post("/categorywisesubcategory", routes.authGaurd,user.Categorywisesubactegory);
+app.post("/addproduct",routes.authGaurd, user.Addproduct);
+app.post("/adminupdateproduct",routes.authGaurd, user.AdminUpdateProduct);
+app.post("/editproduct",routes.authGaurd, user.Editproduct);
+app.post("/updateproduct",routes.authGaurd, user.Updateproduct);
+app.post("/deleteproduct",routes.authGaurd, user.Deleteproduct);
 app.post("/checkuniqueISBM13", user.checkUniqueISBM13);
 app.post("/userresetpwd", parseForm, csrfProtection, user.userResetPwd);
 app.post(
@@ -221,8 +221,8 @@ app.get("/primemembership", order.primeMembership);
 app.get("/viewprimeorder", order.viewPrimeOrder);
 app.post("/addprimebook", order.addPrimeBook);
 
-app.get("/user/vieworder/:id", myaccount.userViewOrder);
-app.get("/user/cancelitem", csrfProtection, myaccount.cancelItem);
+app.get("/user/vieworder/:id",routes.authGaurd, myaccount.userViewOrder);
+app.get("/user/cancelitem",routes.authGaurd, csrfProtection, myaccount.cancelItem);
 app.post(
   "/cancle_item_success",
   parseForm,
@@ -258,16 +258,17 @@ app.post(
 );
 app.post("/delete-state-onrent", user.deleteStateonRent);
 
-app.get("/updatecart", product.updateCart);
-app.post("/saveaddtocart", parseForm, csrfProtection, product.saveAddtoCart);
+app.get("/updatecart",routes.authGaurd, product.updateCart);
+app.post("/saveaddtocart", routes.authGaurd, parseForm, csrfProtection, product.saveAddtoCart);
 app.get("/checkpincode", product.checkPinNumber);
-app.get("/myaccount", myaccount.UserAccount);
-app.get("/profile", myaccount.UserProfile);
+app.get("/myaccount", routes.authGaurd, myaccount.UserAccount);
+app.get("/profile",routes.authGaurd, myaccount.UserProfile);
 app.get("/sritezprime", csrfProtection, myaccount.sritezPrime);
 app.post(
   "/membership_book_request",
   parseForm,
   csrfProtection,
+  routes.authGaurd,
   myaccount.membershipBookRequest
 );
 
@@ -279,6 +280,7 @@ app.post(
   "/vendorregisterfrm",
   parseForm,
   csrfProtection,
+  routes.authGaurd,
   signin.vendorRegisterFrm
 );
 
@@ -288,23 +290,25 @@ app.post("/registerusers", parseForm, csrfProtection, signin.userRegisters);
 app.get("/contact-us", csrfProtection, signin.userContactUs);
 app.post("/contactus", parseForm, csrfProtection, signin.userContactUsSave);
 
-app.get("/users/dashboard", signin.dashboardProfile);
+app.get("/users/dashboard", routes.authGaurd, signin.dashboardProfile);
 app.post("/userlogin", parseForm, csrfProtection, signin.userLogin);
 app.get("/userlogout", signin.userLogout);
-app.post("/delete-cart", signin.deleteInCart);
+app.post("/delete-cart",routes.authGaurd, signin.deleteInCart);
 app.post("/addcallback", signin.addCallBack);
-app.get("/checkout", csrfProtection, signin.shoppingCheckOut);
+app.get("/checkout", csrfProtection,routes.authGaurd, signin.shoppingCheckOut);
 app.get("/getcaptcha", signin.getCaptchaajax);
 app.post(
   "/billing_information",
   parseForm,
   csrfProtection,
+  routes.authGaurd,
   signin.billingInformation
 );
 app.post(
   "/shipping_information",
   parseForm,
   csrfProtection,
+  routes.authGaurd,
   signin.shippingInformation
 );
 
@@ -314,7 +318,7 @@ app.get("/delete_billing_address", signin.deleteBillingAddress);
 app.post("/create-checkout-session", signin.stripePayment);
 
 /* razorpay */
-app.post("/razorpay-checkout", signin.razorpayPaymentStatus);
+app.post("/razorpay-checkout",routes.authGaurd, signin.razorpayPaymentStatus);
 app.get("/payment_status", signin.orderPaymentStatus);
 
 app.post("/confim_order", signin.confimOrder);
@@ -326,8 +330,8 @@ app.post(
 );
 
 /* razorpay for membership plan */
-app.post("/razorpay-membership-checkout", signin.razorpayMembershipPayment);
-app.get("/payment_membership_status", signin.membershipPaymentStatus);
+app.post("/razorpay-membership-checkout",routes.authGaurd, signin.razorpayMembershipPayment);
+app.get("/payment_membership_status",routes.authGaurd, signin.membershipPaymentStatus);
 
 app.post(
   "/register_user_plan",
@@ -335,7 +339,7 @@ app.post(
   csrfProtection,
   signin.registerUserPlan
 );
-app.get("/membership_checkout", csrfProtection, signin.membershipCheckout);
+app.get("/membership_checkout", csrfProtection, routes.authGaurd, signin.membershipCheckout);
 
 app.get("/forgot-password", csrfProtection, signin.forgotPassword);
 app.get("/verifyotp", csrfProtection, signin.otpVerify);
@@ -394,10 +398,11 @@ app.get("/categories", product.categoryPage);
 app.get("/search", search.searchResult);
 app.get("/viewpost/:id", search.viewSearch);
 
-app.get("/adminplanpage", order.adminPlanPage);
-app.post("/editmembershipplan", order.editMembershipPlan);
+app.get("/adminplanpage", routes.authGaurd, order.adminPlanPage);
+app.post("/editmembershipplan", routes.authGaurd, order.editMembershipPlan);
 
-app.get("/uploadexcel", csrfProtection, uploadcsv.uploadExcel);
+app.get("/uploadexcel", routes.authGaurd, csrfProtection, uploadcsv.uploadExcel);
+app.get("/find-missing-image",  uploadcsv.findMissingImage);
 
 const __basedir = path.resolve();
 const multer = require("multer");
@@ -414,15 +419,15 @@ const uploadFile = multer({ storage: storage });
 app.post(
   "/uploadexcelfile",
   uploadFile.single("uploadexcel"),
+  routes.authGaurd,
   uploadcsv.uploadExcelFile
 );
-app.post("/upload-xlsx", uploadcsv.saveExcelFileData);
+app.post("/upload-xlsx", routes.authGaurd, uploadcsv.saveExcelFileData);
 app.get("/:slug/:id", csrfProtection, product.viewProduct);
 
 app.get("/:id", pages.getCategories);
 
 //Middleware
 app.listen(port, () => {
-  console.log("First COmmit");
   console.log(`Server running on port: ${port}`);
 });

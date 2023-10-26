@@ -241,7 +241,7 @@
                                             <ul class="nav nav-checkout-progress list-unstyled">
                                                 <li><p>Total Amount:₹ <% if(total) {%><%= total.toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,") %><% } %></p></li>
                                                 <li><p>Delivery Charges 
-                                                    <% if(delivery_charge=='0') {%>
+                                                    <% if(!delivery_charge) {%>
                                                         <span class="_27kB8M _3Oa-sk">Free Delivery</span>
                                                     <% } else { %>    
                                                         <span class="_27kB8M _3Oa-sk">₹ <%= delivery_charge %></span>

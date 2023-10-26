@@ -1,3 +1,31 @@
+exports.findMissingImage = (req, res) => {
+  const axios = require("axios");
+  const { page, limit } = req.query;
+  console.log(page,limit)
+  const offset = (page-1)*limit;
+  var sql_plan = `SELECT isbn13, image from products limit ${limit} offset ${offset} `;
+  console.log(sql_plan)
+  db.query(sql_plan, async function (error, result) {
+    const missingImage = [];
+    for (let product of result) {
+      console.log(
+        `https://sriina-images.s3.ap-south-1.amazonaws.com/${product.image}`
+      );
+      try {
+        await axios.get(
+          "https://sriina-images.s3.ap-south-1.amazonaws.com/" + product.image
+        );
+      } catch (e) {
+        console.log("e.response", e.response);
+        if (e.response.status == 403) {
+          missingImage.push(product);
+        }
+      }
+    }
+    res.send(missingImage);
+  });
+};
+
 exports.uploadExcel = (req, res) => {
   if (req.method == "GET") {
     userId = req.session.userId;

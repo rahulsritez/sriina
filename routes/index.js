@@ -4,8 +4,7 @@
 const { encrypt, decrypt } = require("./crypto");
 const { addtocart } = require("./cart");
 exports.landingpage = function (req, res) {
-  let title =
-    "Rent/Buy Online Books on Book Store";
+  let title = "Rent/Buy Online Books on Book Store";
   //var sql1="Select * from books_category where is_deleted=0 order by name";
   //var sql1 ="SELECT * FROM `books_category` where parents_id='0' and `status`='1' order by name limit 10";
   var sql1 =
@@ -93,4 +92,13 @@ exports.logincheck = function (req, res) {
   } else {
     res.render("profile.ejs");
   }
+};
+
+exports.authGaurd = function (req, res, next) {
+  const userId = req.session.userId;
+  if (userId == null) {
+    res.redirect("/admin");
+    return;
+  }
+  next();
 };
