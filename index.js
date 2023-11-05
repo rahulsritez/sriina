@@ -259,7 +259,7 @@ app.post(
 app.post("/delete-state-onrent", user.deleteStateonRent);
 
 app.get("/updatecart",routes.authGaurd, product.updateCart);
-app.post("/saveaddtocart", routes.authGaurd, parseForm, csrfProtection, product.saveAddtoCart);
+app.post("/saveaddtocart", parseForm, csrfProtection, product.saveAddtoCart);
 app.get("/checkpincode", product.checkPinNumber);
 app.get("/myaccount", routes.authGaurd, myaccount.UserAccount);
 app.get("/profile",routes.authGaurd, myaccount.UserProfile);
