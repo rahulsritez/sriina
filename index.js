@@ -45,21 +45,21 @@ var csrfProtection = csrf({ cookie: true });
 var parseForm = bodyParser.urlencoded({ extended: true });
 
 /* For live */
-var connection = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: process.env.DB_PASSWORD,
-  database: "sriina",
-});
-
-/* For local */
-
 // var connection = mysql.createConnection({
 //   host: "localhost",
 //   user: "root",
-//   password: "wDtasPLxlRaDwbgo",
-//   database: "books",
+//   password: process.env.DB_PASSWORD,
+//   database: "sriina",
 // });
+
+/* For local */
+
+var connection = mysql.createConnection({
+  host: "sriina.cp0zk32nnnd5.ap-south-1.rds.amazonaws.com",
+  user: "sriinadbadmin",
+  password: "sriina321$#",
+  database: "sriina",
+});
 
 /* For local */
 connection.connect(function (err) {
