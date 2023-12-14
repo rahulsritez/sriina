@@ -1,10 +1,20 @@
+const AWS = require("aws-sdk");
+const fs = require("fs");
+
+AWS.config.update({
+  accessKeyId: process.env.AccessKey,
+  secretAccessKey: process.env.SecretKey,
+  region: process.env.Region,
+});
+const s3 = new AWS.S3();
+
 exports.findMissingImage = (req, res) => {
   const axios = require("axios");
   const { page, limit } = req.query;
-  console.log(page,limit)
-  const offset = (page-1)*limit;
+  console.log(page, limit);
+  const offset = (page - 1) * limit;
   var sql_plan = `SELECT isbn13, image from products limit ${limit} offset ${offset} `;
-  console.log(sql_plan)
+  console.log(sql_plan);
   db.query(sql_plan, async function (error, result) {
     const missingImage = [];
     for (let product of result) {
@@ -325,6 +335,24 @@ exports.saveExcelFileData = (req, res, next) => {
         }
 
         if (data["image"]) {
+          // here is Image code
+          const exFile = __basedir + "/Image/1.11.23/" + data["image"];
+          const exists = fs.existsSync(exFile);
+          if (exists) {
+            const fileContent = fs.readFileSync(exFile);
+            const params = {
+              Bucket: "sriinaproduct",
+              Key: data["image"],
+              Body: fileContent,
+            };
+            s3.upload(params, function (err, s3Data) {
+              if (err) {
+                console.error("Error uploading to S3: sriinaproduct : ", err);
+                return;
+              }
+              // console.log('Image uploaded to S3:', s3Data.Location);
+            });
+          }
           data["image"] = data["image"];
         }
         if (data["author"]) {
@@ -355,7 +383,7 @@ exports.saveExcelFileData = (req, res, next) => {
           data["book_edition"] = data["book_edition"];
         }
         if (data["author_details"]) {
-          data["author_details"] = data["author_details"];
+          data["author_details"] = data["author_details"].replaceAll('"', "'");
         }
         if (data["book_binding"]) {
           data["book_binding"] = data["book_binding"];
