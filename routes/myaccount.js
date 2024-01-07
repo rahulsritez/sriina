@@ -1,348 +1,509 @@
-const moment = require('moment');
-const Cryptr = require('cryptr');
-const cryptr = new Cryptr('myTotalySecretKey');
+const moment = require("moment");
+const Cryptr = require("cryptr");
+const cryptr = new Cryptr("myTotalySecretKey");
 var xss = require("xss");
-var nodemailer = require('nodemailer');
-var base64 = require('base-64');
-var bcrypt = require('bcryptjs');
+var nodemailer = require("nodemailer");
+var base64 = require("base-64");
+var bcrypt = require("bcryptjs");
 
-const e = require('express');
-exports.adminPassword = (req, res)=>{
-    res.render('adminpwd',{'message':req.flash('message'),'message_success':req.flash('message_success'),  csrfToken: req.csrfToken(),cryptr:cryptr});
-}
+const e = require("express");
+exports.adminPassword = (req, res) => {
+  res.render("adminpwd", {
+    message: req.flash("message"),
+    message_success: req.flash("message_success"),
+    csrfToken: req.csrfToken(),
+    cryptr: cryptr,
+  });
+};
 
 exports.saveAdminPwd = (req, res) => {
-    if(req.method == "POST"){
-        var today = new Date().toISOString().slice(0, 19).replace('T', ' ');
-        var user_name   = xss(req.body.user_name);
-        if(!user_name || user_name.search(/\w/)< 0){
-            res.status(200).json({ message: 'Email name cannot be empty.'}); 
-            return;
-        }
-        
-        let sql = "SELECT * FROM `users` WHERE (`type`='1' or `type`='2') and email='"+user_name+"'";
-        let query = db.query(sql, function(error, getData){
-            if(getData.length > 0){
-                var otp = Math.floor(100000 + Math.random() * 900000);
-                    var transporter = nodemailer.createTransport({
-                    service: 'gmail',
-                    auth: {
-                        user: process.env.EMAIL_USERNAME,
-                        pass: process.env.EMAIL_PASSWORD,
-                    }
-                    });
+  if (req.method == "POST") {
+    var today = new Date().toISOString().slice(0, 19).replace("T", " ");
+    var user_name = xss(req.body.user_name);
+    if (!user_name || user_name.search(/\w/) < 0) {
+      res.status(200).json({ message: "Email name cannot be empty." });
+      return;
+    }
 
-                    let msg = 'Dear Admin, \nYour forgot password OTP is . \nOTP: '+ otp +' \n \n \nThanks Sriina Online team';
-                        
-                    var mailOptions = {
-                    from: 'sriinaonlinepvtltd@gmail.com',
-                    to: user_name,
-                    subject: 'Forgot Password OTP',
-                    text: msg,
-                    };
-
-                    transporter.sendMail(mailOptions, function(error, info){
-                        if (error) {
-                            // console.log(error);
-                            req.flash('message','Cannot connect to server email error.');
-                            res.redirect("/adminpwd");
-                        } else {
-                            //console.log('Email sent: ' + info.response);
-                            var sql = "UPDATE `users` SET `otp`='"+otp+"' WHERE `email`='"+user_name+"' and (`type`='1' or `type`='2')";
-                            var query = db.query(sql, function(error, updateotp){
-                                if(error) throw new Error('OTP update problme in user TBL');
-                                req.session.adminForgotEmail = user_name;
-                                req.flash('message_success','Please enter otp received on your registered email address');
-                                res.redirect("/adminpwdotp");
-                            });
-                        }
-                    })
-                    
-            } else {
-                req.flash('message','Admin Email Id Not Found.');
-                res.redirect("/adminpwd");
-            }
+    let sql =
+      "SELECT * FROM `users` WHERE (`type`='1' or `type`='2' or type='5') and email='" +
+      user_name +
+      "'";
+    let query = db.query(sql, function (error, getData) {
+      if (getData.length > 0) {
+        var otp = Math.floor(100000 + Math.random() * 900000);
+        var transporter = nodemailer.createTransport({
+          service: "gmail",
+          auth: {
+            user: process.env.EMAIL_USERNAME,
+            pass: process.env.EMAIL_PASSWORD,
+          },
         });
-    }
-}
 
-exports.adminPasswordOTP = (req,res)=>{
-    res.render('adminpwdotp',{'message':req.flash('message'),'message_success':req.flash('message_success'),csrfToken: req.csrfToken(),cryptr:cryptr});
-}
+        let msg =
+          "Dear Admin, \nYour forgot password OTP is . \nOTP: " +
+          otp +
+          " \n \n \nThanks Sriina Online team";
 
-exports.saveAdminPwdOTP = (req,res)=>{
-    if(req.method == "POST"){
-        let cyperKey = xss(req.body.cyperKey);
-        let admin_otp = xss(req.body.admin_otp);
-        let admin_pwdtp = xss(req.body.admin_pwd);
-        let admin_c_pwd = xss(req.body.admin_c_pwd);
-        cyperKey = cryptr.decrypt(cyperKey);
+        var mailOptions = {
+          from: "sriinaonlinepvtltd@gmail.com",
+          to: user_name,
+          subject: "Forgot Password OTP",
+          text: msg,
+        };
 
-        if(cyperKey == "HSwQ256"){
-            if(!admin_otp || admin_otp.search(/\w/)< 0){
-                res.status(200).json({ message: 'OTP cannot be empty.'}); 
-                return;
-            }
-            if(!admin_otp.length==6){
-                res.status(200).json({ message: 'OTP lenght problem.'}); 
-                return;
-            }
-
-            if(!admin_pwdtp || admin_pwdtp.search(/\w/)< 0){
-                res.status(200).json({ message: 'Paassword cannot be empty.'}); 
-                return;
-            }
-            if(!admin_c_pwd || admin_c_pwd.search(/\w/)< 0){
-                res.status(200).json({ message: 'Confirm Paassword cannot be empty.'}); 
-                return;
-            }
-            if(admin_pwdtp!=admin_c_pwd){
-                res.status(200).json({ message: 'Password and Confirm Paassword should be match.'}); 
-                return;
-            }
-            const rounds    = 10;
-            var hash = bcrypt.hashSync(admin_pwdtp, rounds);
-            const email = req.session.adminForgotEmail;
-            var sql = "SELECT * FROM `users` where email='"+email+"' and (type='1' or type='2') and otp='"+admin_otp+"'";
-            var query = db.query(sql, function(error,getdata){
-                if(getdata.length > 0){
-                    var sql = "UPDATE `users` SET password='"+hash+"' WHERE (type='1' or type='2') and email='"+email+"'";
-                    var query = db.query(sql, function(error, updatepwd){
-                        if(error) throw new Error('Update password error in user table');
-                        req.flash('message_success','Your password has been changed successfully!');
-                        res.redirect("/admin");
-                    });
-                } else {
-                        req.flash('message','OTP Not Match.');
-                        res.redirect("/adminpwd");
-                }
-            });
-        } else {
-            req.flash('message','cyperKey Not Match.');
+        transporter.sendMail(mailOptions, function (error, info) {
+          if (error) {
+            // console.log(error);
+            req.flash("message", "Cannot connect to server email error.");
             res.redirect("/adminpwd");
+          } else {
+            //console.log('Email sent: ' + info.response);
+            var sql =
+              "UPDATE `users` SET `otp`='" +
+              otp +
+              "' WHERE `email`='" +
+              user_name +
+              "' and (`type`='1' or `type`='2')";
+            var query = db.query(sql, function (error, updateotp) {
+              if (error) throw new Error("OTP update problme in user TBL");
+              req.session.adminForgotEmail = user_name;
+              req.flash(
+                "message_success",
+                "Please enter otp received on your registered email address"
+              );
+              res.redirect("/adminpwdotp");
+            });
+          }
+        });
+      } else {
+        req.flash("message", "Admin Email Id Not Found.");
+        res.redirect("/adminpwd");
+      }
+    });
+  }
+};
+
+exports.adminPasswordOTP = (req, res) => {
+  res.render("adminpwdotp", {
+    message: req.flash("message"),
+    message_success: req.flash("message_success"),
+    csrfToken: req.csrfToken(),
+    cryptr: cryptr,
+  });
+};
+
+exports.saveAdminPwdOTP = (req, res) => {
+  if (req.method == "POST") {
+    let cyperKey = xss(req.body.cyperKey);
+    let admin_otp = xss(req.body.admin_otp);
+    let admin_pwdtp = xss(req.body.admin_pwd);
+    let admin_c_pwd = xss(req.body.admin_c_pwd);
+    cyperKey = cryptr.decrypt(cyperKey);
+
+    if (cyperKey == "HSwQ256") {
+      if (!admin_otp || admin_otp.search(/\w/) < 0) {
+        res.status(200).json({ message: "OTP cannot be empty." });
+        return;
+      }
+      if (!admin_otp.length == 6) {
+        res.status(200).json({ message: "OTP lenght problem." });
+        return;
+      }
+
+      if (!admin_pwdtp || admin_pwdtp.search(/\w/) < 0) {
+        res.status(200).json({ message: "Paassword cannot be empty." });
+        return;
+      }
+      if (!admin_c_pwd || admin_c_pwd.search(/\w/) < 0) {
+        res.status(200).json({ message: "Confirm Paassword cannot be empty." });
+        return;
+      }
+      if (admin_pwdtp != admin_c_pwd) {
+        res
+          .status(200)
+          .json({ message: "Password and Confirm Paassword should be match." });
+        return;
+      }
+      const rounds = 10;
+      var hash = bcrypt.hashSync(admin_pwdtp, rounds);
+      const email = req.session.adminForgotEmail;
+      var sql =
+        "SELECT * FROM `users` where email='" +
+        email +
+        "' and (type='1' or type='2' or type='5') and otp='" +
+        admin_otp +
+        "'";
+      var query = db.query(sql, function (error, getdata) {
+        if (getdata.length > 0) {
+          var sql =
+            "UPDATE `users` SET password='" +
+            hash +
+            "' WHERE (type='1' or type='2' or type='5') and email='" +
+            email +
+            "'";
+          var query = db.query(sql, function (error, updatepwd) {
+            if (error) throw new Error("Update password error in user table");
+            req.flash(
+              "message_success",
+              "Your password has been changed successfully!"
+            );
+            res.redirect("/admin");
+          });
+        } else {
+          req.flash("message", "OTP Not Match.");
+          res.redirect("/adminpwd");
         }
+      });
+    } else {
+      req.flash("message", "cyperKey Not Match.");
+      res.redirect("/adminpwd");
     }
-}
+  }
+};
 
 exports.UserAccount = (req, res, next) => {
-    let title = 'My Account';
-    var userId = req.session.userId;
-    if(userId == null){
-        res.redirect('/sign-in');
-    } else {
-       
-       let sql = "SELECT bk_order.created_at as created_at, bk_order.paid_amount as paid_amount, bk_order.reference, shipping_information.fullname as fullname FROM bk_order JOIN shipping_information ON shipping_information.user_id = bk_order.customer_id and shipping_information.user_id ='"+userId+"' and bk_order.customer_id='"+userId+"' and bk_order.paid_amount is not null ORDER BY `bk_order`.`order_id` DESC";
-	    var query = db.query(sql,function(error, getorder){
-            if(error) throw error;
-            res.render('users/myaccount',{getorder:getorder,'message':req.flash('message'),'errors':req.flash('errors'),moment:moment,getCartData:''});
+  let title = "My Account";
+  var userId = req.session.userId;
+  if (userId == null) {
+    res.redirect("/sign-in");
+  } else {
+    let sql =
+      "SELECT bk_order.created_at as created_at, bk_order.paid_amount as paid_amount, bk_order.reference, shipping_information.fullname as fullname FROM bk_order JOIN shipping_information ON shipping_information.user_id = bk_order.customer_id and shipping_information.user_id ='" +
+      userId +
+      "' and bk_order.customer_id='" +
+      userId +
+      "' and bk_order.paid_amount is not null ORDER BY `bk_order`.`order_id` DESC";
+    var query = db.query(sql, function (error, getorder) {
+      if (error) throw error;
+      res.render("users/myaccount", {
+        getorder: getorder,
+        message: req.flash("message"),
+        errors: req.flash("errors"),
+        moment: moment,
+        getCartData: "",
+      });
+    });
+  }
+};
+
+exports.userViewOrder = (req, res, next) => {
+  let orderId = req.params.id;
+  var userId = req.session.userId;
+  if (userId == null) {
+    res.redirect("/sign-in");
+  } else {
+    let sql_userId =
+      "SELECT `cart_id`,`customer_id`,`paid_amount`,`created_at`,`reference`,`cancel_request` FROM bk_order WHERE `reference`='" +
+      orderId +
+      "'";
+    //console.log(sql_userId); return;
+    var SQL = db.query(sql_userId, function (error, results) {
+      let userId = results[0].customer_id;
+      let created_at = results[0].created_at;
+      let paid_amount = results[0].paid_amount;
+      let cancel_request = results[0].cancel_request;
+      let cart_id = results[0].cart_id;
+
+      // let get_products = "SELECT products.id as productId,products.name,products.slug,products.image,products.price,products.discount,cart_product.cart_id,cart_product.product_id,cart_product.on_rental,sum(cart_product.quantity) as cartquantity, `cart`.cart_id as CartId,`cart`.user_id,`cart`.status FROM products LEFT JOIN cart_product ON products.id = cart_product.product_id LEFT JOIN cart ON cart_product.cart_id = cart.cart_id where cart.status='1' AND cart.user_id='"+userId+"' and cart. `cart_id`='"+cart_id+"' group by product_id";
+      let get_products =
+        "SELECT products.id as productId,`products`.product_type_id as productType, products.name,products.slug,products.image,products.price,products.discount,cart_product.cart_id,cart_product.product_id,cart_product.on_rental,sum(cart_product.quantity) as cartquantity, `cart`.cart_id as CartId,`cart`.user_id,`cart`.status,`products_images`.grocery_image as groceyImg FROM products LEFT JOIN cart_product ON products.id = cart_product.product_id LEFT JOIN cart ON cart_product.cart_id = cart.cart_id LEFT JOIN `products_images` ON `products`.id = `products_images`.product_id where cart.status=1 AND cart.user_id='" +
+        userId +
+        "' and cart. `cart_id`='" +
+        cart_id +
+        "' group by product_id";
+
+      //console.log(get_products); return;
+      var QUERY = db.query(get_products, function (error, get_orders) {
+        if (error) throw error;
+        res.render("users/vieworder", {
+          get_orders: get_orders,
+          orderId: orderId,
+          cancel_request: cancel_request,
+          paid_amount: paid_amount,
+          getcartdata: "",
+          base64,
         });
-    }
-}
-
-exports.userViewOrder = (req,res,next)=> {
-    let orderId = req.params.id;
-    var userId = req.session.userId;
-    if(userId == null){
-        res.redirect('/sign-in');
-    } else {
-        let sql_userId = "SELECT `cart_id`,`customer_id`,`paid_amount`,`created_at`,`reference`,`cancel_request` FROM bk_order WHERE `reference`='"+orderId+"'";
-        //console.log(sql_userId); return;
-        var SQL = db.query(sql_userId,function(error, results){
-            let userId = results[0].customer_id;
-            let created_at = results[0].created_at;
-            let paid_amount = results[0].paid_amount;
-            let cancel_request = results[0].cancel_request;
-            let cart_id = results[0].cart_id;
-
-            // let get_products = "SELECT products.id as productId,products.name,products.slug,products.image,products.price,products.discount,cart_product.cart_id,cart_product.product_id,cart_product.on_rental,sum(cart_product.quantity) as cartquantity, `cart`.cart_id as CartId,`cart`.user_id,`cart`.status FROM products LEFT JOIN cart_product ON products.id = cart_product.product_id LEFT JOIN cart ON cart_product.cart_id = cart.cart_id where cart.status='1' AND cart.user_id='"+userId+"' and cart. `cart_id`='"+cart_id+"' group by product_id";
-            let get_products = "SELECT products.id as productId,`products`.product_type_id as productType, products.name,products.slug,products.image,products.price,products.discount,cart_product.cart_id,cart_product.product_id,cart_product.on_rental,sum(cart_product.quantity) as cartquantity, `cart`.cart_id as CartId,`cart`.user_id,`cart`.status,`products_images`.grocery_image as groceyImg FROM products LEFT JOIN cart_product ON products.id = cart_product.product_id LEFT JOIN cart ON cart_product.cart_id = cart.cart_id LEFT JOIN `products_images` ON `products`.id = `products_images`.product_id where cart.status=1 AND cart.user_id='"+userId+"' and cart. `cart_id`='"+cart_id+"' group by product_id";
-
-            //console.log(get_products); return;
-            var QUERY = db.query(get_products, function(error, get_orders){
-                if(error) throw error;
-                res.render('users/vieworder',{get_orders:get_orders,orderId:orderId,cancel_request:cancel_request,paid_amount:paid_amount,getcartdata:'',base64});
-            });    
-        });
-    }
-}
+      });
+    });
+  }
+};
 
 exports.sritezPrime = (req, res, next) => {
-    var userId = req.session.userId;
-    //console.log(userId); return;
-    if(userId == null){
-        res.redirect('/sign-in');
-    } else {
-        let userData = "SELECT `plans`.id as PlanId, `plans`.plan_name,`plans`.plan_price,`plans`.total_month,`plans`.total_book,`plans`.monthly_book,`user_plan`.order_id,`user_plan`.paid_amount,`user_plan`.created_at,`user_plan`.expired_date FROM `user_plan` LEFT JOIN `plans` ON `user_plan`.plan_id = `plans`.id WHERE `user_plan`.user_id='"+userId+"' and `user_plan`.status='1' ";
-        //console.log(userData); return;
-        let query = db.query(userData, function(error, getprimes){
-            if(error) throw error;
-                if (getprimes.length === 0){
-                    res.render('users/sritezprime',{getprimes:getprimes[0], getbook_request:'',moment:moment,csrfToken: req.csrfToken(),'message':req.flash('message'),cryptr:cryptr});
-                } else {
-                    let getorderId = getprimes[0];
-                    var sql = "SELECT * FROM `membership_book_request` WHERE `order_id`='"+getorderId.order_id+"' and user_id='"+userId+"'";
-                    //console.log(sql); return;
-                    var query = db.query(sql, function(error,getbook_request){
-                        res.render('users/sritezprime',{getprimes:getprimes[0], getbook_request:getbook_request,moment:moment,csrfToken: req.csrfToken(),'message':req.flash('message'),cryptr:cryptr});
-                    });
-                }
+  var userId = req.session.userId;
+  //console.log(userId); return;
+  if (userId == null) {
+    res.redirect("/sign-in");
+  } else {
+    let userData =
+      "SELECT `plans`.id as PlanId, `plans`.plan_name,`plans`.plan_price,`plans`.total_month,`plans`.total_book,`plans`.monthly_book,`user_plan`.order_id,`user_plan`.paid_amount,`user_plan`.created_at,`user_plan`.expired_date FROM `user_plan` LEFT JOIN `plans` ON `user_plan`.plan_id = `plans`.id WHERE `user_plan`.user_id='" +
+      userId +
+      "' and `user_plan`.status='1' ";
+    //console.log(userData); return;
+    let query = db.query(userData, function (error, getprimes) {
+      if (error) throw error;
+      if (getprimes.length === 0) {
+        res.render("users/sritezprime", {
+          getprimes: getprimes[0],
+          getbook_request: "",
+          moment: moment,
+          csrfToken: req.csrfToken(),
+          message: req.flash("message"),
+          cryptr: cryptr,
         });
-    }    
-}
+      } else {
+        let getorderId = getprimes[0];
+        var sql =
+          "SELECT * FROM `membership_book_request` WHERE `order_id`='" +
+          getorderId.order_id +
+          "' and user_id='" +
+          userId +
+          "'";
+        //console.log(sql); return;
+        var query = db.query(sql, function (error, getbook_request) {
+          res.render("users/sritezprime", {
+            getprimes: getprimes[0],
+            getbook_request: getbook_request,
+            moment: moment,
+            csrfToken: req.csrfToken(),
+            message: req.flash("message"),
+            cryptr: cryptr,
+          });
+        });
+      }
+    });
+  }
+};
 
 exports.membershipBookRequest = (req, res, next) => {
-    if(req.method == "POST"){
-        var userId = req.session.userId;
-        var today = new Date().toISOString().slice(0, 19).replace('T', ' ');
-        var book_name   = req.body.book_name;
-        var book_author = req.body.book_author;
-        var publisher   = req.body.publisher;
-        var isbn_no     = req.body.isbn_no;
-        var message     = req.body.message;
-        var order_id    = req.body.order_id;
+  if (req.method == "POST") {
+    var userId = req.session.userId;
+    var today = new Date().toISOString().slice(0, 19).replace("T", " ");
+    var book_name = req.body.book_name;
+    var book_author = req.body.book_author;
+    var publisher = req.body.publisher;
+    var isbn_no = req.body.isbn_no;
+    var message = req.body.message;
+    var order_id = req.body.order_id;
 
-        if(!book_name || book_name.search(/\w/)< 0){
-            res.status(200).json({ message: 'Book name cannot be empty'}); 
-            return;
-        }
-        if(!book_author || book_author.search(/\w/)< 0){
-            res.status(200).json({ message: 'Author name cannot be empty'}); 
-            return;
-        }
-        if(!publisher || publisher.search(/\w/)< 0){
-            res.status(200).json({ message: 'Publisher name cannot be empty'}); 
-            return;
-        }
-        if(!message || message.search(/\w/)< 0){
-            res.status(200).json({ message: 'message name cannot be empty'}); 
-            return;
-        }
-        
-        var SQL = "SELECT * FROM `membership_book_request`where user_id='"+userId+"'";
-        var query = db.query(SQL, function(error, getrequest){
-            //console.log(getrequest.length); return;
-            if(getrequest.length >= 3){
-                req.flash('message','A Request is already in progress.');
-                res.redirect("/sritezprime");
-            } else {
-                var sql = "INSERT INTO `membership_book_request`(user_id,order_id,book_name,book_author,publisher,isbn_no,message,created_at) VALUES('"+userId+"','"+cryptr.decrypt(order_id)+"','"+book_name+"','"+book_author+"','"+publisher+"','"+isbn_no+"','"+message+"','"+today+"')";
-                var query = db.query(sql, function(error, updatepages){
-                    if(error) throw new Error('membership_book_request table insert problem');
-                    req.flash('message','Your request has been sent successfully.');
-                    res.redirect("/sritezprime");
-                });
-            }
+    if (!book_name || book_name.search(/\w/) < 0) {
+      res.status(200).json({ message: "Book name cannot be empty" });
+      return;
+    }
+    if (!book_author || book_author.search(/\w/) < 0) {
+      res.status(200).json({ message: "Author name cannot be empty" });
+      return;
+    }
+    if (!publisher || publisher.search(/\w/) < 0) {
+      res.status(200).json({ message: "Publisher name cannot be empty" });
+      return;
+    }
+    if (!message || message.search(/\w/) < 0) {
+      res.status(200).json({ message: "message name cannot be empty" });
+      return;
+    }
+
+    var SQL =
+      "SELECT * FROM `membership_book_request`where user_id='" + userId + "'";
+    var query = db.query(SQL, function (error, getrequest) {
+      //console.log(getrequest.length); return;
+      if (getrequest.length >= 3) {
+        req.flash("message", "A Request is already in progress.");
+        res.redirect("/sritezprime");
+      } else {
+        var sql =
+          "INSERT INTO `membership_book_request`(user_id,order_id,book_name,book_author,publisher,isbn_no,message,created_at) VALUES('" +
+          userId +
+          "','" +
+          cryptr.decrypt(order_id) +
+          "','" +
+          book_name +
+          "','" +
+          book_author +
+          "','" +
+          publisher +
+          "','" +
+          isbn_no +
+          "','" +
+          message +
+          "','" +
+          today +
+          "')";
+        var query = db.query(sql, function (error, updatepages) {
+          if (error)
+            throw new Error("membership_book_request table insert problem");
+          req.flash("message", "Your request has been sent successfully.");
+          res.redirect("/sritezprime");
         });
-    };
+      }
+    });
+  }
 };
 
 exports.cancelItem = (req, res, next) => {
-    let requestId = req.query.requestId;
-    let useCase = req.query.useCase;
-    var userId = req.session.userId;
-    //console.log(req.csrfToken()); return;
-    if(requestId!=null && userId!=null){
-        let sql = "SELECT `order_status`,`reference` FROM bk_order WHERE reference='"+requestId+"' and customer_id='"+userId+"'";
-        let query = db.query(sql, function(error,getrequestId){
-            if(error) throw new Error('Order Tracking Id Problem');
-                if(getrequestId.length>0){
-                    res.render('users/cancelItem',{requestId:getrequestId[0],useCase:useCase,csrfToken: req.csrfToken(),'message':req.flash('message')});
-                }
-            });
-    } else {
-        res.redirect('/sign-in');
-    }
-}
+  let requestId = req.query.requestId;
+  let useCase = req.query.useCase;
+  var userId = req.session.userId;
+  //console.log(req.csrfToken()); return;
+  if (requestId != null && userId != null) {
+    let sql =
+      "SELECT `order_status`,`reference` FROM bk_order WHERE reference='" +
+      requestId +
+      "' and customer_id='" +
+      userId +
+      "'";
+    let query = db.query(sql, function (error, getrequestId) {
+      if (error) throw new Error("Order Tracking Id Problem");
+      if (getrequestId.length > 0) {
+        res.render("users/cancelItem", {
+          requestId: getrequestId[0],
+          useCase: useCase,
+          csrfToken: req.csrfToken(),
+          message: req.flash("message"),
+        });
+      }
+    });
+  } else {
+    res.redirect("/sign-in");
+  }
+};
 
 exports.cancleItemSuccess = (req, res, next) => {
-    let userId = req.session.userId;
-    if(userId == null){
-        res.redirect('/sign-in');
-    } else {
-        if(req.method == "POST"){
-            var today = new Date().toISOString().slice(0, 19).replace('T', ' ');
-            var post  = req.body;
-            var reson = post.reson;
-            var cancelledId = post.cancelledId;
-            if(cancelledId){
-                let updatereq = "UPDATE `bk_order` SET `order_status` = '5', cancel_request='1' WHERE reference='"+cancelledId+"'";
-                var query = db.query(updatereq, function(error, updatesql){
-                    var selectcan = "SELECT * FROM cancelled_order WHERE order_id='"+cancelledId+"' and user_id='"+userId+"'";
-                    var query = db.query(selectcan, function(error, getcanrecord){
-                        if(getcanrecord.length>0){
-                            var sql1 = "UPDATE `cancelled_order` SET `user_id`='"+userId+"',`reason_id`='"+reson+"', `updated_at`='"+today+"' WHERE `order_id`='"+cancelledId+"' ";
-                            var query = db.query(sql1,function(error, cancle_order_tbl){
-                                if(error) throw error;
-                                req.flash('message','Your order has been cancelled.');
-                                res.redirect("/myaccount");
-                            });
-                        } else {
-                            var sql1 = "INSERT INTO `cancelled_order`(`user_id`,`order_id`, `reason_id`,created_at,updated_at) VALUES ('"+userId+"', '" +cancelledId+"', '"+reson+"','" + today + "','" + today + "')";
-                            var query = db.query(sql1, function(error, result) {
-                                if(error) throw error;
-                                req.flash('message','Your order has been cancelled.');
-                                res.redirect("/myaccount");
-                            });
-                        }
-                    });
-                });
-            } else {
-                req.flash('message','Something went wrong please try again.');
+  let userId = req.session.userId;
+  if (userId == null) {
+    res.redirect("/sign-in");
+  } else {
+    if (req.method == "POST") {
+      var today = new Date().toISOString().slice(0, 19).replace("T", " ");
+      var post = req.body;
+      var reson = post.reson;
+      var cancelledId = post.cancelledId;
+      if (cancelledId) {
+        let updatereq =
+          "UPDATE `bk_order` SET `order_status` = '5', cancel_request='1' WHERE reference='" +
+          cancelledId +
+          "'";
+        var query = db.query(updatereq, function (error, updatesql) {
+          var selectcan =
+            "SELECT * FROM cancelled_order WHERE order_id='" +
+            cancelledId +
+            "' and user_id='" +
+            userId +
+            "'";
+          var query = db.query(selectcan, function (error, getcanrecord) {
+            if (getcanrecord.length > 0) {
+              var sql1 =
+                "UPDATE `cancelled_order` SET `user_id`='" +
+                userId +
+                "',`reason_id`='" +
+                reson +
+                "', `updated_at`='" +
+                today +
+                "' WHERE `order_id`='" +
+                cancelledId +
+                "' ";
+              var query = db.query(sql1, function (error, cancle_order_tbl) {
+                if (error) throw error;
+                req.flash("message", "Your order has been cancelled.");
                 res.redirect("/myaccount");
+              });
+            } else {
+              var sql1 =
+                "INSERT INTO `cancelled_order`(`user_id`,`order_id`, `reason_id`,created_at,updated_at) VALUES ('" +
+                userId +
+                "', '" +
+                cancelledId +
+                "', '" +
+                reson +
+                "','" +
+                today +
+                "','" +
+                today +
+                "')";
+              var query = db.query(sql1, function (error, result) {
+                if (error) throw error;
+                req.flash("message", "Your order has been cancelled.");
+                res.redirect("/myaccount");
+              });
             }
-        }
-    }   
-}
-
-exports.memberId = (req, res, next)=> {
-    let userId = req.session.userId;
-    if(userId == null){ 
-        res.redirect('/sign-in'); 
-    }
-    let requestId = req.query.Id;
-    let useCase = req.query.useCase;
-    let PlanId = req.query.PlanId;
-    let PlanPrice = req.query.PlanPrice;
-    if(requestId!="" &&useCase=="addbooks"){
-    let getcats = "SELECT * FROM `books_categroy` WHERE `status`='1'"
-        let query_result = db.query(getcats,function(error, getcategros){
-            res.render('users/memberId',{getcategros:getcategros,requestId:requestId,useCase:useCase,csrfToken: req.csrfToken(),'message':req.flash('message')});
+          });
         });
+      } else {
+        req.flash("message", "Something went wrong please try again.");
+        res.redirect("/myaccount");
+      }
     }
-}
+  }
+};
+
+exports.memberId = (req, res, next) => {
+  let userId = req.session.userId;
+  if (userId == null) {
+    res.redirect("/sign-in");
+  }
+  let requestId = req.query.Id;
+  let useCase = req.query.useCase;
+  let PlanId = req.query.PlanId;
+  let PlanPrice = req.query.PlanPrice;
+  if (requestId != "" && useCase == "addbooks") {
+    let getcats = "SELECT * FROM `books_categroy` WHERE `status`='1'";
+    let query_result = db.query(getcats, function (error, getcategros) {
+      res.render("users/memberId", {
+        getcategros: getcategros,
+        requestId: requestId,
+        useCase: useCase,
+        csrfToken: req.csrfToken(),
+        message: req.flash("message"),
+      });
+    });
+  }
+};
 
 exports.orderTracking = (req, res, next) => {
-    let userId = req.session.userId;
-    if(userId == null){ 
-        res.redirect('/sign-in'); 
+  let userId = req.session.userId;
+  if (userId == null) {
+    res.redirect("/sign-in");
+  }
+  let trackingId = req.query.trackingId;
+  let useCase = req.query.useCase;
+  //console.log(trackingId);
+  let sql =
+    "SELECT `order_status`,`reference` FROM bk_order WHERE reference='" +
+    trackingId +
+    "' and customer_id='" +
+    userId +
+    "'";
+  let query = db.query(sql, function (error, gettracking) {
+    if (error) throw new Error("Order Tracking Id Problem");
+    if (gettracking.length > 0) {
+      res.render("users/order-tracking", {
+        trackingId: gettracking[0],
+        useCase: useCase,
+        csrfToken: req.csrfToken(),
+        message: req.flash("message"),
+      });
+    } else {
+      res.render("users/order-tracking", {
+        trackingId: "",
+        useCase: useCase,
+        csrfToken: req.csrfToken(),
+        message: req.flash("message"),
+      });
     }
-    let trackingId = req.query.trackingId;
-    let useCase = req.query.useCase;
-    //console.log(trackingId);
-    let sql = "SELECT `order_status`,`reference` FROM bk_order WHERE reference='"+trackingId+"' and customer_id='"+userId+"'";
-    let query = db.query(sql, function(error,gettracking){
-        if(error) throw new Error('Order Tracking Id Problem');
-        if(gettracking.length>0){
-            res.render('users/order-tracking',{trackingId:gettracking[0],useCase:useCase,csrfToken: req.csrfToken(),'message':req.flash('message')});
-        } else {
-            res.render('users/order-tracking',{trackingId:'',useCase:useCase,csrfToken: req.csrfToken(),'message':req.flash('message')});
-        }
-    });
-}
+  });
+};
 
 exports.UserProfile = (req, res) => {
-    let title = 'My Profile';
-    var userId = req.session.userId;
-    if(userId == null)
-    {
-        res.redirect('/sign-in');
-    } else 
-    {
-        let sql = "SELECT * FROM `users` WHERE  id='"+userId+"'";
-        let query = db.query(sql, function(error,getdata){
-            let data = JSON.parse(JSON.stringify(getdata[0]))
-            if(error) throw new Error('User Data Problem');
-        res.render('users/profile',{data});
-        });
-    }
-}
+  let title = "My Profile";
+  var userId = req.session.userId;
+  if (userId == null) {
+    res.redirect("/sign-in");
+  } else {
+    let sql = "SELECT * FROM `users` WHERE  id='" + userId + "'";
+    let query = db.query(sql, function (error, getdata) {
+      let data = JSON.parse(JSON.stringify(getdata[0]));
+      if (error) throw new Error("User Data Problem");
+      res.render("users/profile", { data });
+    });
+  }
+};
