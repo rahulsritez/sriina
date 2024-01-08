@@ -1633,7 +1633,7 @@ exports.Addproduct = function (req, res) {
         if (err) throw err;
         //console.log('File read!');
         const params = {
-          Bucket: "sriina-images",
+          Bucket: process.env.Bucket || "sriinaproduct",
           Key: productimage,
           Body: data,
           ContentType: files.product_images.type,
@@ -1777,7 +1777,7 @@ exports.Updateproduct = function (req, res) {
         fs.readFile(oldpath, function (err, data) {
           if (err) throw err;
           const params = {
-            Bucket: "sriina-images",
+            Bucket: process.env.Bucket || "sriinaproduct",
             Key: productimage,
             Body: data,
             // ContentType: files.product_images.type
@@ -1925,77 +1925,79 @@ exports.AdminUpdateProduct = (req, res, next) => {
         fs.readFile(oldpath, function (err, data) {
           if (err) throw err;
           const params = {
-            Bucket: "sriina-images",
+            Bucket: process.env.Bucket || "sriinaproduct",
             Key: productimage,
             Body: data,
             // ContentType: files.product_images.type
           };
+          console.log("params", params);
           s3.upload(params, function (err, s3Data) {
             if (err) {
               console.error("Error uploading to S3:", err);
+              req.flash("errors", "Unable to upload image.");
+              res.redirect("/productlist");
               return;
             }
+            let sql1 =
+              "UPDATE `products` SET `product_type_id` ='" +
+              edit_product_type_id +
+              "', `name` ='" +
+              edit_product_name +
+              "', `author` = '" +
+              edit_author +
+              "', `publisher` ='" +
+              edit_publisher +
+              "', `book_edition`='" +
+              edit_book_edition +
+              "', `price`='" +
+              edit_price +
+              "',`discount`='" +
+              edit_discount +
+              "', `delivery_charge`='" +
+              edit_delivery_charge +
+              "', `quantity`='" +
+              edit_quantity +
+              "', `isbn`='" +
+              edit_ISBN +
+              "', `isbn13`='" +
+              edit_ISBN13 +
+              "', `language`='" +
+              edit_language +
+              "', `book_binding`='" +
+              edit_book_binding +
+              "', `cat_id`='" +
+              edit_category +
+              "', `status`='" +
+              edit_status +
+              "', `no_of_pages`='" +
+              edit_no_of_pages +
+              "', `weight`='" +
+              weight +
+              "', `image`='" +
+              productimage +
+              "',  `product_type`='" +
+              edit_product_type +
+              "',  `publishing_year`='" +
+              edit_publishing_year +
+              "', `description`='" +
+              edit_descriptions +
+              "', `author_details` ='" +
+              edit_author_details +
+              "', `meta_title` ='" +
+              edit_meta_title +
+              "', `meta_description` ='" +
+              edit_meta_description +
+              "', `updated_at`='" +
+              today +
+              "' WHERE id='" +
+              edit_id +
+              "'";
+            var query = db.query(sql1, function (error, update) {
+              if (error) throw error;
+              req.flash("message", "Product has been successfully updated.");
+              res.redirect("/productlist");
+            });
           });
-        });
-
-        let sql1 =
-          "UPDATE `products` SET `product_type_id` ='" +
-          edit_product_type_id +
-          "', `name` ='" +
-          edit_product_name +
-          "', `author` = '" +
-          edit_author +
-          "', `publisher` ='" +
-          edit_publisher +
-          "', `book_edition`='" +
-          edit_book_edition +
-          "', `price`='" +
-          edit_price +
-          "',`discount`='" +
-          edit_discount +
-          "', `delivery_charge`='" +
-          edit_delivery_charge +
-          "', `quantity`='" +
-          edit_quantity +
-          "', `isbn`='" +
-          edit_ISBN +
-          "', `isbn13`='" +
-          edit_ISBN13 +
-          "', `language`='" +
-          edit_language +
-          "', `book_binding`='" +
-          edit_book_binding +
-          "', `cat_id`='" +
-          edit_category +
-          "', `status`='" +
-          edit_status +
-          "', `no_of_pages`='" +
-          edit_no_of_pages +
-          "', `weight`='" +
-          weight +
-          "', `image`='" +
-          productimage +
-          "',  `product_type`='" +
-          edit_product_type +
-          "',  `publishing_year`='" +
-          edit_publishing_year +
-          "', `description`='" +
-          edit_descriptions +
-          "', `author_details` ='" +
-          edit_author_details +
-          "', `meta_title` ='" +
-          edit_meta_title +
-          "', `meta_description` ='" +
-          edit_meta_description +
-          "', `updated_at`='" +
-          today +
-          "' WHERE id='" +
-          edit_id +
-          "'";
-        var query = db.query(sql1, function (error, update) {
-          if (error) throw error;
-          req.flash("message", "Product has been successfully updated.");
-          res.redirect("/productlist");
         });
       } else {
         let sql1 =
@@ -2064,7 +2066,8 @@ exports.AdminUpdateProduct = (req, res, next) => {
 
 exports.Deleteproduct = function (req, res) {
   var id = req.body.id;
-  console.log(id); return;
+  console.log(id);
+  return;
   var data = "";
   var sql1 =
     "UPDATE `products` set is_deleted=1, status=0 where id='" + id + "'";
