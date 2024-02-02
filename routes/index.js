@@ -12,7 +12,7 @@ exports.landingpage = function (req, res) {
 
   var query = db.query(sql1, function (error, result) {
     var sql2 =
-      "SELECT p.id,p.name,p.description,p.price,p.discount,p.image,p.isbn,p.status,p.author,p.book_edition,p.slug,c.name as categoryname from products p left join books_category c on c.id=p.cat_id where p.status=1 and p.product_type_id=1 order by id desc limit 10";
+      "SELECT p.id,p.name,p.description,p.price,p.discount,p.image,p.isbn,p.status,p.author,p.book_edition,p.slug,c.name as categoryname from products p left join books_category c on c.id=p.cat_id where p.status=1 and p.product_type_id=1 order by rand() limit 10";
     var query = db.query(sql2, function (error, result1) {
       if (error) throw error;
       let sql3 = "SELECT * FROM home_slider where status=1";
@@ -22,23 +22,23 @@ exports.landingpage = function (req, res) {
         var query = db.query(sql_plan, function (error, maxplan) {
           if (error) throw error;
           var get_feature_pro =
-            "SELECT p.id,p.name,p.description,p.price,p.discount,p.image,p.isbn,p.status,p.author,p.book_edition,p.slug,c.name as categoryname from products p left join books_category c on c.id=p.cat_id where p.cat_id=1 and p.status=1 and p.product_type_id=1 ORDER BY p.name limit 10";
+            "SELECT p.id,p.name,p.description,p.price,p.discount,p.image,p.isbn,p.status,p.author,p.book_edition,p.slug,c.name as categoryname from products p left join books_category c on c.id=p.cat_id where p.product_type=2 and p.status=1 and p.product_type_id=1 ORDER BY p.updated_at desc limit 10";
           var query = db.query(
             get_feature_pro,
             function (error, feature_product) {
               if (error) throw error;
               var get_rand_pro =
-                "SELECT p.id,p.name,p.description,p.price,p.discount,p.image,p.isbn,p.status,p.author,p.book_edition,p.slug,c.name as categoryname from products p left join books_category c on c.id=p.cat_id where p.status=1 and p.product_type_id=1 ORDER BY rand() limit 10";
+                "SELECT p.id,p.name,p.description,p.price,p.discount,p.image,p.isbn,p.status,p.author,p.book_edition,p.slug,c.name as categoryname from products p left join books_category c on c.id=p.cat_id where p.product_type=5 and p.status=1 and p.product_type_id=1 ORDER BY p.updated_at desc limit 10";
               var query = db.query(
                 get_rand_pro,
                 function (error, random_product) {
                   if (error) throw error;
                   var hotdeal =
-                    "SELECT p.id,p.name,p.description,p.price,p.discount,p.image,p.isbn,p.status,p.author,p.book_edition,p.slug,p.product_type,c.name as categoryname from products p left join books_category c on c.id=p.cat_id where p.product_type='1' and p.status=1 and p.product_type_id=1 ORDER BY id desc limit 10";
+                    "SELECT p.id,p.name,p.description,p.price,p.discount,p.image,p.isbn,p.status,p.author,p.book_edition,p.slug,p.product_type,c.name as categoryname from products p left join books_category c on c.id=p.cat_id where p.product_type='1' and p.status=1 and p.product_type_id=1 ORDER BY p.updated_at desc limit 10";
                   var query = db.query(hotdeal, function (error, gethotdeal) {
                     if (error) throw error;
                     var special_offer =
-                      "SELECT p.id,p.name,p.description,p.price,p.discount,p.image,p.isbn,p.status,p.author,p.book_edition,p.slug,p.product_type,c.name as categoryname from `products` p left join `books_category` c on c.id=p.cat_id where p.product_type=7 and p.`status`=1 and p.`product_type_id`=1";
+                      "SELECT p.id,p.name,p.description,p.price,p.discount,p.image,p.isbn,p.status,p.author,p.book_edition,p.slug,p.product_type,c.name as categoryname from `products` p left join `books_category` c on c.id=p.cat_id where p.product_type=7 and p.`status`=1 and p.`product_type_id`=1 ORDER BY p.updated_at desc";
                     var query = db.query(
                       special_offer,
                       function (error, special_product) {
