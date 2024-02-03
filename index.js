@@ -340,7 +340,7 @@ app.get("/security", pages.security);
 app.get("/contact", pages.contactPage);
 
 app.get("/categories", product.categoryPage);
-app.get("/sub-categories", product.subCategoryPage);
+// app.get("/sub-categories", product.subCategoryPage);
 
 app.get("/search", search.searchResult);
 app.get("/viewpost/:id", search.viewSearch);
