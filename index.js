@@ -2,27 +2,27 @@
  * Module dependencies.
  */
 var express = require("express"),
-  routes = require("./routes"),
-  user = require("./routes/user"),
-  admingrocery = require("./routes/admingrocery"),
-  order = require("./routes/order"),
-  product = require("./routes/product"),
-  search = require("./routes/search"),
-  signin = require("./routes/signin"),
-  pages = require("./routes/pages"),
-  myaccount = require("./routes/myaccount"),
-  payumoney = require("./routes/payumoney"),
-  grocery = require("./routes/grocery"),
-  electronic = require("./routes/electronic"),
-  uploadcsv = require("./routes/uploadcsv"),
-  state = require("./routes/state"),
-  http = require("http"),
-  path = require("path");
+    routes = require("./routes"),
+    user = require("./routes/user"),
+    admingrocery = require("./routes/admingrocery"),
+    order = require("./routes/order"),
+    product = require("./routes/product"),
+    search = require("./routes/search"),
+    signin = require("./routes/signin"),
+    pages = require("./routes/pages"),
+    myaccount = require("./routes/myaccount"),
+    payumoney = require("./routes/payumoney"),
+    grocery = require("./routes/grocery"),
+    electronic = require("./routes/electronic"),
+    uploadcsv = require("./routes/uploadcsv"),
+    state = require("./routes/state"),
+    http = require("http"),
+    path = require("path");
 
 const helmet = require("helmet");
 //var methodOverride = require('method-override');
 var app = express();
-var mysql = require("mysql");
+var mysql = require("mysql2");
 const bodyParser = require("body-parser");
 var session = require("express-session");
 var expressValidator = require("express-validator");
@@ -55,42 +55,47 @@ var parseForm = bodyParser.urlencoded({ extended: true });
 /* For local */
 
 var connection = mysql.createConnection({
-  host: "sriina.cp0zk32nnnd5.ap-south-1.rds.amazonaws.com",
-  user: "sriinadbadmin",
-  password: "sriina321$#",
-  database: "sriina",
+    host: "sriina.cp0zk32nnnd5.ap-south-1.rds.amazonaws.com",
+    user: "sriinadbadmin",
+    password: "sriina321$#",
+    database: "sriina",
 });
+
+// var connection = mysql.createConnection({
+//     host: "localhost",
+//     user: "developer",
+//     password: "developer",
+//     database: "sriina",
+// });
 
 /* For local */
 connection.connect(function (err) {
-  if (err) throw err;
-  console.log("Connection Established Successfully!");
+    if (err) throw err;
+    console.log("Connection Established Successfully!");
 });
 global.db = connection;
 global.baseURL = "https://sriina.com/"; /* For live */
 // global.baseURL = "http://localhost:5000/"; /* For local */
 
 app.get("/robots.txt", function (req, res) {
-  res.type("text/plain");
-  res.send(
-    "User-agent: *\nDisallow: /admin/\nAllow: /\nSitemap: https://sriina.com/sitemap.xml" /* For live */
-  );
+    res.type("text/plain");
+    res.send("User-agent: *\nDisallow: /admin/\nAllow: /\nSitemap: https://sriina.com/sitemap.xml" /* For live */);
 });
 
 app.use(cookieParser());
 app.use(
-  session({
-    secret: "sosecret",
-    cookie: { maxAge: 8 * 60 * 60 * 1000 },
-    saveUninitialized: true,
-    resave: true,
-  })
+    session({
+        secret: "sosecret",
+        cookie: { maxAge: 8 * 60 * 60 * 1000 },
+        saveUninitialized: true,
+        resave: true,
+    })
 );
 
 app.use(function (req, res, next) {
-  res.locals.user = req.session.user;
-  //res.locals.email = req.session.email;
-  next();
+    res.locals.user = req.session.user;
+    //res.locals.email = req.session.email;
+    next();
 });
 
 // all environments
@@ -140,50 +145,50 @@ app.post("/updatecity", user.Updatecity);
 app.post("/deletecity", user.Deletecity);
 app.post("/addcustomer", parseForm, csrfProtection, user.Addcustomer);
 //app.post('/editcustomer', user.Editcustomer);
-app.post("/updatecustomer",routes.authGaurd, user.Updatecustomer);
+app.post("/updatecustomer", routes.authGaurd, user.Updatecustomer);
 app.post("/deletecustomer", routes.authGaurd, user.Deletecustomer);
-app.post("/addcategory",routes.authGaurd, user.Addcategory);
-app.post("/addcatalog",routes.authGaurd, user.Addcatalog);
-app.post("/addcatalogcondition",routes.authGaurd, user.Addcatalogcondition);
+app.post("/addcategory", routes.authGaurd, user.Addcategory);
+app.post("/addcatalog", routes.authGaurd, user.Addcatalog);
+app.post("/addcatalogcondition", routes.authGaurd, user.Addcatalogcondition);
 app.post("/addcarts", user.Addcart);
-app.post("/editcategory",routes.authGaurd, user.Editcategory);
-app.post("/updatecategory",routes.authGaurd, user.Updatecategory);
+app.post("/editcategory", routes.authGaurd, user.Editcategory);
+app.post("/updatecategory", routes.authGaurd, user.Updatecategory);
 app.post("/updatecartts", user.Updatecartts);
-app.post("/updatecatalog",routes.authGaurd, user.Updatecatalog);
-app.post("/deletecategory",routes.authGaurd, user.Deletecategory);
-app.get("/deletecatalog/:id",routes.authGaurd, user.Deletecatalog);
-app.get("/deletecatalogcondition/:id",routes.authGaurd, user.Deletecatalogcondition);
+app.post("/updatecatalog", routes.authGaurd, user.Updatecatalog);
+app.post("/deletecategory", routes.authGaurd, user.Deletecategory);
+app.get("/deletecatalog/:id", routes.authGaurd, user.Deletecatalog);
+app.get("/deletecatalogcondition/:id", routes.authGaurd, user.Deletecatalogcondition);
 app.get("/deletecarts/:id", user.Deletecarts);
-app.post("/addsubcategory",routes.authGaurd, user.Addsubcategory);
-app.post("/editsubcategory",routes.authGaurd, user.Editsubcategory);
-app.post("/updatesubcategory",routes.authGaurd, user.Updatesubcategory);
-app.post("/deletesubcategory",routes.authGaurd, user.Deletesubcategory);
-app.post("/categorywisesubcategory", routes.authGaurd,user.Categorywisesubactegory);
-app.post("/addproduct",routes.authGaurd, user.Addproduct);
-app.post("/adminupdateproduct",routes.authGaurd, user.AdminUpdateProduct);
-app.post("/editproduct",routes.authGaurd, user.Editproduct);
-app.post("/updateproduct",routes.authGaurd, user.Updateproduct);
-app.post("/deleteproduct",routes.authGaurd, user.Deleteproduct);
+
+/*
+ *  Add Sub Category Routes
+ */
+app.post("/addsubcategory", routes.authGaurd, user.Addsubcategory);
+
+/* Old Edit sub category routes */
+app.post("/editsubcategory", routes.authGaurd, user.Editsubcategory);
+
+/*
+ *  Update Sub Category API routes
+ */
+app.post("/updatesubcategory", routes.authGaurd, user.Updatesubcategory);
+
+/*
+ *  Delete Sub Category API Routes
+ */
+app.post("/deletesubcategory", routes.authGaurd, user.Deletesubcategory);
+
+app.post("/categorywisesubcategory", routes.authGaurd, user.Categorywisesubactegory);
+app.post("/addproduct", routes.authGaurd, user.Addproduct);
+app.post("/adminupdateproduct", routes.authGaurd, user.AdminUpdateProduct);
+app.post("/editproduct", routes.authGaurd, user.Editproduct);
+app.post("/updateproduct", routes.authGaurd, user.Updateproduct);
+app.post("/deleteproduct", routes.authGaurd, user.Deleteproduct);
 app.post("/checkuniqueISBM13", user.checkUniqueISBM13);
 app.post("/userresetpwd", parseForm, csrfProtection, user.userResetPwd);
-app.post(
-  "/delay_box_massege",
-  parseForm,
-  csrfProtection,
-  order.delayBoxMassege
-);
-app.post(
-  "/cancel_product_from_admin",
-  parseForm,
-  csrfProtection,
-  order.cancelProductFromAdmin
-);
-app.post(
-  "/update_product_status",
-  parseForm,
-  csrfProtection,
-  order.updateProductStatus
-);
+app.post("/delay_box_massege", parseForm, csrfProtection, order.delayBoxMassege);
+app.post("/cancel_product_from_admin", parseForm, csrfProtection, order.cancelProductFromAdmin);
+app.post("/update_product_status", parseForm, csrfProtection, order.updateProductStatus);
 
 app.get("/statedeliverycharge", state.stateDeliveryCharge);
 app.post("/updatestatedeliverycharge", state.updateStateDeliveryCharge);
@@ -194,21 +199,11 @@ app.post("/addgroceryproduct", parseForm, admingrocery.addGroceryProduct);
 app.post("/get_grocery_sub_category", user.getGrocerySubCategory);
 app.post("/get_brands", admingrocery.getBrands);
 
-app.post(
-  "/updategroceyproducts",
-  parseForm,
-  csrfProtection,
-  admingrocery.updateGroceryProducts
-);
+app.post("/updategroceyproducts", parseForm, csrfProtection, admingrocery.updateGroceryProducts);
 
 app.get("/adminpwd", csrfProtection, myaccount.adminPassword);
 app.post("/saveadminpwd", parseForm, csrfProtection, myaccount.saveAdminPwd);
-app.post(
-  "/saveadminpwdotp",
-  parseForm,
-  csrfProtection,
-  myaccount.saveAdminPwdOTP
-);
+app.post("/saveadminpwdotp", parseForm, csrfProtection, myaccount.saveAdminPwdOTP);
 app.get("/adminpwdotp", csrfProtection, myaccount.adminPasswordOTP);
 
 app.get("/updatediscount", user.Updateddiscount);
@@ -221,14 +216,9 @@ app.get("/primemembership", order.primeMembership);
 app.get("/viewprimeorder", order.viewPrimeOrder);
 app.post("/addprimebook", order.addPrimeBook);
 
-app.get("/user/vieworder/:id",routes.authGaurd, myaccount.userViewOrder);
-app.get("/user/cancelitem",routes.authGaurd, csrfProtection, myaccount.cancelItem);
-app.post(
-  "/cancle_item_success",
-  parseForm,
-  csrfProtection,
-  myaccount.cancleItemSuccess
-);
+app.get("/user/vieworder/:id", routes.authGaurd, myaccount.userViewOrder);
+app.get("/user/cancelitem", routes.authGaurd, csrfProtection, myaccount.cancelItem);
+app.post("/cancle_item_success", parseForm, csrfProtection, myaccount.cancleItemSuccess);
 app.get("/user/order-tracking", csrfProtection, myaccount.orderTracking);
 
 app.get("/error_page", signin.errorPage);
@@ -250,39 +240,22 @@ app.get("/admin-pre-order-products", user.adminPreOrderProducts);
 
 app.get("/state-on-rent", csrfProtection, user.stateONRent);
 app.post("/addstateonrent", parseForm, csrfProtection, user.addStateonRent);
-app.post(
-  "/update-state-onrent",
-  parseForm,
-  csrfProtection,
-  user.updateStateonRent
-);
+app.post("/update-state-onrent", parseForm, csrfProtection, user.updateStateonRent);
 app.post("/delete-state-onrent", user.deleteStateonRent);
 
-app.get("/updatecart",routes.authGaurd, product.updateCart);
+app.get("/updatecart", routes.authGaurd, product.updateCart);
 app.post("/saveaddtocart", parseForm, csrfProtection, product.saveAddtoCart);
 app.get("/checkpincode", product.checkPinNumber);
 app.get("/myaccount", routes.authGaurd, myaccount.UserAccount);
-app.get("/profile",routes.authGaurd, myaccount.UserProfile);
+app.get("/profile", routes.authGaurd, myaccount.UserProfile);
 app.get("/sritezprime", csrfProtection, myaccount.sritezPrime);
-app.post(
-  "/membership_book_request",
-  parseForm,
-  csrfProtection,
-  routes.authGaurd,
-  myaccount.membershipBookRequest
-);
+app.post("/membership_book_request", parseForm, csrfProtection, routes.authGaurd, myaccount.membershipBookRequest);
 
 app.get("/vendorpage", csrfProtection, user.vendorPage);
 app.post("/updatevendor", user.updateVendor);
 
 app.get("/vendor_register", csrfProtection, signin.vendorRegister);
-app.post(
-  "/vendorregisterfrm",
-  parseForm,
-  csrfProtection,
-  routes.authGaurd,
-  signin.vendorRegisterFrm
-);
+app.post("/vendorregisterfrm", parseForm, csrfProtection, routes.authGaurd, signin.vendorRegisterFrm);
 
 /* users routes */
 app.get("/sign-in", csrfProtection, signin.userSignIn);
@@ -293,24 +266,12 @@ app.post("/contactus", parseForm, csrfProtection, signin.userContactUsSave);
 app.get("/users/dashboard", routes.authGaurd, signin.dashboardProfile);
 app.post("/userlogin", parseForm, csrfProtection, signin.userLogin);
 app.get("/userlogout", signin.userLogout);
-app.post("/delete-cart",routes.authGaurd, signin.deleteInCart);
+app.post("/delete-cart", routes.authGaurd, signin.deleteInCart);
 app.post("/addcallback", signin.addCallBack);
-app.get("/checkout", csrfProtection,routes.authGaurd, signin.shoppingCheckOut);
+app.get("/checkout", csrfProtection, routes.authGaurd, signin.shoppingCheckOut);
 app.get("/getcaptcha", signin.getCaptchaajax);
-app.post(
-  "/billing_information",
-  parseForm,
-  csrfProtection,
-  routes.authGaurd,
-  signin.billingInformation
-);
-app.post(
-  "/shipping_information",
-  parseForm,
-  csrfProtection,
-  routes.authGaurd,
-  signin.shippingInformation
-);
+app.post("/billing_information", parseForm, csrfProtection, routes.authGaurd, signin.billingInformation);
+app.post("/shipping_information", parseForm, csrfProtection, routes.authGaurd, signin.shippingInformation);
 
 app.get("/delete_shipping_address", signin.deleteShippingAddress);
 app.get("/delete_billing_address", signin.deleteBillingAddress);
@@ -318,27 +279,17 @@ app.get("/delete_billing_address", signin.deleteBillingAddress);
 app.post("/create-checkout-session", signin.stripePayment);
 
 /* razorpay */
-app.post("/razorpay-checkout",routes.authGaurd, signin.razorpayPaymentStatus);
+app.post("/razorpay-checkout", routes.authGaurd, signin.razorpayPaymentStatus);
 app.get("/payment_status", signin.orderPaymentStatus);
 
 app.post("/confim_order", signin.confimOrder);
-app.post(
-  "/prime_confim_order",
-  parseForm,
-  csrfProtection,
-  signin.PrimeConfimOrder
-);
+app.post("/prime_confim_order", parseForm, csrfProtection, signin.PrimeConfimOrder);
 
 /* razorpay for membership plan */
-app.post("/razorpay-membership-checkout",routes.authGaurd, signin.razorpayMembershipPayment);
-app.get("/payment_membership_status",routes.authGaurd, signin.membershipPaymentStatus);
+app.post("/razorpay-membership-checkout", routes.authGaurd, signin.razorpayMembershipPayment);
+app.get("/payment_membership_status", routes.authGaurd, signin.membershipPaymentStatus);
 
-app.post(
-  "/register_user_plan",
-  parseForm,
-  csrfProtection,
-  signin.registerUserPlan
-);
+app.post("/register_user_plan", parseForm, csrfProtection, signin.registerUserPlan);
 app.get("/membership_checkout", csrfProtection, routes.authGaurd, signin.membershipCheckout);
 
 app.get("/forgot-password", csrfProtection, signin.forgotPassword);
@@ -371,12 +322,7 @@ app.post("/payment/membership_failure", payumoney.PaymentMembershipFailure);
 /* for grocery page */
 app.get("/grocery", grocery.groceryIndex);
 app.get("/p/groceries/:slug/:id", csrfProtection, grocery.viewGroceryProduct);
-app.post(
-  "/groceyaddtocart",
-  parseForm,
-  csrfProtection,
-  grocery.addtoCartGroceryProducts
-);
+app.post("/groceyaddtocart", parseForm, csrfProtection, grocery.addtoCartGroceryProducts);
 /* end */
 
 /* for grocery page */
@@ -394,6 +340,7 @@ app.get("/security", pages.security);
 app.get("/contact", pages.contactPage);
 
 app.get("/categories", product.categoryPage);
+app.get("/sub-categories", product.subCategoryPage);
 
 app.get("/search", search.searchResult);
 app.get("/viewpost/:id", search.viewSearch);
@@ -402,26 +349,21 @@ app.get("/adminplanpage", routes.authGaurd, order.adminPlanPage);
 app.post("/editmembershipplan", routes.authGaurd, order.editMembershipPlan);
 
 app.get("/uploadexcel", routes.authGaurd, csrfProtection, uploadcsv.uploadExcel);
-app.get("/find-missing-image",  uploadcsv.findMissingImage);
+app.get("/find-missing-image", uploadcsv.findMissingImage);
 
 const __basedir = path.resolve();
 const multer = require("multer");
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, __basedir + "/exceldata/");
-  },
-  filename: (req, file, cb) => {
-    cb(null, file.fieldname + "-" + Date.now() + "-" + file.originalname);
-  },
+    destination: (req, file, cb) => {
+        cb(null, __basedir + "/exceldata/");
+    },
+    filename: (req, file, cb) => {
+        cb(null, file.fieldname + "-" + Date.now() + "-" + file.originalname);
+    },
 });
 const uploadFile = multer({ storage: storage });
 
-app.post(
-  "/uploadexcelfile",
-  uploadFile.single("uploadexcel"),
-  routes.authGaurd,
-  uploadcsv.uploadExcelFile
-);
+app.post("/uploadexcelfile", uploadFile.single("uploadexcel"), routes.authGaurd, uploadcsv.uploadExcelFile);
 app.post("/upload-xlsx", routes.authGaurd, uploadcsv.saveExcelFileData);
 app.get("/:slug/:id", csrfProtection, product.viewProduct);
 
@@ -429,5 +371,5 @@ app.get("/:id", pages.getCategories);
 
 //Middleware
 app.listen(port, () => {
-  console.log(`Server running on port: ${port}`);
+    console.log(`Server running on port: ${port}`);
 });

@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Category | Dashboard</title>
+	<meta name="_csrf" content="#{csrfToken}">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+	<link rel="stylesheet" href="/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+	<%- include ("../../common/css") %>
+</head>
+
+<body class="hold-transition sidebar-mini layout-fixed">
+	<div class="wrapper">
+		<%- include ("../../common/top_nav") %>
+			<% if(user.type==5){ %>
+				<%- include ("../../common/seosidebar") %>
+					<% } else if(user.type==2) { %>
+						<%- include ("../../common/dataentrysidebar") %>
+							<% } else {%>
+								<%- include ("../../common/sidebar") %>
+									<% } %>
+										<div class="content-wrapper">
+											<div class="content-header">
+												<div class="container-fluid">
+													<div class="row mb-2">
+														<div class="col-sm-6">
+															<h1 class="m-0 text-dark">Sub Category</h1>
+														</div>
+														<div class="col-sm-6">
+															<ol class="breadcrumb float-sm-right">
+																<li class="breadcrumb-item"><a
+																		href="/dashboard">Home</a></li>
+																<li class="breadcrumb-item active">SubCategory</li>
+															</ol>
+														</div>
+													</div>
+												</div>
+											</div>
+											<section class="content">
+												<div class="container-fluid">
+													<div class="">
+														<div class="">
+															<% if(message.length> 0) {%>
+																<div class="alert alert-success alert-dismissible show"
+																	role="alert">
+																	<%= message %>
+																		<button type="button" class="close"
+																			data-dismiss="alert" aria-label="Close">
+																			<span aria-hidden="true">&times;</span>
+																		</button>
+																</div>
+																<% } %>
+																	<div class="card">
+																		<div class="card-header">
+																			<h3 class="card-title float-right"><button
+																					type="button"
+																					class="btn btn-default"
+																					data-toggle="modal"
+																					data-target="#modal-default">
+																					Add SubCategory
+																				</button></h3>
+																		</div>
+																		<!-- /.card-header -->
+																		<div class="card-body">
+																			<table id="example1"
+																				class="table table-bordered table-striped">
+																				<thead>
+																					<tr>
+																						<th>#</th>
+																						<th>ID</th>
+																						<th>Name</th>
+																						<th>Category</th>
+																						<th>Status</th>
+																						<th>Action</th>
+																					</tr>
+																				</thead>
+																				<tbody>
+																					<% for(var i=0; i <
+																						subcategorylist.length; i++){ %>
+																						<tr>
+																							<td>
+																								<%= i+1 %>
+																							</td>
+																							<td>
+																								<%= subcategorylist[i].id
+																									%>
+																							</td>
+																							<td>
+																								<%= subcategorylist[i].name
+																									%>
+																							</td>
+																							<td>
+																								<%= subcategorylist[i].categoryname
+																									%>
+																							</td>
+																							<td>
+																								<% if(subcategorylist[i].status==1){
+																									%>Active<% } else{
+																										%>Inactive<% }
+																											%>
+																							</td>
+																							<td>
+																								<a class="edit_sub_category btn btn-info btn-sm"
+																									data-id="<%= subcategorylist[i].id %>"
+																									data-name="<%= subcategorylist[i].name %>"
+																									data-categoryid="<%= subcategorylist[i].categoryid %>"
+																									data-categoryname="<%= subcategorylist[i].categoryname %>"
+																									data-status="<%= subcategorylist[i].status %>"
+																									data-target="#myModaledit"
+																									data-toggle="modal"><i
+																										class="fas fa-pencil-alt"></i>Edit</a>
+																								<% if(user.type !=2) {
+																									%>
+																									<a class="delete_sub_category btn btn-danger btn-sm"
+																										id="<%= subcategorylist[i].id %>"><i
+																											class="fas fa-trash"></i>Delete</a>
+																									<% } %>
+																							</td>
+																						</tr>
+																						<% } %>
+																				</tbody>
+																				<tfoot>
+																					<tr>
+																						<th>#</th>
+																						<th>ID</th>
+																						<th>Name</th>
+																						<th>Category</th>
+																						<th>Status</th>
+																						<th>Action</th>
+																					</tr>
+																				</tfoot>
+																			</table>
+																		</div>
+																	</div>
+														</div>
+
+														<div class="modal fade" id="modal-default">
+															<div class="modal-dialog">
+																<div class="modal-content">
+																	<div class="modal-header">
+																		<h4 class="modal-title">Add Sub Category</h4>
+																		<button type="button" class="close"
+																			data-dismiss="modal" aria-label="Close">
+																			<span aria-hidden="true">&times;</span>
+																		</button>
+																	</div>
+																	<form action="addsubcategory" method="post"
+																		enctype="multipart/form-data">
+																		<div class="modal-body">
+																			<div class="form-group">
+																				<div class="col-sm-12">
+																					<label
+																						class="control-label label-margin">Sub
+																						category
+																						Name</label>
+																					<input type="text"
+																						class="form-control"
+																						id="subCategoryName"
+																						placeholder="Name"
+																						name="subCategoryName"
+																						required />
+																				</div>
+																			</div>
+																			<div class="form-group">
+																				<div class="col-sm-12">
+																					<label
+																						class="control-label label-margin">Category</label>
+																					<select class="form-control"
+																						name="categoryid" id="category"
+																						required>
+																						<option value="">-Please select
+																							category-</option>
+																						<% for(var i=0; i <
+																							categorylist?.length; i++){
+																							%>
+																							<option
+																								value="<%= categorylist[i].id %>">
+																								<%= categorylist[i].name
+																									%>
+																							</option>
+																							<% }%>
+																					</select>
+																				</div>
+																			</div>
+																			<div class="form-group">
+																				<div class="col-sm-12">
+																					<label
+																						class="control-label label-margin">Status</label>
+																					<select class="form-control"
+																						name="cat_status" required>
+																						<option value="1">Active
+																						</option>
+																						<option value="0">Inactive
+																						</option>
+																					</select>
+																				</div>
+																			</div>
+																		</div>
+																		<div
+																			class="modal-footer justify-content-between">
+																			<button type="button"
+																				class="btn btn-default"
+																				data-dismiss="modal">Close</button>
+																			<button type="submit"
+																				class="btn btn-primary">Submit</button>
+																		</div>
+																	</form>
+																</div>
+															</div>
+														</div>
+
+
+														<div class="modal fade" id="myModaledit" tabindex="-1"
+															role="dialog" aria-hidden="true">
+															<div class="modal-dialog">
+																<div class="modal-content animated bounceInRight">
+																	<div class="modal-header">
+																		<h4 class="modal-title">Edit Sub Categroy</h4>
+																		<button type="button" class="close"
+																			data-dismiss="modal" aria-label="Close">
+																			<span aria-hidden="true">&times;</span>
+																		</button>
+																	</div>
+																	<!--end modal-header-->
+																	<form action="/updatesubcategory" method="post"
+																		enctype="multipart/form-data"
+																		id="updatecategory">
+																		<input type="hidden" id="subcategory_id"
+																			name="subcategory_id" value="" />
+																		<div class="modal-body">
+																			<div class="example-box-wrapper">
+																				<div class="form-group">
+																					<div class="col">
+																						<label
+																							class="control-label label-margin">Sub
+																							Category
+																							Name</label>
+																						<input type="text"
+																							class="form-control"
+																							id="edit_sub_category_name"
+																							placeholder="Sub Category Name"
+																							name="editSubCategoryName" />
+																					</div>
+																				</div>
+																				<div class="form-group">
+																					<div class="col-sm-12">
+																						<label
+																							class="control-label label-margin">Category</label>
+																						<select class="form-control"
+																							name="categoryid"
+																							id="edit_categoryid"
+																							required>
+																							<option value="">-Please
+																								select
+																								category-</option>
+																							<% for(var i=0; i <
+																								categorylist?.length;
+																								i++){ %>
+																								<option
+																									value="<%= categorylist[i].id %>">
+																									<%= categorylist[i].name
+																										%>
+																								</option>
+																								<% }%>
+																						</select>
+																					</div>
+																				</div>
+
+																				<div class="form-group">
+																					<div class="col">
+																						<label
+																							class="control-label label-margin">Status</label>
+																						<select class="form-control"
+																							id="edit_subCategory_Status"
+																							name="editsubCategory_Status"
+																							required>
+																							<option value="1">Active
+																							</option>
+																							<option value="0">Inactive
+																							</option>
+																						</select>
+																					</div>
+																				</div>
+																			</div>
+																		</div>
+																		<div class="modal-footer">
+																			<button type="button"
+																				class="btn btn-default"
+																				data-dismiss="modal">Close</button>
+																			<button type="submit"
+																				class="btn btn-primary">Submit</button>
+																		</div>
+																	</form>
+																</div>
+															</div>
+														</div>
+
+													</div>
+												</div>
+											</section>
+										</div>
+										<%- include ("../../common/footer") %>
+	</div>
+	<%- include ("../../common/js") %>
+		<script type="text/javascript">
+			$(function () {
+				"use strict";
+				$("#example1").DataTable({
+					"responsive": true,
+					"autoWidth": false,
+					"pageLength": 25,
+				});
+			});  
+		</script>
+</body>
+
+</html>

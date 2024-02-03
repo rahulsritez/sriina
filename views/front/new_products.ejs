@@ -1,63 +1,77 @@
 <div class="owl-carousel home-owl-carousel custom-carousel owl-theme outer-top-xs">
-    <% if (productlist.length > 0) {%>
-      <% productlist.forEach((list, index) => { %>
-      <% var new_price = (list.price)-(list.price/100)*list.discount; %>
-        <div class="item item-carousel">
-            <div class="products">
-                <div class="product">
-                    <div class="product-image">
-                        <% if(list.image) {%>
-                            <% if(/(http(s?)):\/\//i.test(list.image)) {%>
-                                <div class="img-wrap"> <a href="<%= list.slug %>/<%= list.id %>"><img src="<%= list.image %>" alt="<%= list.name %>"></a> </div>
-                            <% } else { %>
-                                <div class="img-wrap"> <a href="<%= list.slug %>/<%= list.id %>"><img src="<%= process.env.IMAGE_URL%><%= list.image %>" alt="<%= list.name %>"></a> </div>
-                            <% } %>
-                        <% } else {%>
-                        <div class="img-wrap"> <a href="<%= list.slug %>/<%= list.id %>"><img src="<%= process.env.IMAGE_URL%>404.jpg" alt="<%= list.name %>"></a> </div>
-                        <% } %>
+    <% if (productlist.length> 0) {%>
+        <% productlist.forEach((list, index)=> { %>
+            <% var new_price=(list.price)-(list.price/100)*list.discount; %>
+                <div class="item item-carousel">
+                    <div class="products">
+                        <div class="product">
+                            <div class="product-image">
+                                <% if(list.image) {%>
+                                    <% if(/(http(s?)):\/\//i.test(list.image)) {%>
+                                        <div class="img-wrap"> <a href="<%= list.slug %>/<%= list.id %>"><img
+                                                    src="<%= list.image %>" alt="<%= list.name %>"></a> </div>
+                                        <% } else { %>
+                                            <div class="img-wrap"> <a href="<%= list.slug %>/<%= list.id %>"><img
+                                                        src="<%= process.env.IMAGE_URL%><%= list.image %>"
+                                                        alt="<%= list.name %>"></a> </div>
+                                            <% } %>
+                                                <% } else {%>
+                                                    <div class="img-wrap"> <a
+                                                            href="<%= list.slug %>/<%= list.id %>"><img
+                                                                src="<%= process.env.IMAGE_URL%>404.jpg"
+                                                                alt="<%= list.name %>"></a> </div>
+                                                    <% } %>
+                            </div>
+                            <div class="product-info text-left">
+                                <h3 class="name"><a href="<%= list.slug %>/<%= list.id %>">
+                                        <%= list.name.substring(0, 60) %>
+                                    </a></h3>
+                                <div>By: <%= list.author.substring(0,25) %>
+                                </div>
+                                <div class="rating rateit-small"></div>
+                                <div class="description"></div>
+                                <div class="product-price"> <span class="price"> ₹<%=
+                                            new_price.toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1," ) %> </span>
+                                    <span class="price-before-discount">₹ <%= (list.price) %></span> <span>
+                                        <%= list.discount %>% off
+                                    </span> </div>
+                                <% if( maxplan[0].MaxPlanPrice>= list.price ) { %>
+                                    <div class="on_rent"><a href="membership?productId=<%= list.id %>">On Rent</a></div>
+                                    <% } %>
+                                        <div class="add_cart">
+
+                                            <a href="<%= list.slug %>/<%= list.id %>"><i
+                                                    class="fa fa-shopping-cart"></i> Buy Now</a>
+
+                                            <!-- <a class="add-cart" herf="<%= list.slug %>/<%= list.id %>"><i class="fa fa-shopping-cart"></i> Add to cart </a> -->
+
+                                            <!--<a class="add-cart cart<%= index %>"><i class="fa fa-shopping-cart"></i> Add to cart</a>-->
+                                        </div>
+                            </div>
+
+                        </div>
                     </div>
-                    <div class="product-info text-left">
-                        <h3 class="name"><a href="<%= list.slug %>/<%= list.id %>"><%= list.name.substring(0, 60) %></a></h3>
-                        <div>By: <%= list.author.substring(0,25) %></div>
-                        <div class="rating rateit-small"></div>
-                        <div class="description"></div>
-                        <div class="product-price"> <span class="price"> ₹<%= new_price.toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,") %> </span> <span class="price-before-discount">₹ <%= (list.price) %></span> <span><%= list.discount %>% off</span> </div>
-                        <% if( maxplan[0].MaxPlanPrice >= list.price ) { %>
-                            <div class="on_rent"><a href="membership?productId=<%= list.id %>">On Rent</a></div>
-                        <% } %>
-                         <div class="add_cart">
-
-                         <a href="<%= list.slug %>/<%= list.id %>"><i class="fa fa-shopping-cart"></i> View Product</a>
-
-                        <!-- <a class="add-cart" herf="<%= list.slug %>/<%= list.id %>"><i class="fa fa-shopping-cart"></i> Add to cart </a> -->
-
-                         <!--<a class="add-cart cart<%= index %>"><i class="fa fa-shopping-cart"></i> Add to cart</a>-->
-                         </div>
-                    </div>
-                   
                 </div>
-            </div>
-        </div>
-        <% }) %>
-    <% } else { %>
-        <p class="text-center">No Book Found.</p>
-    <% } %>
+                <% }) %>
+                    <% } else { %>
+                        <p class="text-center">No Book Found.</p>
+                        <% } %>
 </div>
 <script>
-function addtocart(product_id){
-    const cart_product = JSON.parse(localStorage.getItem('cart_product'));
-    if(cart_product){
-        cart_product.push(product_id);
-        localStorage.setItem('cart_product',JSON.stringify(cart_product));
-    } else {
-        localStorage.setItem('cart_product',JSON.stringify([product_id]));
+    function addtocart(product_id) {
+        const cart_product = JSON.parse(localStorage.getItem('cart_product'));
+        if (cart_product) {
+            cart_product.push(product_id);
+            localStorage.setItem('cart_product', JSON.stringify(cart_product));
+        } else {
+            localStorage.setItem('cart_product', JSON.stringify([product_id]));
+        }
+        document.getElementById("count").innerHTML = updateCartCount();
     }
-    document.getElementById("count").innerHTML = updateCartCount();    
-}
 
-function updateCartCount(){
-    const cart_product = JSON.parse(localStorage.getItem('cart_product'));
-    return cart_product.length ? cart_product.length : 0;
-}
+    function updateCartCount() {
+        const cart_product = JSON.parse(localStorage.getItem('cart_product'));
+        return cart_product.length ? cart_product.length : 0;
+    }
 
 </script>

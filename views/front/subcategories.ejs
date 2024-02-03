@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Sriina: <%= title %>
+    </title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon.png">
+    <link href="css/shop-homepage.css" rel="stylesheet" />
+    <link rel="stylesheet" href="../../plugins/fontawesome-free/css/all.min.css" />
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-184850763-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'UA-184850763-1');
+    </script>
+</head>
+
+<body class="">
+    <header class="section-header">
+        <section class="header-main border-bottom">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-xl-2 col-lg-3 col-md-12">
+                        <a href="/"><img class="logo img-responsive" src="images/Sriina-logo.jpg"
+                                alt="Buy Books Online India, Online Books Shopping, Online Bookstore, Shop Online Books"
+                                width="150" height="47" style="max-width: none;"></a>
+                    </div>
+                    <div class="col-xl-6 col-lg-5 col-md-6">
+                        <% include ("search") %>
+                    </div>
+
+                    <div class="col-xl-4 col-lg-4 col-md-6">
+                        <% include ("../../common/user_top_nav") %>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <nav class="navbar navbar-main navbar-expand-lg border-bottom">
+            <div class="container navbar_align">
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main_nav"
+                    aria-controls="main_nav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="main_nav">
+                    <% include ("navigation") %>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Page Content -->
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3">
+                <% include ("../../common/left_category") %>
+            </div>
+            <div class="col-lg-9">
+                Sub Category
+            </div>
+        </div>
+        <!-- /.row -->
+    </div>
+    <!-- /.container -->
+    <% include ("book_footer") %>
+
+        <script src="vendor/jquery/jquery.min.js"></script>
+        <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
