@@ -640,9 +640,10 @@
                                                                                             </span> <span
                                                                                                 class="price-before-discount">₹
                                                                                                 <% if(list.price) {%>
-                                                                                                    <%= (list.price).toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"
-                                                                                                        ) %>
-                                                                                                        <% } %></span>
+                                                                                                    <%=
+                                                                                                        parseFloat(list.price).toFixed(2)%>
+                                                                                                        <% } %>
+                                                                                            </span>
                                                                                             <span>
                                                                                                 <%= list.discount %>%
                                                                                                     off
