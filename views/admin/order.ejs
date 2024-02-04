@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -9,330 +10,388 @@
   <link rel="stylesheet" href="/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
   <%- include ("../../common/css") %>
 </head>
+
 <body class="hold-transition sidebar-mini layout-fixed">
-<div class="wrapper">
-<%- include ("../../common/top_nav") %>
-<% if(user.type == 5){ %>
-  <%- include ("../../common/seosidebar") %>
-<% } else { %>
-  <%- include ("../../common/sidebar") %>
-<% } %>
-  <div class="content-wrapper">
-    <div class="content-header">
-      <div class="container-fluid">
-        <div class="row mb-2">
-          <div class="col-sm-6">
-            <h1 class="m-0 text-dark">Dashboard</h1>
-          </div>
-          <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
-              <li class="breadcrumb-item active">Orders List</li>
-            </ol>
-          </div>
-        </div>
-      </div>
-    </div>
-    <section class="content">
-      <div class="container-fluid">
-        <div class="">
-          <div class="">
-            <% if(message.length > 0) {%>
-              <div class="alert alert-success alert-dismissible show" role="alert">
-                 <%= message %> 
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-            <% } %>
-            <% if(errors.length > 0) {%>
-              <div class="alert alert-danger alert-dismissible show" role="alert">
-                 <%= errors %> 
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-            <% } %>
-
-            <div class="card">
-              <div class="card-body">
-                <table id="order_tbl" class="table table-bordered table-striped">
-                  <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>Name</th>
-                    <th>Email Id</th>
-                    <th>Paid Amount</th>
-                    <th>Order Id</th>
-                    <th>Payment Status</th>
-                    <th>Payment Method</th>
-                    <th>Date</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                  </tr>
-                  </thead>
-                  <tbody>
-                    <% if (orderlist.length > 0) { %>
-                    <% orderlist.forEach((list, index) => {
-                      var payment_method = list.paymentMethod
-                      var payment_status = list.paymentStatus
-                      var payment_id     = list.paymentId
-                    %>
-                  <tr>
-                    <td><%= index+1 %></td>
-                    <td><%= list.username %></td>
-                    <td><%= list.useremail %></td>
-                    <td><% if(list.paid_amount){ %><%= (list.paid_amount).toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,") %><% } %></td>
-                    <td><%= list.reference %></td>
-                    <td>
-                      <%
-                        if(payment_method==1 && payment_status=="success" && payment_id!="")
-                        {
-                          var result = payment_status
-                        }else if(payment_method==1 && payment_id==null && payment_status==null)
-                        {
-                          var result = "Failure"
-                        }else if(payment_method==1 && payment_status==null)
-                        {
-                          var result = "Failure"
-                        }else if(payment_method==2)
-                        {
-                          var result = "POD Payment"
-                        }else
-                        {
-                          var result = "N/A"
-                        }
-                      %>
-                      <%= result %></td>
-                    <td><% if(list.paymentMethod==1) {%>
-                      <strong class="text-success">Online</strong>
-                    <% } else { %>
-                      <strong style="color: #e67a00;">POD</strong>
-                    <% } %></td>
-                    <td><%= 
-              moment(list.orderDate).add(5, 'hours').add(30, 'minutes').format('llll') %></td>
-                    <td>
-                      <% if(list.order_status==1){%>
-                          <button type="button" class="btn btn-outline-primary">Booked</button>
-                      <% } else if(list.order_status==2) {%>
-                          <button type="button" class="btn btn-outline-secondary">Dispatched</button>
-                      <% } else if(list.order_status==3) {%>
-                          <button type="button" class="btn btn-outline-info">Shipped</button>
-                      <% } else if(list.order_status==4) {%>
-                        <button type="button" class="btn btn-outline-success">Delivered</button>
-                      <% } else if(list.order_status==5) {%>
-                          <button type="button" class="btn btn-outline-danger">Cancelled</button>
-                      <% } else if(list.order_status==6) {%>
-                        <button type="button" class="btn btn-outline-dark">Return</button>
-                      <% } else if(list.order_status==7) {%>
-                        <button type="button" class="btn btn-outline-primary">Pending</button>
-                      <% } else if(list.order_status==8) {%>
-                        <button type="button" class="btn btn-outline-dark">Product Delay</button> 
-                      <% } else if(list.order_status==9) {%>
-                        <button type="button" class="btn btn-outline-danger">Product cancelled from admin side</button> 
-                      <% } %>     
-                     </td>
-
-                   <td>
-                      <a href="/vieworder?id=<%= list.reference %>" class="btn btn-success btn-sm">View Order</a> <br>| <a style="cursor: pointer;" class="show_delay_box" data-id="<%= list.reference %>" data-username="<%= list.username %>" data-useremail="<%= list.useremail %>" data-reference="<%= list.reference %>" data-target="#myModaledit" data-toggle="modal">Delay box</a> | <a style="cursor: pointer;" class="cancellation_product" data-id="<%= list.reference %>" data-username="<%= list.username %>" data-useremail="<%= list.useremail %>" data-reference="<%= list.reference %>" data-target="#myModalCancellation" data-toggle="modal">Cancellation</a> | <a style="cursor: pointer;" class="delivered_product" data-id="<%= list.reference %>" data-username="<%= list.username %>" data-useremail="<%= list.useremail %>" data-reference="<%= list.reference %>"  data-order_status="<%= list.order_status %>" data-target="#myModalDelivered" data-toggle="modal">Status</a>
-                    </td>
-                  </tr>
-                  <% }) %>
-                  <% } else { %>
-                    <tr><td colspan="8" style="text-align:center;color:red">no order found</td></tr>
-                    <% } %>
-                  </tbody>
-                  <tfoot>
-                  <tr>
-                    <th>#</th>
-                    <th>Name</th>
-                    <th>Email Id</th>
-                    <th>Paid Amount</th>
-                    <th>Order Id</th>
-                    <th>Payment Status</th>
-                    <th>Payment Method</th>
-                    <th>Date</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                  </tr>
-                  </tfoot>
-                </table>
-              </div>
-            </div>
-        </div>
-
-        </div>
-      </div>
-    </section>
-    <div class="modal fade" id="myModaledit" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content animated bounceInRight">
-          <div class="modal-header">
-            <h5 class="modal-title">Delay box [<span style="color: green;" id="get_delay_name"></span>]</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-            <!--end modal-header-->
-            <form action="/delay_box_massege" method="post">
-              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                <input type="hidden" id="edit_id" name="edit_id" value="">
-                <div class="modal-body">
-                  <div class="row mb-2">
-                    <div class="col-md-4">
-                      <label class="control-label label-margin">User Name</label>
-                      <input type="text" class="form-control" id="edit_username" placeholder="Name" name="edit_username" readonly="readonly" style="cursor: no-drop;">
-                    </div>
-                    <div class="col-md-4">
-                      <label class="control-label label-margin">User Email</label>
-                      <input type="text" name="edit_useremail" class="form-control" id="edit_useremail" placeholder="Author" readonly="readonly" style="cursor: no-drop;">
-                    </div>
-                    <div class="col-md-4">
-                      <label class="control-label label-margin">Order no</label>
-                      <input type="text" class="form-control" id="edit_reference" placeholder="Publisher" name="edit_reference" readonly="readonly" style="cursor: no-drop;">
-                    </div>
-                  </div>  
-                  <div class="row mb-2">
-                       <div class="col-md-12">
-                          <label class="control-label label-margin">Message</label>
-                          <textarea name="edit_message" id="edit_message" class="form-control textarea"></textarea>
+  <div class="wrapper">
+    <%- include ("../../common/top_nav") %>
+      <% if(user.type==5){ %>
+        <%- include ("../../common/seosidebar") %>
+          <% } else { %>
+            <%- include ("../../common/sidebar") %>
+              <% } %>
+                <div class="content-wrapper">
+                  <div class="content-header">
+                    <div class="container-fluid">
+                      <div class="row mb-2">
+                        <div class="col-sm-6">
+                          <h1 class="m-0 text-dark">Dashboard</h1>
+                        </div>
+                        <div class="col-sm-6">
+                          <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
+                            <li class="breadcrumb-item active">Orders List</li>
+                          </ol>
+                        </div>
                       </div>
+                    </div>
                   </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Submit</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="myModalCancellation" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content animated bounceInRight">
-          <div class="modal-header">
-            <h5 class="modal-title">Cancellation product [<span style="color: green;" id="get_cancellation_name"></span>]</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-            <!--end modal-header-->
-            <form action="/cancel_product_from_admin" method="post">
-              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                <input type="hidden" id="edit_id" name="edit_id" value="">
-                <div class="modal-body">
-                  <div class="row mb-2">
-                    <div class="col-md-4">
-                      <label class="control-label label-margin">User Name</label>
-                      <input type="text" class="form-control" id="edit_c_username" placeholder="Name" name="edit_c_username" readonly="readonly" style="cursor: no-drop;">
-                    </div>
-                    <div class="col-md-4">
-                      <label class="control-label label-margin">User Email</label>
-                      <input type="text" name="edit_c_useremail" class="form-control" id="edit_c_useremail" placeholder="Author" readonly="readonly" style="cursor: no-drop;">
-                    </div>
-                    <div class="col-md-4">
-                      <label class="control-label label-margin">Order no</label>
-                      <input type="text" class="form-control" id="edit_c_reference" placeholder="Publisher" name="edit_c_reference" readonly="readonly" style="cursor: no-drop;">
-                    </div>
-                  </div>  
-                  <div class="row mb-2">
-                       <div class="col-md-12">
-                          <label class="control-label label-margin">Reason</label>
-                          <select class="form-control" name="reason" id="reason">
-                              <option value="Order Created by Mistake">Order Created by Mistake</option>
-                              <option value="Item(s) Would Not Arrive on Time">Item(s) Would Not Arrive on Time</option>
-                              <option value="Shipping Cost Too High">Shipping Cost Too High</option>
-                              <option value="Found Cheaper Somewhere Else">Found Cheaper Somewhere Else</option>
-                              <option value="Need to Change Shipping Address">Need to Change Shipping Address</option>
-                              <option value="Need to Change Shipping Spped">Need to Change Shipping Spped</option>
-                              <option value="Need to Change Billing Address">Need to Change Billing Address</option>
-                              <option value="Need to Change Payment Method">Need to Change Payment Method</option>
-                              <option value="Other">Other</option>
-                          </select>
-                      </div>
-                  </div>
-                  <div class="row mb-2">
-                       <div class="col-md-12">
-                          <label class="control-label label-margin">Message</label>
-                          <textarea name="edit_c_message" id="edit_c_message" class="form-control textarea"></textarea>
-                      </div>
-                  </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Submit</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="myModalDelivered" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content animated bounceInRight">
-          <div class="modal-header">
-            <h5 class="modal-title">Deliverd Product [<span style="color: green;" id="get_delay_name_delivery"></span>]</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-            <!--end modal-header-->
-            <form action="/update_product_status" method="post">
-              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                <input type="hidden" id="edit_id_de" name="edit_id_de" value="">
-                <div class="modal-body">
-                  <div class="row mb-2">
-                    <div class="col-md-4">
-                      <label class="control-label label-margin">User Name</label>
-                      <input type="text" class="form-control" id="edit_username_de" placeholder="Name" name="edit_username_de" readonly="readonly" style="cursor: no-drop;">
-                    </div>
-                    <div class="col-md-4">
-                      <label class="control-label label-margin">User Email</label>
-                      <input type="text" name="edit_useremail_de" class="form-control" id="edit_useremail_de" placeholder="Author" readonly="readonly" style="cursor: no-drop;">
-                    </div>
-                    <div class="col-md-4">
-                      <label class="control-label label-margin">Order no</label>
-                      <input type="text" class="form-control" id="edit_reference_de" placeholder="Publisher" name="edit_reference_de" readonly="readonly" style="cursor: no-drop;">
-                    </div>
-                  </div>  
-                  <div class="row mb-2">
-                       <div class="col-md-12">
-                          <label class="control-label label-margin">Update Products Status</label>
-                          <select name="products_status" id="products_status" class="form-control">
-                            <option value="">-Please select product status-</option>
-                            <% if (getproductsstatus && getproductsstatus.length > 0) { %>
-                              <% getproductsstatus.forEach((list, index) => { %>
-                                <option value="<%= list.id %>"><%= list.name %></option>
-                              <% }) %>
-                            <% } else {%>
-                              <option>no record found</option>
+                  <section class="content">
+                    <div class="container-fluid">
+                      <div class="">
+                        <div class="">
+                          <% if(message.length> 0) {%>
+                            <div class="alert alert-success alert-dismissible show" role="alert">
+                              <%= message %>
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
                             <% } %>
-                          </select>
-                      </div>
-                  </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Submit</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
+                              <% if(errors.length> 0) {%>
+                                <div class="alert alert-danger alert-dismissible show" role="alert">
+                                  <%= errors %>
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                      <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <% } %>
 
+                                  <div class="card">
+                                    <div class="card-body">
+                                      <table id="order_tbl" class="table table-bordered table-striped">
+                                        <thead>
+                                          <tr>
+                                            <th>#</th>
+                                            <th>Name</th>
+                                            <th>Email Id</th>
+                                            <th>Paid Amount</th>
+                                            <th>Order Id</th>
+                                            <th>Payment Status</th>
+                                            <th>Payment Method</th>
+                                            <th>Date</th>
+                                            <th>Status</th>
+                                            <th>Action</th>
+                                          </tr>
+                                        </thead>
+                                        <tbody>
+                                          <% if (orderlist.length> 0) { %>
+                                            <% orderlist.forEach((list, index)=> {
+                                              var payment_method = list.paymentMethod
+                                              var payment_status = list.paymentStatus
+                                              var payment_id = list.paymentId
+                                              %>
+                                              <tr>
+                                                <td>
+                                                  <%= index+1 %>
+                                                </td>
+                                                <td>
+                                                  <%= list.username %>
+                                                </td>
+                                                <td>
+                                                  <%= list.useremail %>
+                                                </td>
+                                                <td>
+                                                  <% if(list.paid_amount){ %>
+                                                    <%=
+                                                      parseFloat((list.paid_amount)).toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"
+                                                      ) %>
+                                                      <% } %>
+                                                </td>
+                                                <td>
+                                                  <%= list.reference %>
+                                                </td>
+                                                <td>
+                                                  <% if(payment_method==1 && payment_status=="success" && payment_id!=""
+                                                    ) { var result=payment_status }else if(payment_method==1 &&
+                                                    payment_id==null && payment_status==null) { var result="Failure"
+                                                    }else if(payment_method==1 && payment_status==null) { var
+                                                    result="Failure" }else if(payment_method==2) { var
+                                                    result="POD Payment" }else { var result="N/A" } %>
+                                                    <%= result %>
+                                                </td>
+                                                <td>
+                                                  <% if(list.paymentMethod==1) {%>
+                                                    <strong class="text-success">Online</strong>
+                                                    <% } else { %>
+                                                      <strong style="color: #e67a00;">POD</strong>
+                                                      <% } %>
+                                                </td>
+                                                <td>
+                                                  <%= moment(list.orderDate).add(5, 'hours' ).add(30, 'minutes'
+                                                    ).format('llll') %>
+                                                </td>
+                                                <td>
+                                                  <% if(list.order_status==1){%>
+                                                    <button type="button"
+                                                      class="btn btn-outline-primary">Booked</button>
+                                                    <% } else if(list.order_status==2) {%>
+                                                      <button type="button"
+                                                        class="btn btn-outline-secondary">Dispatched</button>
+                                                      <% } else if(list.order_status==3) {%>
+                                                        <button type="button"
+                                                          class="btn btn-outline-info">Shipped</button>
+                                                        <% } else if(list.order_status==4) {%>
+                                                          <button type="button"
+                                                            class="btn btn-outline-success">Delivered</button>
+                                                          <% } else if(list.order_status==5) {%>
+                                                            <button type="button"
+                                                              class="btn btn-outline-danger">Cancelled</button>
+                                                            <% } else if(list.order_status==6) {%>
+                                                              <button type="button"
+                                                                class="btn btn-outline-dark">Return</button>
+                                                              <% } else if(list.order_status==7) {%>
+                                                                <button type="button"
+                                                                  class="btn btn-outline-primary">Pending</button>
+                                                                <% } else if(list.order_status==8) {%>
+                                                                  <button type="button"
+                                                                    class="btn btn-outline-dark">Product Delay</button>
+                                                                  <% } else if(list.order_status==9) {%>
+                                                                    <button type="button"
+                                                                      class="btn btn-outline-danger">Product cancelled
+                                                                      from admin side</button>
+                                                                    <% } %>
+                                                </td>
+
+                                                <td>
+                                                  <a href="/vieworder?id=<%= list.reference %>"
+                                                    class="btn btn-success btn-sm">View Order</a> <br>| <a
+                                                    style="cursor: pointer;" class="show_delay_box"
+                                                    data-id="<%= list.reference %>" data-username="<%= list.username %>"
+                                                    data-useremail="<%= list.useremail %>"
+                                                    data-reference="<%= list.reference %>" data-target="#myModaledit"
+                                                    data-toggle="modal">Delay box</a> | <a style="cursor: pointer;"
+                                                    class="cancellation_product" data-id="<%= list.reference %>"
+                                                    data-username="<%= list.username %>"
+                                                    data-useremail="<%= list.useremail %>"
+                                                    data-reference="<%= list.reference %>"
+                                                    data-target="#myModalCancellation"
+                                                    data-toggle="modal">Cancellation</a> | <a style="cursor: pointer;"
+                                                    class="delivered_product" data-id="<%= list.reference %>"
+                                                    data-username="<%= list.username %>"
+                                                    data-useremail="<%= list.useremail %>"
+                                                    data-reference="<%= list.reference %>"
+                                                    data-order_status="<%= list.order_status %>"
+                                                    data-target="#myModalDelivered" data-toggle="modal">Status</a>
+                                                </td>
+                                              </tr>
+                                              <% }) %>
+                                                <% } else { %>
+                                                  <tr>
+                                                    <td colspan="8" style="text-align:center;color:red">no order found
+                                                    </td>
+                                                  </tr>
+                                                  <% } %>
+                                        </tbody>
+                                        <tfoot>
+                                          <tr>
+                                            <th>#</th>
+                                            <th>Name</th>
+                                            <th>Email Id</th>
+                                            <th>Paid Amount</th>
+                                            <th>Order Id</th>
+                                            <th>Payment Status</th>
+                                            <th>Payment Method</th>
+                                            <th>Date</th>
+                                            <th>Status</th>
+                                            <th>Action</th>
+                                          </tr>
+                                        </tfoot>
+                                      </table>
+                                    </div>
+                                  </div>
+                        </div>
+
+                      </div>
+                    </div>
+                  </section>
+                  <div class="modal fade" id="myModaledit" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                      <div class="modal-content animated bounceInRight">
+                        <div class="modal-header">
+                          <h5 class="modal-title">Delay box [<span style="color: green;" id="get_delay_name"></span>]
+                          </h5>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <!--end modal-header-->
+                        <form action="/delay_box_massege" method="post">
+                          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                          <input type="hidden" id="edit_id" name="edit_id" value="">
+                          <div class="modal-body">
+                            <div class="row mb-2">
+                              <div class="col-md-4">
+                                <label class="control-label label-margin">User Name</label>
+                                <input type="text" class="form-control" id="edit_username" placeholder="Name"
+                                  name="edit_username" readonly="readonly" style="cursor: no-drop;">
+                              </div>
+                              <div class="col-md-4">
+                                <label class="control-label label-margin">User Email</label>
+                                <input type="text" name="edit_useremail" class="form-control" id="edit_useremail"
+                                  placeholder="Author" readonly="readonly" style="cursor: no-drop;">
+                              </div>
+                              <div class="col-md-4">
+                                <label class="control-label label-margin">Order no</label>
+                                <input type="text" class="form-control" id="edit_reference" placeholder="Publisher"
+                                  name="edit_reference" readonly="readonly" style="cursor: no-drop;">
+                              </div>
+                            </div>
+                            <div class="row mb-2">
+                              <div class="col-md-12">
+                                <label class="control-label label-margin">Message</label>
+                                <textarea name="edit_message" id="edit_message"
+                                  class="form-control textarea"></textarea>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="modal fade" id="myModalCancellation" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                      <div class="modal-content animated bounceInRight">
+                        <div class="modal-header">
+                          <h5 class="modal-title">Cancellation product [<span style="color: green;"
+                              id="get_cancellation_name"></span>]</h5>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <!--end modal-header-->
+                        <form action="/cancel_product_from_admin" method="post">
+                          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                          <input type="hidden" id="edit_id" name="edit_id" value="">
+                          <div class="modal-body">
+                            <div class="row mb-2">
+                              <div class="col-md-4">
+                                <label class="control-label label-margin">User Name</label>
+                                <input type="text" class="form-control" id="edit_c_username" placeholder="Name"
+                                  name="edit_c_username" readonly="readonly" style="cursor: no-drop;">
+                              </div>
+                              <div class="col-md-4">
+                                <label class="control-label label-margin">User Email</label>
+                                <input type="text" name="edit_c_useremail" class="form-control" id="edit_c_useremail"
+                                  placeholder="Author" readonly="readonly" style="cursor: no-drop;">
+                              </div>
+                              <div class="col-md-4">
+                                <label class="control-label label-margin">Order no</label>
+                                <input type="text" class="form-control" id="edit_c_reference" placeholder="Publisher"
+                                  name="edit_c_reference" readonly="readonly" style="cursor: no-drop;">
+                              </div>
+                            </div>
+                            <div class="row mb-2">
+                              <div class="col-md-12">
+                                <label class="control-label label-margin">Reason</label>
+                                <select class="form-control" name="reason" id="reason">
+                                  <option value="Order Created by Mistake">Order Created by Mistake</option>
+                                  <option value="Item(s) Would Not Arrive on Time">Item(s) Would Not Arrive on Time
+                                  </option>
+                                  <option value="Shipping Cost Too High">Shipping Cost Too High</option>
+                                  <option value="Found Cheaper Somewhere Else">Found Cheaper Somewhere Else</option>
+                                  <option value="Need to Change Shipping Address">Need to Change Shipping Address
+                                  </option>
+                                  <option value="Need to Change Shipping Spped">Need to Change Shipping Spped</option>
+                                  <option value="Need to Change Billing Address">Need to Change Billing Address</option>
+                                  <option value="Need to Change Payment Method">Need to Change Payment Method</option>
+                                  <option value="Other">Other</option>
+                                </select>
+                              </div>
+                            </div>
+                            <div class="row mb-2">
+                              <div class="col-md-12">
+                                <label class="control-label label-margin">Message</label>
+                                <textarea name="edit_c_message" id="edit_c_message"
+                                  class="form-control textarea"></textarea>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="modal fade" id="myModalDelivered" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                      <div class="modal-content animated bounceInRight">
+                        <div class="modal-header">
+                          <h5 class="modal-title">Deliverd Product [<span style="color: green;"
+                              id="get_delay_name_delivery"></span>]</h5>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <!--end modal-header-->
+                        <form action="/update_product_status" method="post">
+                          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                          <input type="hidden" id="edit_id_de" name="edit_id_de" value="">
+                          <div class="modal-body">
+                            <div class="row mb-2">
+                              <div class="col-md-4">
+                                <label class="control-label label-margin">User Name</label>
+                                <input type="text" class="form-control" id="edit_username_de" placeholder="Name"
+                                  name="edit_username_de" readonly="readonly" style="cursor: no-drop;">
+                              </div>
+                              <div class="col-md-4">
+                                <label class="control-label label-margin">User Email</label>
+                                <input type="text" name="edit_useremail_de" class="form-control" id="edit_useremail_de"
+                                  placeholder="Author" readonly="readonly" style="cursor: no-drop;">
+                              </div>
+                              <div class="col-md-4">
+                                <label class="control-label label-margin">Order no</label>
+                                <input type="text" class="form-control" id="edit_reference_de" placeholder="Publisher"
+                                  name="edit_reference_de" readonly="readonly" style="cursor: no-drop;">
+                              </div>
+                            </div>
+                            <div class="row mb-2">
+                              <div class="col-md-12">
+                                <label class="control-label label-margin">Update Products Status</label>
+                                <select name="products_status" id="products_status" class="form-control">
+                                  <option value="">-Please select product status-</option>
+                                  <% if (getproductsstatus && getproductsstatus.length> 0) { %>
+                                    <% getproductsstatus.forEach((list, index)=> { %>
+                                      <option value="<%= list.id %>">
+                                        <%= list.name %>
+                                      </option>
+                                      <% }) %>
+                                        <% } else {%>
+                                          <option>no record found</option>
+                                          <% } %>
+                                </select>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+                <%- include ("../../common/footer") %>
   </div>
-<%- include ("../../common/footer") %>
-</div>
-<%- include ("../../common/js") %>
-<script type="text/javascript">
-$(function() { 
-  "use strict";  
-  $("#order_tbl").DataTable({
-        "responsive": true,
-        "autoWidth": false,
-  });
-});  
-</script>
+  <%- include ("../../common/js") %>
+    <script type="text/javascript">
+      $(function () {
+        "use strict";
+        $("#order_tbl").DataTable({
+          "responsive": true,
+          "autoWidth": false,
+        });
+      });  
+    </script>
 </body>
+
 </html>

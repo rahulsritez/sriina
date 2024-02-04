@@ -1,267 +1,406 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>Books Store | Membership View</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
-<link rel="stylesheet" href="/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
-<link rel="stylesheet" href="/plugins/css/invoice.css">
-<%- include ("../../common/css") %>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Books Store | Membership View</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+    <link rel="stylesheet" href="/plugins/css/invoice.css">
+    <%- include ("../../common/css") %>
 </head>
+
 <body class="hold-transition sidebar-mini layout-fixed">
-<div class="wrapper">
-<%- include ("../../common/top_nav") %>
-<%- include ("../../common/sidebar") %>
-<div class="content-wrapper">
-    <div class="content-header">
-        <div class="container-fluid">
-            <div class="row mb-2">
-                <div class="col-sm-6">
-                    <h1 class="m-0 text-dark">Dashboard</h1>
-                </div>
-                <div class="col-sm-6">
-                    <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
-                        <li class="breadcrumb-item active">Membership</li>
-                    </ol>
-                </div>
-            </div>
-        </div>
-    </div>
-    <section class="content">
-      <% if(message.length > 0) {%>
-            <div class="alert alert-success alert-dismissible show" role="alert">
-                <%= message %> 
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-        <% } %>
-        <div class="container-fluid">
-            <div class="row">
-                <div class="container">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="container bootstrap snippets bootdeys">
-                                <div class="row">
-                                    <div class="col-md-12 text-right">
-                                        <button type="button" class="btn btn-default" data-toggle="modal" data-target="#modal-default"> Add Book</button>
-                                    </div>
+    <div class="wrapper">
+        <%- include ("../../common/top_nav") %>
+            <%- include ("../../common/sidebar") %>
+                <div class="content-wrapper">
+                    <div class="content-header">
+                        <div class="container-fluid">
+                            <div class="row mb-2">
+                                <div class="col-sm-6">
+                                    <h1 class="m-0 text-dark">Dashboard</h1>
                                 </div>
-                                <div class="row">
-                                    <div class="col-sm-12" id="printableArea">
-                                        <div class="panel panel-default invoice" id="invoice">
-                                            <div class="panel-body">
-                                                <!-- <div class="invoice-ribbon"><div class="ribbon-inner">PAID</div></div> -->
-                                                <div class="row" style="background-color: #007bff;">
-                                                    <div class="col-sm-6 top-left">
-                                                        <img src="/assets/images/logo.png">
-                                                    </div>
-                                                    <div class="col-sm-6 top-right">
-                                                        <h3 class="marginright">Invoice No.#<%= get_user_plan_data.order_id %></h3>
-                                                        <span class="marginright"><%= moment(get_user_plan_data.created_at).format('lll') %></span>
-                                                    </div>
-                                                </div>
-                                                <hr />
-                                                <div class="row">
-                                                    <div class="col-sm-4 from pl-3">
-                                                        <p class="lead marginbottom"><strong>Billing</strong></p>
-                                                        <% if(get_billing_address){ %>
-                                                        <p><%= get_billing_address.fullname ? get_billing_address.fullname : 'N/A' %></p>
-                                                        <p><%= get_billing_address.house_address ? get_billing_address.house_address : 'N/A' %>, <%= get_billing_address.colony_area %></p>
-                                                        <p><%= get_billing_address.landmark %> <%= get_billing_address.city_town %></p>
-                                                        <p>State:<%= get_billing_address.BillingState %> (<%= get_billing_address.pincode %>)</p>
-                                                        <p>Phone: <%= get_billing_address.mobile %></p>
-                                                        <% } %>
-                                                    </div>
+                                <div class="col-sm-6">
+                                    <ol class="breadcrumb float-sm-right">
+                                        <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
+                                        <li class="breadcrumb-item active">Membership</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <section class="content">
+                        <% if(message.length> 0) {%>
+                            <div class="alert alert-success alert-dismissible show" role="alert">
+                                <%= message %>
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                            </div>
+                            <% } %>
+                                <div class="container-fluid">
+                                    <div class="row">
+                                        <div class="container">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <div class="container bootstrap snippets bootdeys">
+                                                        <div class="row">
+                                                            <div class="col-md-12 text-right">
+                                                                <button type="button" class="btn btn-default"
+                                                                    data-toggle="modal" data-target="#modal-default">
+                                                                    Add Book</button>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-sm-12" id="printableArea">
+                                                                <div class="panel panel-default invoice" id="invoice">
+                                                                    <div class="panel-body">
+                                                                        <!-- <div class="invoice-ribbon"><div class="ribbon-inner">PAID</div></div> -->
+                                                                        <div class="row"
+                                                                            style="background-color: #007bff;">
+                                                                            <div class="col-sm-6 top-left">
+                                                                                <img src="/assets/images/logo.png">
+                                                                            </div>
+                                                                            <div class="col-sm-6 top-right">
+                                                                                <h3 class="marginright">Invoice No.#<%=
+                                                                                        get_user_plan_data.order_id %>
+                                                                                </h3>
+                                                                                <span class="marginright">
+                                                                                    <%= moment(get_user_plan_data.created_at).format('lll')
+                                                                                        %>
+                                                                                </span>
+                                                                            </div>
+                                                                        </div>
+                                                                        <hr />
+                                                                        <div class="row">
+                                                                            <div class="col-sm-4 from pl-3">
+                                                                                <p class="lead marginbottom">
+                                                                                    <strong>Billing</strong>
+                                                                                </p>
+                                                                                <% if(get_billing_address){ %>
+                                                                                    <p>
+                                                                                        <%= get_billing_address.fullname
+                                                                                            ?
+                                                                                            get_billing_address.fullname
+                                                                                            : 'N/A' %>
+                                                                                    </p>
+                                                                                    <p>
+                                                                                        <%= get_billing_address.house_address
+                                                                                            ?
+                                                                                            get_billing_address.house_address
+                                                                                            : 'N/A' %>, <%=
+                                                                                                get_billing_address.colony_area
+                                                                                                %>
+                                                                                    </p>
+                                                                                    <p>
+                                                                                        <%= get_billing_address.landmark
+                                                                                            %>
+                                                                                            <%= get_billing_address.city_town
+                                                                                                %>
+                                                                                    </p>
+                                                                                    <p>State:<%=
+                                                                                            get_billing_address.BillingState
+                                                                                            %> (<%=
+                                                                                                get_billing_address.pincode
+                                                                                                %>)</p>
+                                                                                    <p>Phone: <%=
+                                                                                            get_billing_address.mobile
+                                                                                            %>
+                                                                                    </p>
+                                                                                    <% } %>
+                                                                            </div>
 
-                                                    <div class="col-sm-4 to">
-                                                        <% if(get_shipping_address){ %>
-                                                        <p class="lead marginbottom"><strong>Delivery Address</strong></p>
-                                                        <p><%= get_shipping_address.fullname ? get_shipping_address.fullname : 'N/A' %></p>
-                                                        <p><%= get_shipping_address.house_address ? get_shipping_address.house_address : 'N/A' %>, <%= get_shipping_address.colony_area %></p>
-                                                        <p><%= get_shipping_address.landmark %> <%= get_shipping_address.city_town %></p>
-                                                        <p>State:<%= get_shipping_address.ShippingState %> (<%= get_shipping_address.pincode %>)</p>
-                                                        <p>Phone: <%= get_shipping_address.mobile %></p>
-                                                        <% } %>
-                                                    </div>
+                                                                            <div class="col-sm-4 to">
+                                                                                <% if(get_shipping_address){ %>
+                                                                                    <p class="lead marginbottom">
+                                                                                        <strong>Delivery
+                                                                                            Address</strong>
+                                                                                    </p>
+                                                                                    <p>
+                                                                                        <%= get_shipping_address.fullname
+                                                                                            ?
+                                                                                            get_shipping_address.fullname
+                                                                                            : 'N/A' %>
+                                                                                    </p>
+                                                                                    <p>
+                                                                                        <%= get_shipping_address.house_address
+                                                                                            ?
+                                                                                            get_shipping_address.house_address
+                                                                                            : 'N/A' %>, <%=
+                                                                                                get_shipping_address.colony_area
+                                                                                                %>
+                                                                                    </p>
+                                                                                    <p>
+                                                                                        <%= get_shipping_address.landmark
+                                                                                            %>
+                                                                                            <%= get_shipping_address.city_town
+                                                                                                %>
+                                                                                    </p>
+                                                                                    <p>State:<%=
+                                                                                            get_shipping_address.ShippingState
+                                                                                            %> (<%=
+                                                                                                get_shipping_address.pincode
+                                                                                                %>)</p>
+                                                                                    <p>Phone: <%=
+                                                                                            get_shipping_address.mobile
+                                                                                            %>
+                                                                                    </p>
+                                                                                    <% } %>
+                                                                            </div>
 
-                                                    <div class="col-sm-4 text-right payment-details pr-3">
-                                                        <p class="lead marginbottom payment-info">Payment details</p>
-                                                        <p>Date: <%= moment(get_user_plan_data.created_at).format('lll') %></p>
-                                                        <p>Total Amount: <%= get_user_plan_data.paid_amount %></p>
-                                                        <p>Email: <%= getEmail.email %></p>
-                                                        <p>Usually dispatched in 2 to 3 days</p>
-                                                    </div>
-                                                </div>
+                                                                            <div
+                                                                                class="col-sm-4 text-right payment-details pr-3">
+                                                                                <p
+                                                                                    class="lead marginbottom payment-info">
+                                                                                    Payment details</p>
+                                                                                <p>Date: <%=
+                                                                                        moment(get_user_plan_data.created_at).format('lll')
+                                                                                        %>
+                                                                                </p>
+                                                                                <p>Total Amount: <%=
+                                                                                        get_user_plan_data.paid_amount
+                                                                                        %>
+                                                                                </p>
+                                                                                <p>Email: <%= getEmail.email %>
+                                                                                </p>
+                                                                                <p>Usually dispatched in 2 to 3 days</p>
+                                                                            </div>
+                                                                        </div>
 
-                                                <div class="">
-                                                    <table class="table table-striped">
-                                                        <thead>
-                                                            <tr>
-                                                                <th style="width: 25%;">Plan Name</th>
-                                                                <th style="width: 15%;">Plan Price</th>
-                                                                <th style="width: 15%;">Total Month</th>
-                                                                <th style="width: 15%;">Total Books</th>
-                                                                <th style="width: 15%;">Monthly Books</th>
-                                                                <th style="width: 15%;">Date</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <% if(getplanData){ %>
-                                                        <tr>
-                                                            <td><%= getplanData.plan_name %></td>
-                                                            <td>₹ <%= (getplanData.plan_price).toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,") %></td>
-                                                            <td><%= getplanData.total_month %> Months</td>
-                                                            <td><%= getplanData.total_book %> Books </td>
-                                                            <td><%= getplanData.monthly_book %>/month </td>
-                                                            <td><%= moment(getplanData.created_at).format('lll') %></td>
-                                                        </tr>
-                                                        <% } %>
-                                                    </table>    
-                                                </div>
+                                                                        <div class="">
+                                                                            <table class="table table-striped">
+                                                                                <thead>
+                                                                                    <tr>
+                                                                                        <th style="width: 25%;">Plan
+                                                                                            Name</th>
+                                                                                        <th style="width: 15%;">Plan
+                                                                                            Price</th>
+                                                                                        <th style="width: 15%;">Total
+                                                                                            Month</th>
+                                                                                        <th style="width: 15%;">Total
+                                                                                            Books</th>
+                                                                                        <th style="width: 15%;">Monthly
+                                                                                            Books</th>
+                                                                                        <th style="width: 15%;">Date
+                                                                                        </th>
+                                                                                    </tr>
+                                                                                </thead>
+                                                                                <% if(getplanData){ %>
+                                                                                    <tr>
+                                                                                        <td>
+                                                                                            <%= getplanData.plan_name %>
+                                                                                        </td>
+                                                                                        <td>₹ <%=
+                                                                                                parseFloat(getplanData.plan_price).toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"
+                                                                                                ) %>
+                                                                                        </td>
+                                                                                        <td>
+                                                                                            <%= getplanData.total_month
+                                                                                                %> Months
+                                                                                        </td>
+                                                                                        <td>
+                                                                                            <%= getplanData.total_book
+                                                                                                %> Books
+                                                                                        </td>
+                                                                                        <td>
+                                                                                            <%= getplanData.monthly_book
+                                                                                                %>/month
+                                                                                        </td>
+                                                                                        <td>
+                                                                                            <%= moment(getplanData.created_at).format('lll')
+                                                                                                %>
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                    <% } %>
+                                                                            </table>
+                                                                        </div>
 
-                                                <div class="row">
-                                                    <div class="col-sm-6 margintop pl-3">
-                                                        <p class="lead marginbottom">THANK YOU!</p>
+                                                                        <div class="row">
+                                                                            <div class="col-sm-6 margintop pl-3">
+                                                                                <p class="lead marginbottom">THANK YOU!
+                                                                                </p>
 
-                                                        <button class="btn btn-success" id="invoice-print" onclick="printDiv('printableArea')"><i class="fa fa-print"></i> Print Invoice</button>
-                                                        <button class="btn btn-danger" id="mail-invoice"><i class="fa fa-envelope-o"></i> Mail Invoice</button>
-                                                    </div>
-                                                    <div class="col-sm-6 text-right pull-right invoice-total pr-3">
-                                                        <p>Subtotal : ₹ <%= (get_user_plan_data.paid_amount).toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,") %></p>
-                                                        
-                                                        <p>Total :₹ <% if(get_user_plan_data.paid_amount) {%><%= (get_user_plan_data.paid_amount).toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,") %><% } %></p>
+                                                                                <button class="btn btn-success"
+                                                                                    id="invoice-print"
+                                                                                    onclick="printDiv('printableArea')"><i
+                                                                                        class="fa fa-print"></i> Print
+                                                                                    Invoice</button>
+                                                                                <button class="btn btn-danger"
+                                                                                    id="mail-invoice"><i
+                                                                                        class="fa fa-envelope-o"></i>
+                                                                                    Mail Invoice</button>
+                                                                            </div>
+                                                                            <div
+                                                                                class="col-sm-6 text-right pull-right invoice-total pr-3">
+                                                                                <p>Subtotal : ₹ <%=
+                                                                                        parseFloat(get_user_plan_data.paid_amount).toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"
+                                                                                        ) %>
+                                                                                </p>
+
+                                                                                <p>Total :₹ <%
+                                                                                        if(get_user_plan_data.paid_amount)
+                                                                                        {%>
+                                                                                        <%= parseFloat(get_user_plan_data.paid_amount).toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"
+                                                                                            ) %>
+                                                                                            <% } %>
+                                                                                </p>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <hr>
+                                                        <div class="row">
+                                                            <div class="col-md-12"><strong> Book name from customer
+                                                                </strong></div>
+
+                                                            <table class="table table-striped">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>#</th>
+                                                                        <th style="width: 25%;">Plan Name</th>
+                                                                        <th style="width: 15%;">Plan Author</th>
+                                                                        <th style="width: 15%;">Publisher</th>
+                                                                        <th style="width: 15%;">ISBN</th>
+                                                                        <th style="width: 15%;">Message</th>
+                                                                        <th style="width: 15%;">Date</th>
+                                                                    </tr>
+                                                                    <% if(book_requestfromuser.length>0) {%>
+                                                                        <% book_requestfromuser.forEach((list, index)=>
+                                                                            { %>
+                                                                            <tr>
+                                                                                <td>
+                                                                                    <%= index+1 %>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <%= list.book_name %>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <%= list.book_author %>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <%= list.publisher %>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <%= list.isbn_no %>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <%= list.message %>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <%= moment(list.created_at).format('lll')
+                                                                                        %>
+                                                                                </td>
+                                                                            </tr>
+                                                                            <% }); %>
+                                                                                <% } else {%>
+                                                                                    <tr>
+                                                                                        <td colspan="7" align="center">
+                                                                                            <p>no record found</p>
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                    <% } %>
+                                                                </thead>
+                                                            </table>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                  </div>
-                                  <hr>
-                                  <div class="row">
-                                        <div class="col-md-12"><strong> Book name from customer </strong></div>
-                                        
-                                            <table class="table table-striped">
-                                                <thead>
-                                                    <tr>
-                                                        <th>#</th>
-                                                        <th style="width: 25%;">Plan Name</th>
-                                                        <th style="width: 15%;">Plan Author</th>
-                                                        <th style="width: 15%;">Publisher</th>
-                                                        <th style="width: 15%;">ISBN</th>
-                                                        <th style="width: 15%;">Message</th>
-                                                        <th style="width: 15%;">Date</th>
-                                                    </tr>
-                                                <% if(book_requestfromuser.length>0) {%>
-                                                    <% book_requestfromuser.forEach((list, index) => { %>
-                                                    <tr>
-                                                        <td><%= index+1 %></td>
-                                                        <td><%= list.book_name %></td>
-                                                        <td><%= list.book_author %></td>
-                                                        <td><%= list.publisher %></td>
-                                                        <td><%= list.isbn_no %></td>
-                                                        <td><%= list.message %></td>
-                                                        <td><%= moment(list.created_at).format('lll') %></td>
-                                                    </tr>
-                                                    <% }); %>
-                                                <% } else {%>
-                                                    <tr>
-                                                        <td colspan="7" align="center"><p>no record found</p></td>
-                                                    </tr>
-                                                <% } %>    
-                                                </thead>
-                                            </table>
-                                    </div>
                                 </div>
+                </div>
+                </section>
+    </div>
+
+    <div class="modal fade" id="modal-default">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Add Book Details</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="/addprimebook" method="post">
+                    <input type="hidden" value="<%= get_user_plan_data.order_id %>" name="orderId">
+                    <div class="modal-body">
+                        <div class="row mb-2">
+                            <div class="col-md-6">
+                                <label class="control-label label-margin">Name</label>
+                                <input type="text" class="form-control" id="book_name" placeholder="Name"
+                                    name="book_name" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="control-label label-margin">Authors</label>
+                                <input type="text" name="author" class="form-control" id="author" placeholder="Author">
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-md-4">
+                                <label class="control-label label-margin">Publisher</label>
+                                <input type="text" class="form-control" id="publisher" placeholder="Publisher"
+                                    name="publisher" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="control-label label-margin">Book Edition</label>
+                                <input type="text" name="book_edition" class="form-control" id="book_edition"
+                                    placeholder="book edition">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="control-label label-margin">ISBN</label>
+                                <input type="text" name="isbn" class="form-control" id="isbn" placeholder="isbn"
+                                    maxlength="13" onkeypress="return isNumber(event)">
+                            </div>
+                        </div>
+
+                        <div class="row mb-2">
+                            <div class="col-md-12">
+                                <label class="control-label label-margin">Message</label>
+                                <textarea name="message" id="message" class="form-control"
+                                    placeholder="message"></textarea>
                             </div>
                         </div>
                     </div>
-                </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
             </div>
+            <!-- /.modal-content -->
         </div>
-    </section>
-</div>
-
-<div class="modal fade" id="modal-default">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h4 class="modal-title">Add Book Details</h4>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <form action="/addprimebook" method="post">
-        <input type="hidden" value="<%= get_user_plan_data.order_id %>" name="orderId">
-        <div class="modal-body">
-          <div class="row mb-2">
-            <div class="col-md-6">
-              <label class="control-label label-margin">Name</label>
-              <input type="text" class="form-control" id="book_name" placeholder="Name" name="book_name" required>
-            </div>
-            <div class="col-md-6">
-              <label class="control-label label-margin">Authors</label>
-              <input type="text" name="author" class="form-control" id="author" placeholder="Author">
-            </div>
-          </div>
-          <div class="row mb-2">
-            <div class="col-md-4">
-              <label class="control-label label-margin">Publisher</label>
-              <input type="text" class="form-control" id="publisher" placeholder="Publisher" name="publisher" required>
-            </div>
-            <div class="col-md-4">
-              <label class="control-label label-margin">Book Edition</label>
-              <input type="text" name="book_edition" class="form-control" id="book_edition" placeholder="book edition">
-            </div>
-            <div class="col-md-4">
-              <label class="control-label label-margin">ISBN</label>
-              <input type="text" name="isbn" class="form-control" id="isbn" placeholder="isbn" maxlength="13" onkeypress="return isNumber(event)">
-            </div>
-          </div>
-          
-          <div class="row mb-2">
-            <div class="col-md-12">
-               <label class="control-label label-margin">Message</label>
-               <textarea name="message" id="message" class="form-control" placeholder="message"></textarea>
-           </div>
-           </div>
-        </div>
-        <div class="modal-footer justify-content-between">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-          <button type="submit" class="btn btn-primary">Submit</button>
-        </div>
-      </form>
-      </div>
-      <!-- /.modal-content -->
+        <!-- /.modal-dialog -->
     </div>
-    <!-- /.modal-dialog -->
-  </div>
 
-<%- include ("../../common/footer") %>
-</div>
-<%- include ("../../common/js") %>
-<script type="text/javascript">
-$(function() { 
-  "use strict";  
-  $("#products_tbl").DataTable({
-        "responsive": true,
-        "autoWidth": false,
-  });
+    <%- include ("../../common/footer") %>
+        </div>
+        <%- include ("../../common/js") %>
+            <script type="text/javascript">
+                $(function () {
+                    "use strict";
+                    $("#products_tbl").DataTable({
+                        "responsive": true,
+                        "autoWidth": false,
+                    });
 
-  $('.textarea').summernote();
+                    $('.textarea').summernote();
 
-});
-function printDiv(divName) {
-     var printContents = document.getElementById(divName).innerHTML;
-     var originalContents = document.body.innerHTML;
-     document.body.innerHTML = printContents;
-     document.getElementById('invoice-print').style.display="none";
-     document.getElementById('mail-invoice').style.display="none"; 
-     window.print();
-     document.body.innerHTML = originalContents;
-}
-</script>
+                });
+                function printDiv(divName) {
+                    var printContents = document.getElementById(divName).innerHTML;
+                    var originalContents = document.body.innerHTML;
+                    document.body.innerHTML = printContents;
+                    document.getElementById('invoice-print').style.display = "none";
+                    document.getElementById('mail-invoice').style.display = "none";
+                    window.print();
+                    document.body.innerHTML = originalContents;
+                }
+            </script>
 </body>
+
 </html>
