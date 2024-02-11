@@ -7,7 +7,7 @@ exports.searchResult = (req, res, next) => {
 	if(newkey!=null){
 	var sql1 = "Select * from books_category where is_deleted=0";
 	    var query = db.query(sql1, function(err, result) {
-	       var sql2 = "SELECT * FROM `products` WHERE  status=1 and (`publisher` LIKE '%"+newkey+"%' or `name` LIKE '%"+newkey+"%' or `isbn` ='"+newkey+"' or `isbn13` ='"+newkey+"' or `author` ='%"+newkey+"%') ORDER BY id DESC";
+	       var sql2 = "SELECT * FROM `products` WHERE  status=1 and (`publisher` LIKE '%"+newkey+"%' or `name` LIKE '%"+newkey+"%' or `isbn` ='"+newkey+"' or `isbn13` ='"+newkey+"' or `author` LIKE '%"+newkey+"%' or `description` LIKE '%"+newkey+"%') ORDER BY id DESC";
 		        var query = db.query(sql2, function(error, searchresult) {
 				if(error){
 					res.redirect('/errorPage');
