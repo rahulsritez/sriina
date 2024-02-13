@@ -140,7 +140,7 @@ exports.productpage = function (req, res) {
                     var sql2 =
                         "SELECT p.*,c.name as categoryname from products p left join books_category c on c.id=p.cat_id WHERE p.status=1 and (p.name LIKE '%" +
                         req.query.search +
-                        "%' or `isbn13` ='"+req.query.search+"' or `isbn` ='"+req.query.search+"' or `publisher` LIKE '%"+req.query.search+"%' or `author` LIKE '%"+req.query.search+"%' or `description` LIKE '%"+req.query.search+"%') and product_type_id=1 ORDER BY id DESC LIMIT " +
+                        "%' ) and product_type_id=1 ORDER BY id DESC LIMIT " +
                         limit_start +
                         " OFFSET " +
                         limit_end;
