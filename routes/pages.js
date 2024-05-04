@@ -60,7 +60,7 @@ exports.returnPolicy = (req, res, next) => {
     var sql = "SELECT * FROM books_category where is_deleted=0";
     var query = db.query(sql, function(error, result){
         if(error) throw error;
-        var sql = "SELECT `title`, `description` FROM `pages` WHERE `id`='2' and `status` = '0'";
+        var sql = "SELECT `title`, `description` FROM `pages` WHERE `id`='2' and `status` = '1'";
         var query = db.query(sql, function(error, getpages){
             if(error) throw error;
             res.render('front/returnpolicy',{'title':title,'categorylist':result, getresult:getpages[0] });
@@ -73,7 +73,7 @@ exports.privacyPolicy = (req, res, next) => {
     var sql = "SELECT * FROM books_category where is_deleted=0";
     var query = db.query(sql, function(error, result){
         if(error) throw error;
-        var sql = "SELECT `title`, `description` FROM `pages` WHERE `id`='3' and `status` = '0'";
+        var sql = "SELECT `title`, `description` FROM `pages` WHERE `id`='3' and `status` = '1'";
         var query = db.query(sql, function(error, getpages){
             if(error) throw error;
             res.render('front/privacypolicy',{'title':title,'categorylist':result, getresult:getpages[0] });
@@ -86,7 +86,7 @@ exports.cancellationReturns = (req, res, next) => {
     var sql = "SELECT * FROM books_category where is_deleted=0";
     var query = db.query(sql, function(error, result){
         if(error) throw error;
-        var sql = "SELECT `title`, `description` FROM `pages` WHERE `id`='4' and `status` = '0'";
+        var sql = "SELECT `title`, `description` FROM `pages` WHERE `id`='4' and `status` = '1'";
         var query = db.query(sql, function(error, getpages){
             if(error) throw error;
             res.render('front/cancellationreturns',{'title':title,'categorylist':result, getresult:getpages[0] });
@@ -99,7 +99,7 @@ exports.security = (req, res, next) => {
     var sql = "SELECT * FROM books_category where is_deleted=0";
     var query = db.query(sql, function(error, result){
         if(error) throw error;
-        var sql = "SELECT `title`, `description` FROM `pages` WHERE `id`='5' and `status` = '0'";
+        var sql = "SELECT `title`, `description` FROM `pages` WHERE `id`='5' and `status` = '1'";
         var query = db.query(sql, function(error, getpages){
             if(error) throw error;
             res.render('front/security',{'title':title,'categorylist':result, getresult:getpages[0] });
@@ -112,7 +112,7 @@ exports.aboutPage = (req, res, next) => {
     var sql = "SELECT * FROM books_category where is_deleted=0";
     var query = db.query(sql, function(error, result){
         if(error) throw error;
-        var sql = "SELECT `title`, `description` FROM `pages` WHERE `id`='1' and `status` = '0'";
+        var sql = "SELECT `title`, `description` FROM `pages` WHERE `id`='1' and `status` = '1'";
         var query = db.query(sql, function(error, getpages){
             if(error) throw error;
             res.render('front/aboutus',{'title':title,'categorylist':result, getresult:getpages[0] });
@@ -125,7 +125,7 @@ exports.termsPage = (req, res, next) => {
     var sql = "SELECT * FROM books_category where is_deleted=0";
     var query = db.query(sql, function(error, result){
         if(error) throw error;
-        var sql = "SELECT `title`, `description` FROM `pages` WHERE `id`='6' and `status` = '0'";
+        var sql = "SELECT `title`, `description` FROM `pages` WHERE `id`='6' and `status` = '1'";
         var query = db.query(sql, function(error, getpages){
             if(error) throw error;
             res.render('front/terms_conditions',{'title':title,'categorylist':result, getresult:getpages[0] });
@@ -138,7 +138,7 @@ exports.shippingDeliveryPage = (req, res, next) => {
     var sql = "SELECT * FROM books_category where is_deleted=0";
     var query = db.query(sql, function(error, result){
         if(error) throw error;
-        var sql = "SELECT `title`, `description` FROM `pages` WHERE `id`='7' and `status` = '0'";
+        var sql = "SELECT `title`, `description` FROM `pages` WHERE `id`='7' and `status` = '1'";
         var query = db.query(sql, function(error, getpages){
             if(error) throw error;
             res.render('front/shipping_delivery',{'title':title,'categorylist':result, getresult:getpages[0] });
