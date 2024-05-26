@@ -13,35 +13,21 @@
 
     <%- include ("../../common/css") %>
         <style>
-            .summary {
-                border: 1px solid #ccc;
-                border-radius: 5px;
-                padding: 10px;
-                margin-bottom: 20px;
-            }
-
-            .summary-item {
-                margin-bottom: 5px;
-            }
-
-            .summary-item strong {
-                font-weight: bold;
-                color: #333;
-            }
-
-            .amount {
-                color: #007bff;
-                /* Blue color for the amount */
-                font-weight: bold;
-            }
+            @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap');
 
             body {
                 font-family: 'Roboto Mono', monospace;
+                margin: 20px;
+                background-color: #f5f7fa;
             }
 
             .invoice-container {
                 width: 83%;
                 margin: 1px 257px;
+                background: #ffffff;
+                padding: 30px;
+                border-radius: 10px;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             }
 
             .invoice-header {
@@ -50,10 +36,12 @@
 
             .invoice-header h2 {
                 margin: 0;
+                color: #333;
             }
 
             .invoice-header p {
                 margin: 5px 0;
+                color: #666;
             }
 
             .invoice-details {
@@ -66,7 +54,8 @@
                 width: 48%;
             }
 
-            .invoice-details .from {
+            .invoice-details .from,
+            .invoice-details .to {
                 text-align: left;
             }
 
@@ -76,11 +65,17 @@
 
             .invoice-details p {
                 margin: 5px 0;
+                color: #444;
             }
 
             .payment-details {
                 text-align: right;
                 margin-bottom: 20px;
+            }
+
+            .payment-details p {
+                margin: 5px 0;
+                color: #444;
             }
 
             .order-details table {
@@ -90,13 +85,34 @@
 
             .order-details th,
             .order-details td {
-                border: 1px solid #000;
-                padding: 8px;
+                border: 1px solid #ddd;
+                padding: 12px;
                 text-align: center;
             }
 
             .order-details th {
-                background-color: #f2f2f2;
+                background-color: #7367F0;
+                z-index: 2;
+                font-weight: bold;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+            }
+
+
+            .order-details tr:nth-child(even) {
+                background-color: #f9f9f9;
+            }
+
+            .order-details tr:hover {
+                background-color: #f1f1f1;
+            }
+
+            .order-details .text-right {
+                text-align: right;
+            }
+
+            .order-details .action-column {
+                text-align: center;
             }
 
             .thank-you {
@@ -146,8 +162,6 @@
                     &nbsp;
                     <div class="invoice-details">
                         <div class="from">
-
-                            <p class="lead"><strong>Sold By:</strong></p>
                             <p>Sriina Internet Private Ltd</p>
                             <p>RZ-126, INDRA PARK UTTAM NAGAR</p>
                             <p>NEW DELHI, SOUTH WEST DELHI DL, 110059</p>
@@ -156,7 +170,7 @@
                             <p><strong>CIN:</strong>U74999DL2021PTC391791</p>
                         </div>
                         <div class="to">
-                            <p class="lead"><strong>Billing Address:</strong></p>
+                            <p class="lead" style="font-weight: 800 !important;"><strong>Billing Address:</strong></p>
                             <% if(get_shipping_address) { %>
                                 <p>
                                     <%= get_shipping_address.fullname %>
@@ -178,7 +192,7 @@
                     <hr />
 
                     <div class="payment-details">
-                        <p class="lead"><strong>Payment details</strong></p>
+                        <p class="lead" style="font-weight: 800 !important;"><strong>Payment details</strong></p>
                         <p style="margin: 5px;">Date: <%= moment(created_at).format('lll') %>
                         </p>
                         <p style="margin: 5px;">Total Amount: ₹ <%= paid_amount %>
