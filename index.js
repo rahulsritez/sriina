@@ -108,6 +108,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static("public"));
 
 //app.get('/', routes.index);//call for main index page
+app.get("/test", (req, res) => res.send('Server is running'));
 app.get("/", routes.landingpage); //call for main index page
 
 app.get("/admin", routes.admin); //call for main index page
