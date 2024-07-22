@@ -99,7 +99,7 @@ app.use(function (req, res, next) {
 });
 
 // all environments
-const port = 80;
+const port = 3000;
 app.set("views", __dirname + "/views");
 //app.set('common', __dirname + '/common');
 app.set("view engine", "ejs");
