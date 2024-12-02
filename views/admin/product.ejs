@@ -285,7 +285,7 @@
                                     <div class="col-md-4">
                                       <label class="control-label label-margin">Publishing Year</label>
                                       <input type="text" name="publishing_year" class="form-control"
-                                        id="publishing_year" placeholder="Publish Year" required>
+                                        id="publishing_year" placeholder="Publish Year">
                                     </div>
                                   </div>
                                   <div class="row mb-2">
@@ -343,13 +343,13 @@
                                     <div class="col-md-4">
                                       <label class="control-label label-margin">ISBN-10</label>
                                       <input type="text" class="form-control" id="ISBN" placeholder="ISBN" name="ISBN"
-                                        maxlength="10" onkeypress="return isNumber(event)">
+                                        minlength="10" maxlength="10" onkeypress="return isNumber(event)">
                                     </div>
 
                                     <div class="col-md-4">
                                       <label class="control-label label-margin">ISBN-13</label>
                                       <input type="text" class="form-control" id="ISBN12" placeholder="ISBN13"
-                                        name="ISBN13" maxlength="13" onkeypress="return isNumber(event)" required>
+                                        name="ISBN13" minlength="13" maxlength="13" onkeypress="return isNumber(event)" required>
                                     </div>
 
                                   </div>
