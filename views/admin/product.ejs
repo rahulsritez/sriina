@@ -601,14 +601,14 @@
                                         <div class="col-md-4">
                                           <label class="control-label label-margin">ISBN-10</label>
                                           <input type="text" class="form-control" id="edit_ISBN" placeholder="ISBN"
-                                            name="edit_ISBN" maxlength="10" onkeypress="return isNumber(event)">
+                                            name="edit_ISBN" minlength="10" maxlength="10" onkeypress="return isNumber(event)">
                                         </div>
 
                                         <div class="col-md-4">
                                           <label class="control-label label-margin">ISBN-13</label>
                                           <input type="text" class="form-control ISBN13" id="edit_ISBN13"
                                             placeholder="ISBN13" name="edit_ISBN13" onkeyup="checkISBM13()"
-                                            maxlength="13" onkeypress="return isNumber(event)">
+                                            minlength="13" maxlength="13" onkeypress="return isNumber(event)">
                                         </div>
 
                                       </div>
