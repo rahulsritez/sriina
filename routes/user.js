@@ -176,7 +176,7 @@ exports.productpage = function (req, res) {
                     " OFFSET " +
                     limit_end;
                 countQuery =
-                    "SELECT count(*) as count from products p left join books_category c on c.id=p.cat_id where p.status=1 and product_type_id=1 and `user_id`!='0' order by id desc ";
+                    "SELECT count(*) as count from products p left join books_category c on c.id=p.cat_id where p.status=1 and product_type_id=1 and `user_id`!='0' order by c.id desc ";
             } else {
                 var sql2 =
                     "SELECT p.*,c.name as categoryname from products p left join books_category c on c.id=p.cat_id where p.status=1 and product_type_id=1 and `user_id`='" +
