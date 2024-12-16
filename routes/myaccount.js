@@ -53,7 +53,7 @@ exports.saveAdminPwd = (req, res) => {
                         res.redirect("/adminpwd");
                     } else {
                         //console.log('Email sent: ' + info.response);
-                        var sql = "UPDATE `users` SET `otp`='" + otp + "' WHERE `email`='" + user_name + "' and (`type`='1' or `type`='2')";
+                        var sql = "UPDATE `users` SET `otp`='" + otp + "' WHERE `email`='" + user_name + "' and (`type`='1' or `type`='2' or `type`='5')";
                         var query = db.query(sql, function (error, updateotp) {
                             if (error) throw new Error("OTP update problme in user TBL");
                             req.session.adminForgotEmail = user_name;
