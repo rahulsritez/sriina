@@ -1,72 +1,76 @@
 exports.searchResult = (req, res, next) => {
-	var xss = require("xss");
-	var dateFormat = require('dateformat');
-	let title = "Search result page";
-	let keyword = xss(req.query.q);
-	var newkey = keyword.replace(/'/g, "\\'").trim();
-	if(newkey!=null){
-	var sql1 = "Select * from books_category where is_deleted=0";
+  const xss = require("xss");
+  const title = "Search result page";
+  // Get and sanitize search query
+  let searchQuery = xss(req.query.q || "").trim();
+  const sanitizedPhrase = searchQuery
+    .normalize("NFKD") // Normalize special characters
+    .replace(/[\u2013\u2014]/g, "-") // Replace long dashes
+    .replace(/[|!']/g, ""); // Remove problematic characters // Replace dashes
 
-		const searchInput = newkey.trim();
-		const keywords = searchInput.split(' ');
-		keywords.push(newkey.replace(/\s+/g, ""));
+  if (sanitizedPhrase && sanitizedPhrase.length > 0) {
+    // Use the entire sanitized query for multi-word phrase search
+    const phrase = `%${sanitizedPhrase}%`; // Use % for wildcard matching
 
-		const likeConditions = keywords.map(() => `
-			publisher LIKE CONCAT('%', ?, '%') OR 
-			name LIKE CONCAT('%', ?, '%') OR 
-			isbn LIKE CONCAT('%', ?, '%') OR 
-			REGEXP_REPLACE(isbn13, '[^a-zA-Z0-9]', '') LIKE REGEXP_REPLACE(?, '[^a-zA-Z0-9]', '') OR 
-			author LIKE CONCAT('%', ?, '%') OR 
-			description LIKE CONCAT('%', ?, '%')
-			`).join(' OR ');
+    // Build SQL query to match the entire phrase across relevant fields
+    const sqlQuery = `
+		SELECT p.*
+		FROM products p
+		WHERE p.is_deleted = 0 
+		AND (
+		  name LIKE ? OR 
+		  author LIKE ? OR 
+		  publisher LIKE ? OR 
+		  isbn LIKE ? OR 
+		  isbn13 LIKE ? OR 
+		  description LIKE ? OR
+		  id LIKE ? OR
+		  is_deleted LIKE ?
+		)
+		ORDER BY p.id DESC
+		LIMIT 1000;
+	  `;
 
-		const sql2 = `
-			SELECT p.*
-			FROM products p
-			JOIN (
-				SELECT MAX(id) AS max_id
-				FROM products
-				WHERE status = 1 AND (${likeConditions})
-				GROUP BY isbn13
-			) latest_products ON p.id = latest_products.max_id
-			ORDER BY p.id DESC
-			LIMIT 1000;
-		`;
+    // Create an array with the same phrase for each field
+    const params = Array(8).fill(phrase);
 
-		const params = keywords.flatMap(k => [k, k, k, k, k, k]);
+    // Execute the query
+    db.query(sqlQuery, params, function (error, searchresult) {
+      if (error) {
+        console.error("Database Error:", error);
+        return res.redirect("/errorPage");
+      }
 
-		db.query(sql2, params, function (error, searchresult) {
-			if (error) {
-				res.redirect('/errorPage');
-			} else {
-				res.render('front/searchview', { searchresult: searchresult, 'title': title });
-			}
-		});
+      if (!searchresult || searchresult.length === 0) {
+        // If no results are found, render the view with an empty result set
+        console.log("No search results found.");
+        return res.render("front/searchview", {
+          searchresult: [],
+          title: title,
+        });
+      }
 
-	    //    var sql2 = "SELECT p.* FROM products p JOIN (SELECT MAX(id) AS max_id FROM products WHERE status = 1 AND (`publisher` LIKE '%"+newkey+"%' OR `name` LIKE '%"+newkey+"%' OR `isbn` LIKE '%"+newkey+"%' OR `isbn13` LIKE '%"+newkey+"%' OR `author` LIKE '%"+newkey+"%' OR `description` LIKE '%"+newkey+"%') GROUP BY isbn13) latest_products ON p.id = latest_products.max_id ORDER BY p.id DESC LIMIT 1000";
-		//         var query = db.query(sql2, function(error, searchresult) {
-		// 		if(error){
-		// 			res.redirect('/errorPage');
-		// 		} else {
-		// 			res.render('front/searchview', {searchresult:searchresult,'title':title});
-		// 		}
-	    // 	});
-	    // });
-	} else {
-		results = {}
-		res.render('front/searchview');
-	}
-}
+      // Render the view with search results
+      res.render("front/searchview", {
+        searchresult: searchresult,
+        title: title,
+      });
+    });
+  } else {
+    // If no valid search query is provided
+    res.render("front/searchview", { searchresult: [], title: title });
+  }
+};
 
 function convertDate(d) {
-    var converted_date = dateFormat(d, "dd.mmm.yyyy")
-    return converted_date;
+  var converted_date = dateFormat(d, "dd.mmm.yyyy");
+  return converted_date;
 }
 
-exports.viewSearch = function(req, res, next){
-	let Ids = req.params.id;
-	let getSQL = "SELECT * FROM `blogs` where id='"+Ids+"'";
-	db.query(getSQL, function(error, results){
-		res.render('view_search_blog.ejs',{'results':results});
-	});
-}
+exports.viewSearch = function (req, res, next) {
+  let Ids = req.params.id;
+  let getSQL = "SELECT * FROM `blogs` where id='" + Ids + "'";
+  db.query(getSQL, function (error, results) {
+    res.render("view_search_blog.ejs", { results: results });
+  });
+};
