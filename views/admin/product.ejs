@@ -132,7 +132,7 @@
                                               Search:
                                               <input type="text" id="searchitem" value="" />
                                               <button
-                                                onclick="handleValueChange(1, '<%=(+query.count) %>')">Search</button>
+                                                onclick="handleValueChange(1, '<%= query.count %>')">Search</button>
                                             </p>
 
                                           </div>
@@ -465,13 +465,13 @@
 
                           <div class="col-sm-6">
                             <p align="right" class="right">
-                            <div class="pagination">
+                            <!-- <div class="pagination">
                               <span
                                 onclick="changePage('previous','<%=(+query.page) %>',  '<%=(+totalpages) %>', '<%=(+query.count) %>', '<%=(query.search) %>')">
                                 Previous
                               </span>
                               <span>
-                                <%=(+query.page) %>
+                                <%=(+ query.page) %>
                               </span>
                               <span
                                 onclick="changePage('next','<%=(+query.page) %>', '<%=(+totalpages) %>', '<%=(+query.count) %>', '<%=(query.search) %>')">
@@ -488,7 +488,39 @@
                               <input value="1" id="page" />
                               <button
                                 onclick="getcube('<%=(+query.count) %>', '<%=(+totalpages) %>', '<%=(query.search) %>')">Go</button>
-                              <!-- /.modal-dialog -->
+                              /.modal-dialog
+                            </div> -->
+
+                            <div class="pagination">
+                              <!-- Previous Button -->
+                              <span onclick="changePage('previous', '<%= query.page || 1 %>', '<%= totalpages || 1 %>', '<%= query.count || 10 %>', '<%= query.search %>')">
+                                Previous
+                              </span>
+                            
+                              <!-- Current Page Display -->
+                              <span>
+                                <%= query.page || 1 %>
+                              </span>
+                            
+                              <!-- Next Button -->
+                              <span onclick="changePage('next', '<%= query.page || 1 %>', '<%= totalpages || 1 %>', '<%= query.count || 10 %>', '<%= query.search  %>')">
+                                Next
+                              </span>
+                            
+                              <!-- Dropdown for Selecting Pages -->
+                              <p style="margin-left: 20px; margin-right: 20px;">Select Page</p>
+                              <select onchange="onPageChange('<%= query.count || 10 %>', this.value, '<%= query.search  %>')">
+                                <% 
+                                  let totalPagesSafe = Number(totalpages) || 1;
+                                  for (var i = 1; i <= totalPagesSafe; i++) { 
+                                %>
+                                  <option value="<%= i %>" <%= i === (query.page || 1) ? 'selected' : '' %>><%= i %></option>
+                                <% } %>
+                              </select>
+                            
+                              <!-- Input and Button for Direct Page Entry -->
+                              <input value="<%= query.page || 1 %>" id="page" />
+                              <button onclick="getcube('<%= query.count || 10 %>', '<%= totalpages || 1 %>', '<%= query.search  %>')">Go</button>
                             </div>
 
                             <div class="modal fade" id="myModaledit" tabindex="-1" role="dialog" aria-hidden="true">
@@ -749,8 +781,8 @@
       const onPageChange = (count, page, search) => {
         let item = document.getElementById('searchitem').value
         const urlParams = new URLSearchParams(window.location.search);
-        const myParam = urlParams.get('search');
-        document.location.href = '/productlist?search=' + myParam + '&page=' + page + '&count=' + count
+                const myParam = urlParams.get('search');
+                document.location.href = '/productlist?search=' + myParam + '&page=' + page + '&count=' + count
       }
       function getcube(count, number, search) {
         var number = document.getElementById("page").value;
@@ -778,8 +810,8 @@
           });
       }
       function handleValueChange(page, count) {
-        let item = document.getElementById('searchitem').value
-        document.location.href = '/productlist?search=' + item + '&page=' + page + '&count=' + count
+                let item = document.getElementById('searchitem').value
+                document.location.href = '/productlist?search=' + item + '&page=' + page + '&count=' + count
 
       }
       // $(document).ready(function(){
