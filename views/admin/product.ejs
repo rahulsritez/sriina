@@ -465,31 +465,7 @@
 
                           <div class="col-sm-6">
                             <p align="right" class="right">
-                            <!-- <div class="pagination">
-                              <span
-                                onclick="changePage('previous','<%=(+query.page) %>',  '<%=(+totalpages) %>', '<%=(+query.count) %>', '<%=(query.search) %>')">
-                                Previous
-                              </span>
-                              <span>
-                                <%=(+ query.page) %>
-                              </span>
-                              <span
-                                onclick="changePage('next','<%=(+query.page) %>', '<%=(+totalpages) %>', '<%=(+query.count) %>', '<%=(query.search) %>')">
-                                Next </span>
-                              <p style="margin-left: 20px;margin-right: 20px;">Select Page</p>
-                              <select
-                                onchange="onPageChange('<%=(+query.count) %>', this.value,'<%=(+query.search) %>')" <%
-                                for(var i=0; i <=totalpages; i++){ %>
-                                <option value="<%= i %>">
-                                  <%= i %>
-                                </option>
-                                <% }%>
-                              </select>
-                              <input value="1" id="page" />
-                              <button
-                                onclick="getcube('<%=(+query.count) %>', '<%=(+totalpages) %>', '<%=(query.search) %>')">Go</button>
-                              /.modal-dialog
-                            </div> -->
+                           
 
                             <div class="pagination">
                               <!-- Previous Button -->
@@ -781,8 +757,10 @@
       const onPageChange = (count, page, search) => {
         let item = document.getElementById('searchitem').value
         const urlParams = new URLSearchParams(window.location.search);
-                const myParam = urlParams.get('search');
-                document.location.href = '/productlist?search=' + myParam + '&page=' + page + '&count=' + count
+        console.log("urlParams",urlParams)
+        const myParam = urlParams.get('search');
+        console.log("myParam",9789394547704	)
+        document.location.href = '/productlist?search=' + myParam + '&page=' + page + '&count=' + count
       }
       function getcube(count, number, search) {
         var number = document.getElementById("page").value;
@@ -810,8 +788,10 @@
           });
       }
       function handleValueChange(page, count) {
-                let item = document.getElementById('searchitem').value
-                document.location.href = '/productlist?search=' + item + '&page=' + page + '&count=' + count
+        console.log("111111111111111111111111111")
+        let item = document.getElementById('searchitem').value
+        console.log("item",item)
+        document.location.href = '/productlist?search=' + item + '&page=' + page + '&count=' + count
 
       }
       // $(document).ready(function(){
