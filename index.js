@@ -400,5 +400,5 @@ app.get("/:id", pages.getCategories);
 
 //Middleware
 app.listen(port, () => {
-    console.log(`Server running on port: ${port}`);
+    console.log(`Server running on port: ${port}.`);
 });
