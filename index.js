@@ -330,7 +330,35 @@ app.post("/groceyaddtocart", parseForm, csrfProtection, grocery.addtoCartGrocery
 app.get("/electronic", electronic.electronicIndex);
 /* end */
 
-app.get("/sitemap.xml", pages.siteMapMethod);
+app.get("/sitemap.xml", (req, res) => {
+    const filePath = path.join(__dirname, "sitemap.xml");
+    res.sendFile(filePath, (err) => {
+        if (err) {
+            console.error("Error sending file:", err);
+            res.status(500).send("Error occurred while sending the file.");
+        }
+    });
+});
+app.get("/sitemap/001.xml", pages.siteMapMethod);
+app.get("/sitemap/002.xml", pages.siteMapMethod);
+app.get("/sitemap/003.xml", pages.siteMapMethod);
+app.get("/sitemap/004.xml", pages.siteMapMethod);
+app.get("/sitemap/005.xml", pages.siteMapMethod);
+app.get("/sitemap/006.xml", pages.siteMapMethod);
+app.get("/sitemap/007.xml", pages.siteMapMethod);
+app.get("/sitemap/008.xml", pages.siteMapMethod);
+app.get("/sitemap/009.xml", pages.siteMapMethod);
+app.get("/sitemap/010.xml", pages.siteMapMethod);
+
+app.get('/product.xml', (req, res) => {
+    const filePath = path.join(__dirname, 'product.xml');
+    res.set('Content-Type', 'application/xml');
+    res.sendFile(filePath, (err) => {
+      if (err) {
+        res.status(500).send('Error sending the XML file');
+      }
+    });
+});
 app.get("/terms-conditions", pages.termsPage);
 app.get("/shipping-delivery", pages.shippingDeliveryPage);
 app.get("/about-us", pages.aboutPage);

@@ -7,28 +7,39 @@ var base64 = require('base-64');
 exports.siteMapMethod = (req,res) =>{
     res.header('Content-Type', 'application/xml');
     res.header('Content-Encoding', 'gzip');
-    if (sitemap) {
-        res.send(sitemap)
-        return;
-      }
+    // if (sitemap) {
+    //     res.send(sitemap)
+    //     return;
+    //   }
       try {
-	      	var sql = "SELECT `id`,`slug` FROM `products` where `status`='1'";
+            const str = req.url;
+            const match = str.match(/(\d+)\.xml$/);
+            const pageNumber = parseInt(match[1], 10);
+            const limit = 5000;
+            
+            const offset = (pageNumber - 1) * limit;
+
+	      	var sql = `SELECT id,slug FROM products where status='1' LIMIT ${limit} OFFSET ${offset}`;
 	        var query = db.query(sql, function(error, results){
             if(error) throw new Error('Products Table ERROR.');
             const smStream = new SitemapStream({ hostname: 'https://sriina.com' });
             const pipeline = smStream.pipe(createGzip());
             var resultArray = JSON.parse(JSON.stringify(results));
-            resultArray.forEach(function(list,index){
-                if(index==0){
-                    let siteURL = 'https://sriina.com';
-                    smStream.write({ url: siteURL,  changefreq: 'daily', priority: 1.0 })
-                } else {
-                    let slugutl = list.slug +"/"+ list.id;
-                    smStream.write({ url: slugutl,  changefreq: 'daily', priority: 0.9 })
-                }
-                /*let slugutl = list.slug +"/"+ list.id;
-                smStream.write({ url: slugutl,  changefreq: 'daily', priority: 0.3 })*/
-            })
+            if (resultArray.length === 0) {
+                smStream.write({ url: 'https://sriina.com', changefreq: 'daily', priority: 1.0 });
+            } else {
+                resultArray.forEach(function(list,index){
+                    if(index==0){
+                        let siteURL = 'https://sriina.com';
+                        smStream.write({ url: siteURL,  changefreq: 'daily', priority: 1.0 })
+                    } else {
+                        let slugutl = list.slug +"/"+ list.id;
+                        smStream.write({ url: slugutl,  changefreq: 'daily', priority: 0.9 })
+                    }
+                    /*let slugutl = list.slug +"/"+ list.id;
+                    smStream.write({ url: slugutl,  changefreq: 'daily', priority: 0.3 })*/
+                })
+            }
            
             streamToPromise(pipeline).then(sm => sitemap = sm)
             // make sure to attach a write stream such as streamToPromise before ending
