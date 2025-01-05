@@ -55,9 +55,9 @@ var parseForm = bodyParser.urlencoded({ extended: true });
 /* For local */
 
 var connection = mysql.createConnection({
-    host: "sriina.cdu8kwoiio9z.ap-south-1.rds.amazonaws.com",
+    host: "sriina.cts26q6uunut.ap-south-1.rds.amazonaws.com",
     user: "admin",
-    password: "yEg7qdgNRy4OfNs3N5HB",
+    password: "TA0n9vHclfoEsvHZ1wPN",
     database: "sriina",
 });
 
