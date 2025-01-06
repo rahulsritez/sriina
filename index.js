@@ -359,6 +359,9 @@ app.get('/product.xml', (req, res) => {
       }
     });
 });
+
+app.get("/productRss/:categoryId.xml", pages.categoryXML);
+
 app.get("/terms-conditions", pages.termsPage);
 app.get("/shipping-delivery", pages.shippingDeliveryPage);
 app.get("/about-us", pages.aboutPage);
