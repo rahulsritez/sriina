@@ -360,7 +360,16 @@ app.get('/product.xml', (req, res) => {
     });
 });
 
-app.get("/productRss/:categoryId.xml", pages.categoryXML);
+app.get("/productRss/001.xml", pages.categoryXML);
+app.get("/productRss/002.xml", pages.categoryXML);
+app.get("/productRss/003.xml", pages.categoryXML);
+app.get("/productRss/004.xml", pages.categoryXML);
+app.get("/productRss/005.xml", pages.categoryXML);
+app.get("/productRss/006.xml", pages.categoryXML);
+app.get("/productRss/007.xml", pages.categoryXML);
+app.get("/productRss/008.xml", pages.categoryXML);
+app.get("/productRss/009.xml", pages.categoryXML);
+app.get("/productRss/010.xml", pages.categoryXML);
 
 app.get("/terms-conditions", pages.termsPage);
 app.get("/shipping-delivery", pages.shippingDeliveryPage);

@@ -54,6 +54,7 @@ function sanitize(text) {
     return text
       .replace(/&nbsp;/g, '&#160;')
       .replace(/&/g, '&amp;')
+      .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, '')
   }
 
 exports.categoryXML = (req,res) =>{
@@ -62,9 +63,12 @@ exports.categoryXML = (req,res) =>{
       try {
             const str = req.url;
             const match = str.match(/(\d+)\.xml$/);
-            const categoryId = parseInt(match[1], 10);
+            const pageNumber = parseInt(match[1], 10);
+            const limit = 5000;
+            
+            const offset = (pageNumber - 1) * limit;
 
-	      	var sql = `SELECT * FROM products where cat_id=${categoryId} `;
+	      	var sql = `SELECT * FROM products LIMIT ${limit} OFFSET ${offset}`;
 	        var query = db.query(sql, function(error, results){
             if(error) throw new Error('Products Table ERROR.');
             var resultArray = JSON.parse(JSON.stringify(results));
