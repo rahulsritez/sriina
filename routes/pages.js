@@ -81,10 +81,14 @@ exports.categoryXML = (req,res) =>{
             resultArray.forEach(function(product,index){
                 const item = root.ele('item');
 
+                const discountPercentage = product.discount;
+                const discountAmount = (parseInt(product.price, 10).toFixed(2) * discountPercentage ) / 100;
+                const salePrice = parseInt(product.price, 10).toFixed(2) - discountAmount;
+
                 item.ele('title').txt(sanitize(product.name));
                 item.ele('link').txt(`https://sriina.com/${product.slug}/${product.id}`);
                 item.ele('description').txt(sanitize(product.description));
-                item.ele('g:price').txt(`${parseInt(product.price, 10).toFixed(2)} INR`);
+                item.ele('g:price').txt(`${salePrice} INR`);
                 item.ele('g:availability').txt(product.quantity > 0 ? 'In Stock' : 'Out of stock');
                 item.ele('g:condition').txt('New');
                 item.ele('g:id').txt(product.id);
