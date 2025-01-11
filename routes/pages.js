@@ -23,7 +23,12 @@ exports.siteMapMethod = (req,res) =>{
 	      	var sql = `SELECT id,slug FROM products where status='1' LIMIT ${limit} OFFSET ${offset}`;
 	        var query = db.query(sql, function(error, results){
             if(error) throw new Error('Products Table ERROR.');
-            const smStream = new SitemapStream({ hostname: 'https://sriina.com' });
+            const smStream = new SitemapStream({ hostname: 'https://sriina.com', xmlns: {
+                news: false,
+                xhtml: false,
+                image: false,
+                video: false,
+            }, });
             const pipeline = smStream.pipe(createGzip());
             var resultArray = JSON.parse(JSON.stringify(results));
             if (resultArray.length === 0) {
