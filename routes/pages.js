@@ -1,6 +1,7 @@
 const { SitemapStream, streamToPromise } = require('sitemap');
 const { createGzip } = require('zlib');
 const { Readable } = require('stream');
+const { create } = require('xmlbuilder2');
 let sitemap;
 var base64 = require('base-64');
 
@@ -22,20 +23,20 @@ exports.siteMapMethod = (req,res) =>{
 	      	var sql = `SELECT id,slug FROM products where status='1' LIMIT ${limit} OFFSET ${offset}`;
 	        var query = db.query(sql, function(error, results){
             if(error) throw new Error('Products Table ERROR.');
-            const smStream = new SitemapStream({ hostname: 'https://sriina.com' });
+            const smStream = new SitemapStream({ hostname: 'https://sriina.com', xmlns: {
+                news: false,
+                xhtml: false,
+                image: false,
+                video: false,
+            }, });
             const pipeline = smStream.pipe(createGzip());
             var resultArray = JSON.parse(JSON.stringify(results));
             if (resultArray.length === 0) {
                 smStream.write({ url: 'https://sriina.com', changefreq: 'daily', priority: 1.0 });
             } else {
                 resultArray.forEach(function(list,index){
-                    if(index==0){
-                        let siteURL = 'https://sriina.com';
-                        smStream.write({ url: siteURL,  changefreq: 'daily', priority: 1.0 })
-                    } else {
-                        let slugutl = list.slug +"/"+ list.id;
-                        smStream.write({ url: slugutl,  changefreq: 'daily', priority: 0.9 })
-                    }
+                    let slugutl = list.slug +"/"+ list.id;
+                    smStream.write({ url: slugutl,  changefreq: 'daily', priority: 1.0 })
                     /*let slugutl = list.slug +"/"+ list.id;
                     smStream.write({ url: slugutl,  changefreq: 'daily', priority: 0.3 })*/
                 })
@@ -46,6 +47,73 @@ exports.siteMapMethod = (req,res) =>{
             smStream.end()
             // stream write the response
             pipeline.pipe(res).on('error', (e) => {throw e})
+        });
+      } catch (e) {
+        console.error(e)
+        res.status(500).end()
+      }
+}
+
+function sanitize(text) {
+    if (!text) return '';
+    return text
+      .replace(/&nbsp;/g, '&#160;')
+      .replace(/&/g, '&amp;')
+      .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, '')
+  }
+
+exports.categoryXML = (req,res) =>{
+    res.header('Content-Type', 'application/xml');
+    res.header('Content-Encoding', 'gzip');
+      try {
+            const str = req.url;
+            const match = str.match(/(\d+)\.xml$/);
+            const pageNumber = parseInt(match[1], 10);
+            const limit = 5000;
+            
+            const offset = (pageNumber - 1) * limit;
+
+	      	var sql = `SELECT * FROM products LIMIT ${limit} OFFSET ${offset}`;
+	        var query = db.query(sql, function(error, results){
+            if(error) throw new Error('Products Table ERROR.');
+            var resultArray = JSON.parse(JSON.stringify(results));
+            const root = create({ version: '1.0', encoding: 'UTF-8' })
+            .ele('rss', { 'xmlns:g': 'http://base.google.com/ns/1.0', version: '2.0' })
+            .ele('channel');
+            root.ele('title').txt('Sriina');
+            root.ele('link').txt('https://sriina.com/');
+
+            resultArray.forEach(function(product,index){
+                const item = root.ele('item');
+
+                const discountPercentage = product.discount;
+                const discountAmount = (parseInt(product.price, 10).toFixed(2) * discountPercentage ) / 100;
+                const salePrice = parseInt(product.price, 10).toFixed(2) - discountAmount;
+
+                item.ele('title').txt(sanitize(product.name));
+                item.ele('link').txt(`https://sriina.com/${product.slug}/${product.id}`);
+                item.ele('description').txt(sanitize(product.description));
+                item.ele('g:price').txt(`${salePrice} INR`);
+                item.ele('g:availability').txt(product.quantity > 0 ? 'In Stock' : 'Out of stock');
+                item.ele('g:condition').txt('New');
+                item.ele('g:id').txt(product.id);
+                item.ele('g:image_link').txt(`${process.env.IMAGE_URL}${product.image}`);
+                item.ele('g:product_type').txt('Book');
+
+                const shipping = item.ele('g:shipping');
+                shipping.ele('g:country').txt('IN');
+                shipping.ele('g:price').txt(product.delivery_charge);
+
+                item.ele('g:brand').txt('Sriina');
+                item.ele('g:identifier_exists').txt('No');
+            })
+
+            const xmlString = root.end({ prettyPrint: true });
+
+            const gzip = createGzip();
+            res.status(200);
+            gzip.pipe(res);
+            gzip.end(xmlString);
         });
       } catch (e) {
         console.error(e)

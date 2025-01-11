@@ -26,7 +26,7 @@
                                 <h3 class="name"><a href="<%= list.slug %>/<%= list.id %>">
                                         <%= list.name.substring(0, 60) %>
                                     </a></h3>
-                                <div>By: <%= list.author.substring(0,25) %>
+                                <div>By: <%= list.author ? list.author.substring(0, 25) : "" %>
                                 </div>
                                 <div class="rating rateit-small"></div>
                                 <div class="description"></div>

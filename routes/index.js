@@ -70,7 +70,7 @@ exports.admin = function (req, res) {
 
 exports.indexpage = function (req, res) {
     var message = "";
-    res.render("admin/admin", { message: message });
+    res.render("admin/admin", { message: message, message_success: "" });
 };
 
 exports.logincheck = function (req, res) {
