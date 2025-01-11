@@ -7,7 +7,6 @@ exports.orderpage = function (req, res) {
   if (userId == null && userType == null) {
     res.redirect("/admin");
   }
-  console.log("req.session.type", req.session.type);
   if (userType != 1) {
     res.redirect("/error_page");
   }
