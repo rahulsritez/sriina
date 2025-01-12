@@ -269,7 +269,7 @@ a {
 }
 #owl-main:hover .owl-prev:hover .icon,
 #owl-main:hover .owl-next:hover .icon {
- color:#fff!important
+  color:#fff!important
 }
 
 #owl-main .owl-controls .owl-pagination .owl-page:active span,
@@ -416,8 +416,8 @@ a {
   color: #0f6cb2;
 }
 .mega-menu .dropdown-menu {
-width:100%;
-left:0px 
+  width:100%;
+  left:0px
 }
 
 .navbar-nav>li>.dropdown-menu { box-shadow:0 4px 6px -1px rgba(0,0,0,0.4);}
@@ -454,4 +454,12 @@ left:0px
 }
 .terms-conditions-page .contact-form {
   color: #0f6cb2;
+}
+
+
+
+@media (max-width: 768px) {
+  .category-menu {
+    display: none;
+  }
 }
