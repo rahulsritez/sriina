@@ -112,6 +112,10 @@ exports.orderViewPage = (req, res, next) => {
 };
 
 exports.adminPlanPage = function (req, res) {
+  var userType = req.session.type;
+  if (userType != 1) {
+    res.redirect("/error_page");
+  }
   let sql = "SELECT * FROM plans where 1";
   let title = "Membership Plan";
   let query = db.query(sql, function (error, result) {
@@ -148,6 +152,10 @@ exports.editMembershipPlan = function (req, res) {
 };
 
 exports.homeSlider = function (req, res) {
+  var userType = req.session.type;
+  if (userType != 1) {
+    res.redirect("/error_page");
+  }
   let sql = "SELECT * FROM home_slider where 1 order by id desc";
   let title = "Home Slider";
   let query = db.query(sql, function (error, homeslider) {
@@ -296,6 +304,10 @@ exports.UpdateSlider = (req, res, next) => {
 };
 
 exports.primeMembership = (req, res) => {
+  var userType = req.session.type;
+  if (userType != 1) {
+    res.redirect("/error_page");
+  }
   if (req.method == "GET") {
     var sql =
       "SELECT `user_plan`.order_id as orderId,`user_plan`.user_id,`user_plan`.paid_amount,`user_plan`.payment_method,`user_plan`.created_at as orderDate, `users`.id as userId,`users`.name as username,`users`.email as useremail, `users`.mobile FROM `user_plan` LEFT JOIN `users` ON `user_plan`.user_id = `users`.id where `user_plan`.payment_method != 0 order by `user_plan`.order_id DESC ";
