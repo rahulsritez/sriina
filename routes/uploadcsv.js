@@ -30,6 +30,9 @@ exports.uploadExcel = (req, res) => {
   if (req.method == "GET") {
     userId = req.session.userId;
     var userType = req.session.type;
+    if (userType != 1) {
+      res.redirect("/error_page");
+    }
     if (userId == null && userType == null) {
       res.render("admin/admin", {
         message: "Please login as admin",
