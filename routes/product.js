@@ -181,7 +181,7 @@ exports.allProducts = (req, res, next) => {
                 var sql_plan = "SELECT MAX(plan_price) as MaxPlanPrice FROM plans";
                 var query = db.query(sql_plan, function (error, maxplan) {
                     if (error) throw error;
-                    res.render("front/products", { title: title, maxplan: maxplan, getcartdata: "", myJsonString: myJsonString });
+                    res.render("front/products", { title: title, maxplan: maxplan, getcartdata: "", myJsonString: myJsonString, page });
                 });
             });
         });
