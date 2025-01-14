@@ -647,6 +647,7 @@ exports.orderPaymentStatus = (req, res, next) => {
 
         const url = `${req.protocol}://${req.headers.host}/user/vieworder/${orderData[0].reference}`;
         const bodyContent = "Sriina: Dear, "+req.session.user.name+" Thank you for your purchase! We are getting your order: "+orderData[0].reference+" view order "+url+" ready to shipped and will notify you when it has been sent";
+        const emailBody = "Thank you so much for your order! We will get started on your order Right away. When we ship your order, we will send an email. \n\nIn the mean time, if any questions arise please do not hesitate to contact us we will always be happy to help.";
 
         if(req.session.user.mobile) {
             await client.messages
@@ -663,6 +664,30 @@ exports.orderPaymentStatus = (req, res, next) => {
                     orderData = false;
                     console.log('twilio error -->', error)
                 });
+        }
+        if (req.session.user.email) {
+            var transporter = nodemailer.createTransport({
+                service: "gmail",
+                auth: {
+                  user: process.env.EMAIL_USERNAME,
+                  pass: process.env.EMAIL_PASSWORD,
+                },
+            });
+  
+            var mailOptions = {
+                from: "sriinaonlinepvtltd@gmail.com",
+                to: req.session.user.email,
+                subject: "Order confirmation",
+                text: emailBody,
+            };
+  
+            transporter.sendMail(mailOptions, function (error, info) {
+                if (error) {
+                    console.log("Cannot connect to server email error.", error);
+                } else {
+                    console.log('Email sent: ' + info.response);
+                }
+            });
         }
 
         var sql = "UPDATE bk_order SET `payment_gateway_status` ='"+payment_gateway_status+"' WHERE `order_id` ='"+orderId+"'";
