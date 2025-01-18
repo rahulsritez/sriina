@@ -1,5 +1,6 @@
 const { SitemapStream, streamToPromise } = require('sitemap');
 const { createGzip } = require('zlib');
+const zlib = require('zlib');
 const { Readable } = require('stream');
 const { create } = require('xmlbuilder2');
 let sitemap;
@@ -42,11 +43,32 @@ exports.siteMapMethod = (req,res) =>{
                 })
             }
            
-            streamToPromise(pipeline).then(sm => sitemap = sm)
-            // make sure to attach a write stream such as streamToPromise before ending
-            smStream.end()
-            // stream write the response
-            pipeline.pipe(res).on('error', (e) => {throw e})
+            smStream.end();
+
+            streamToPromise(pipeline).then((sitemapBuffer) => {
+                zlib.gunzip(sitemapBuffer, (err, decompressed) => {
+                    if (err) {
+                        console.error('Decompression Error:', err);
+                        res.status(500).end();
+                    } else {
+                        const sitemapString = decompressed.toString('utf8').replace('<?xml version="1.0" encoding="UTF-8"?>', '');
+
+                        zlib.gzip(sitemapString, (gzipErr, compressed) => {
+                            if (gzipErr) {
+                                console.error('Recompression Error:', gzipErr);
+                                res.status(500).end();
+                            } else {
+                                res.header('Content-Type', 'application/xml');
+                                res.header('Content-Encoding', 'gzip');
+                                res.send(compressed);
+                            }
+                        });
+                    }
+                });
+            }).catch((error) => {
+                console.error('Stream to Promise Error:', error);
+                res.status(500).end();
+            });
         });
       } catch (e) {
         console.error(e)
