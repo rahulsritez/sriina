@@ -339,7 +339,16 @@ app.get("/sitemap.xml", (req, res) => {
         }
     });
 });
-app.get("/sitemap/001.xml", pages.siteMapMethod);
+app.get("/sitemap/001.xml", (req, res) => {
+    const filePath = path.join(__dirname, "001.xml");
+    res.sendFile(filePath, (err) => {
+        if (err) {
+            console.error("Error sending file:", err);
+            res.status(500).send("Error occurred while sending the file.");
+        }
+    });
+});
+// app.get("/sitemap/001.xml", pages.siteMapMethod);
 app.get("/sitemap/002.xml", pages.siteMapMethod);
 app.get("/sitemap/003.xml", pages.siteMapMethod);
 app.get("/sitemap/004.xml", pages.siteMapMethod);
