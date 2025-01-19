@@ -16,7 +16,7 @@ exports.siteMapMethod = (req,res) =>{
             const str = req.url;
             const match = str.match(/(\d+)\.xml$/);
             const pageNumber = parseInt(match[1], 10);
-            const limit = 5000;
+            const limit = 1500;
             
             const offset = (pageNumber - 1) * limit;
 
@@ -36,7 +36,7 @@ exports.siteMapMethod = (req,res) =>{
             } else {
                 resultArray.forEach(function(list,index){
                     let slugutl = list.slug +"/"+ list.id;
-                    smStream.write({ url: slugutl,  changefreq: 'daily', priority: 1.0 })
+                    smStream.write({ url: slugutl,  changefreq: 'daily', priority: 1.0, lastmod: '2025-01-19' })
                     /*let slugutl = list.slug +"/"+ list.id;
                     smStream.write({ url: slugutl,  changefreq: 'daily', priority: 0.3 })*/
                 })
