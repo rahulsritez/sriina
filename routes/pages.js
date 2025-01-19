@@ -12,46 +12,57 @@ exports.siteMapMethod = (req,res) =>{
     //     res.send(sitemap)
     //     return;
     //   }
-      try {
-            const str = req.url;
-            const match = str.match(/(\d+)\.xml$/);
-            const pageNumber = parseInt(match[1], 10);
-            const limit = 1500;
-            
-            const offset = (pageNumber - 1) * limit;
-
-	      	var sql = `SELECT id,slug FROM products where status='1' LIMIT ${limit} OFFSET ${offset}`;
-	        var query = db.query(sql, function(error, results){
-            if(error) throw new Error('Products Table ERROR.');
-            const smStream = new SitemapStream({ hostname: 'https://sriina.com', xmlns: {
-                news: false,
-                xhtml: false,
-                image: false,
-                video: false,
-            }, });
-            const pipeline = smStream.pipe(createGzip());
-            var resultArray = JSON.parse(JSON.stringify(results));
-            if (resultArray.length === 0) {
-                smStream.write({ url: 'https://sriina.com', changefreq: 'daily', priority: 1.0 });
-            } else {
-                resultArray.forEach(function(list,index){
-                    let slugutl = list.slug +"/"+ list.id;
-                    smStream.write({ url: slugutl,  changefreq: 'daily', priority: 1.0, lastmod: '2025-01-19' })
-                    /*let slugutl = list.slug +"/"+ list.id;
-                    smStream.write({ url: slugutl,  changefreq: 'daily', priority: 0.3 })*/
-                })
-            }
-           
-            streamToPromise(pipeline).then(sm => sitemap = sm)
-            // make sure to attach a write stream such as streamToPromise before ending
-            smStream.end()
-            // stream write the response
-            pipeline.pipe(res).on('error', (e) => {throw e})
-        });
-      } catch (e) {
-        console.error(e)
-        res.status(500).end()
+    
+    try {
+      const str = req.url;
+      const match = str.match(/(\d+)\.xml$/);
+      
+      if (!match) {
+        throw new Error('Invalid URL format');
       }
+    
+      const pageNumber = parseInt(match[1], 10);
+      const limit = 5000;
+      const offset = (pageNumber - 1) * limit;
+    
+      const sql = `SELECT id, slug FROM products WHERE status='1' LIMIT ${limit} OFFSET ${offset}`;
+      db.query(sql, (error, results) => {
+        if (error) throw new Error('Products Table ERROR.');
+    
+        const xmlDoc = create({ version: '1.0', encoding: 'UTF-8' })
+          .ele('urlset', { xmlns: 'http://www.sitemaps.org/schemas/sitemap/0.9' });
+    
+        const resultArray = JSON.parse(JSON.stringify(results));
+    
+        if (resultArray.length === 0) {
+          xmlDoc.ele('url')
+            .ele('loc').txt('https://sriina.com').up()
+            .ele('lastmod').txt('2025-01-20').up()
+            .up();
+        } else {
+          resultArray.forEach(({ slug, id }) => {
+            const slugUrl = `https://sriina.com/${slug}/${id}`;
+            const lastModDate = new Date().toISOString().split('T')[0];
+            xmlDoc.ele('url')
+              .ele('loc').txt(slugUrl).up()
+              .ele('lastmod').txt(lastModDate).up()
+              .up();
+          });
+        }
+    
+        const xmlString = xmlDoc.end({ prettyPrint: true });
+    
+        const gzip = createGzip();
+        res.setHeader('Content-Type', 'application/xml');
+        res.setHeader('Content-Encoding', 'gzip');
+        res.status(200);
+        gzip.pipe(res);
+        gzip.end(xmlString);
+      });
+    } catch (e) {
+      console.error(e);
+      res.status(500).end();
+    }
 }
 
 function sanitize(text) {
