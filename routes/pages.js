@@ -17,7 +17,7 @@ exports.siteMapMethod = (req,res) =>{
             const str = req.url;
             const match = str.match(/(\d+)\.xml$/);
             const pageNumber = parseInt(match[1], 10);
-            const limit = 5000;
+            const limit = 2000;
             
             const offset = (pageNumber - 1) * limit;
 
