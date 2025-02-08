@@ -222,7 +222,7 @@ exports.userLogin = (req, res) => {
                             if(ress){
                                 req.session.userId = results[0].id;
                                 req.session.user = results[0];
-                                res.redirect('/myaccount');
+                                res.redirect('/addtocart');
                             } else {
                                 req.flash('errors','Invalid Credential.');
                                 res.redirect('/sign-in');
