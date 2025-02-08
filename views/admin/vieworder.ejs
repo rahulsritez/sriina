@@ -199,7 +199,7 @@
                         </p>
                         <p style="margin: 5px;">Payment Status: <%=result%>
                         </p>
-                        <p style="margin: 5px;">Email: <%= getEmail.email %>
+                        <p style="margin: 5px;">Email: <%= getEmail?.email %>
                         </p>
                         <p style="margin: 5px;">Estimated time of delivery: within 7 Days</p>
                     </div>
@@ -215,19 +215,25 @@
                                     <th>Qty</th>
                                     <th>Unit Price</th>
                                     <th>Discount</th>
+                                    <th>Delivery Charge</th>
                                     <th>Net Amount</th>
                                     <th class="action-column">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <% var total=0; var discount=0; var sub_total=0; %>
+                                <% var total=0; var discount=0; var sub_total=0; var deliveryCharge1=0; %>
                                     <% if (get_orders.length> 0) { %>
                                         <% get_orders.forEach((list, index)=> {
                                             var newTotal = (list.price) * (list.cartquantity);
                                             let afterdiscount = newTotal - (newTotal / 100) * list.discount;
-                                            total += afterdiscount;
+                                            let price = parseFloat(list.price) || 0;
+                                            let deliveryCharge = parseFloat(list.delivery_charge) || 0;
+                                            let unitPrice = price;
+                                            deliveryCharge1 += deliveryCharge ;
+                                            total += afterdiscount + deliveryCharge;
                                             discount += (newTotal - afterdiscount);
-                                            sub_total += newTotal;
+                                            
+                                            sub_total += newTotal ;
                                             %>
                                             <tr id="invoice-print-<%= index %>">
                                                 <td class="text-center">
@@ -243,17 +249,22 @@
                                                     <%= list.cartquantity %>
                                                 </td>
                                                 <td class="text-right">₹ <%= list.price ?
-                                                        parseFloat(list.price).toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"
+                                                    (unitPrice).toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"
                                                         ) : '' %>
                                                 </td>
                                                 <td class="text-right">₹ <%= (newTotal -
                                                         afterdiscount).toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"
                                                         ) %>
                                                 </td>
+                                                <td class="text-right">₹ <%= list.delivery_charge ? 
+                                                    deliveryCharge.toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"
+                                                    ) : '' %>
+                                            </td>
                                                 <td class="text-right">₹ <%=
                                                         afterdiscount.toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"
                                                         ) %>
                                                 </td>
+                                               
                                                 <td class="text-right action-column">
                                                     <button class="btn btn-success"
                                                         onclick="printSingle('printableArea', 'invoice-print-<%= index %>')">
@@ -274,15 +285,19 @@
                                                             <td class="text-right" colspan="1"></td>
                                                             <td class="text-right" colspan="1"></td>
                                                             <td class="text-right" colspan="1">Subtotal: ₹<%=
-                                                                    sub_total.toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"
+                                                                    sub_total?.toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"
                                                                     ) %>
                                                             </td>
                                                             <td class="text-right" colspan="1">Discount: ₹<%=
-                                                                    discount.toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"
+                                                                    discount?.toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"
                                                                     ) %>
                                                             </td>
+                                                            <td class="text-right" colspan="1">Delivery charge: ₹<%=
+                                                                deliveryCharge1?.toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"
+                                                                ) %>
+                                                        </td>
                                                             <td class="text-right" colspan="1">Total: ₹<%=
-                                                                    total.toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"
+                                                                    total?.toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"
                                                                     ) %>
                                                             </td>
                                                             <td class="text-right action-column" colspan="1"></td>
