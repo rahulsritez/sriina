@@ -115,29 +115,29 @@ exports.viewProduct = function (req, res, next) {
                                 if(error) throw new Error('USER TABLE PROBLEM');
                                 var sql = "SELECT name,mobile,email FROM `users` WHERE id='"+userId+"'";
                                 var query = db.query(sql,function(error,data){
-                                	var sql3 = "SELECT * FROM `products` WHERE `status`=1 and `product_type_id`=1 and id='"+Ids+"'";
-                            		db.query(sql3, function(error, getresult) {
-                            			let meteTitle = getresult[0].meta_title;
-		                                let metaDescription = getresult[0].meta_description;
-		                                let description = getresult[0].description;
+                                    var sql3 = "SELECT * FROM `products` WHERE `status`=1 and `product_type_id`=1 and id='"+Ids+"'";
+                                    db.query(sql3, function(error, getresult) {
+                                        let meteTitle = getresult[0].meta_title;
+                                        let metaDescription = getresult[0].meta_description;
+                                        let description = getresult[0].description;
 
-		                                if(meteTitle==null){
-		                                    var M_title = getresult[0].name;
-		                                } else {
-		                                    var M_title = meteTitle;
-		                                }
+                                        if(meteTitle==null){
+                                            var M_title = getresult[0].name;
+                                        } else {
+                                            var M_title = meteTitle;
+                                        }
 
-		                                if(metaDescription==null){
-		                                    var M_description = getresult[0].description;
-		                                } else if(metaDescription!="") {
-		                                    var M_description = metaDescription;
-		                                } else {
-		                                    var M_description = getresult[0].name;
-		                                }
+                                        if(metaDescription==null){
+                                            var M_description = getresult[0].description;
+                                        } else if(metaDescription!="") {
+                                            var M_description = metaDescription;
+                                        } else {
+                                            var M_description = getresult[0].name;
+                                        }
 
                                     res.render('front/productview', {get_products:get_products,maxplan:maxplan,'viewlist': result[0],'title':title,'categorylist': category,message:req.flash('message'),csrfToken: req.csrfToken(),cryptr:cryptr,usersdata:usersdata[0],data:data[0],settingData:settingData[0],M_title,M_description});
-                                	});
-                            	});
+                                    });
+                                });
                             });
                         }*/
                         });
@@ -454,6 +454,11 @@ exports.saveAddtoCart = function (req, res, next) {
 
         var today = new Date().toISOString().slice(0, 19).replace("T", " ");
         if (userId == null) {
+            req.session.addToCart = {
+                quantity: req.body.quantity,
+                product_id: req.body.product_id
+            };
+            
             res.redirect("/sign-in");
         } else {
             var post = req.body;
