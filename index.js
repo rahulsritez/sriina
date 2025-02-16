@@ -62,10 +62,10 @@ var connection = mysql.createConnection({
 });
 
 // var connection = mysql.createConnection({
-//    host: process.env.DB_HOST,
-//    user: process.env.DB_USERNAME,
-//    password: process.env.DB_PASSWORD,
-//    database: process.env.DB_NAME,
+//     host: process.env.DB_HOST,
+//     user: process.env.DB_USERNAME,
+//     password: process.env.DB_PASSWORD,
+//     database: process.env.DB_NAME,
 // });
 
 /* For local */
@@ -75,7 +75,7 @@ connection.connect(function (err) {
 });
 global.db = connection;
 global.baseURL = "https://sriina.com/"; /* For live */
-//global.baseURL = "http://13.234.165.9:3000/"; /* For local */
+// global.baseURL = "http://localhost:5000/"; /* For local */
 
 app.get("/robots.txt", function (req, res) {
     res.type("text/plain");
@@ -412,6 +412,5 @@ app.get("/:id", pages.getCategories);
 
 //Middleware
 app.listen(port, () => {
-   console.log(`Server running on port: ${port}`);
+    console.log(`Server running on port: ${port}`);
 });
-
