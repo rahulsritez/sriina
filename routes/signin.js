@@ -234,6 +234,11 @@ exports.userLogin = (req, res) => {
                                 delete req.session.addToCart;
                                 req.body.quantity = cartData.quantity;
                                 req.body.product_id = cartData.product_id;
+                                console.log(req.body)
+
+                                if (parseInt(req.body.quantity_form) > parseInt(cartData.quantity)) {
+                                    req.body.quantity = parseInt(req.body.quantity_form);
+                                }
                                 saveAddtoCart(req, res)
                             } else {
                                 res.redirect('/addtocart');

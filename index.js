@@ -54,19 +54,19 @@ var parseForm = bodyParser.urlencoded({ extended: true });
 
 /* For local */
 
-var connection = mysql.createConnection({
-     host: "sriina-rds.cbgqo08ka5st.ap-south-1.rds.amazonaws.com",
-     user: "admin",
-     password: "TA0n9vHclfoEsvHZ1wPN",
-     database: "sriina",
- });
+// var connection = mysql.createConnection({
+//     host: "sriina-rds.cbgqo08ka5st.ap-south-1.rds.amazonaws.com",
+//     user: "admin",
+//     password: "TA0n9vHclfoEsvHZ1wPN",
+//     database: "sriina",
+// });
 
-//var connection = mysql.createConnection({
-//    host: process.env.DB_HOST,
-//    user: process.env.DB_USERNAME,
-//    password: process.env.DB_PASSWORD,
-//    database: process.env.DB_NAME,
-//});
+var connection = mysql.createConnection({
+    host: process.env.DB_HOST,
+    user: process.env.DB_USERNAME,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+});
 
 /* For local */
 connection.connect(function (err) {
@@ -412,5 +412,5 @@ app.get("/:id", pages.getCategories);
 
 //Middleware
 app.listen(port, () => {
-   console.log(`Server running on port: ${port}`);
+    console.log(`Server running on port: ${port}`);
 });
