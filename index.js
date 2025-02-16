@@ -54,19 +54,19 @@ var parseForm = bodyParser.urlencoded({ extended: true });
 
 /* For local */
 
-// var connection = mysql.createConnection({
-//     host: "sriina.cts26q6uunut.ap-south-1.rds.amazonaws.com",
-//     user: "admin",
-//     password: "TA0n9vHclfoEsvHZ1wPN",
-//     database: "sriina",
-// });
-
 var connection = mysql.createConnection({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USERNAME,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-});
+     host: "sriina.cts26q6uunut.ap-south-1.rds.amazonaws.com",
+     user: "admin",
+     password: "TA0n9vHclfoEsvHZ1wPN",
+     database: "sriina",
+ });
+
+//var connection = mysql.createConnection({
+//    host: process.env.DB_HOST,
+//    user: process.env.DB_USERNAME,
+//    password: process.env.DB_PASSWORD,
+//    database: process.env.DB_NAME,
+//});
 
 /* For local */
 connection.connect(function (err) {
@@ -75,7 +75,7 @@ connection.connect(function (err) {
 });
 global.db = connection;
 global.baseURL = "https://sriina.com/"; /* For live */
-// global.baseURL = "http://localhost:5000/"; /* For local */
+//global.baseURL = "http://13.234.165.9:3000/"; /* For local */
 
 app.get("/robots.txt", function (req, res) {
     res.type("text/plain");
@@ -412,5 +412,6 @@ app.get("/:id", pages.getCategories);
 
 //Middleware
 app.listen(port, () => {
-    console.log(`Server running on port: ${port}`);
+   console.log(`Server running on port: ${port}`);
 });
+
