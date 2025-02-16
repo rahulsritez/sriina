@@ -458,8 +458,19 @@ exports.saveAddtoCart = function (req, res, next) {
                 quantity: req.body.quantity,
                 product_id: req.body.product_id
             };
-            
-            res.redirect("/sign-in");
+
+            var SQL = "SELECT * FROM `products` WHERE id = " + req.body.product_id;
+
+            db.query(SQL, function (err, results) {
+
+                var product_id = results[0]['id'];
+                var name = results[0]['name'];
+                var image = results[0]['image'];
+                var price = results[0]['price'];
+                var discount = results[0]['discount'];
+                price = parseFloat(price) - ((parseFloat(price) * parseFloat(discount)) / 100)
+                res.redirect("/sign-in?product_id=" + product_id + "&quantity=" + req.body.quantity + "&name=" + name + "&image=" + image + "&price=" + price);
+            });
         } else {
             var post = req.body;
             var quantity = post.quantity;

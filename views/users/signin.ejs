@@ -67,35 +67,61 @@
                           </button>
                         </div>
                         <% } %>
+
                         
                         <div class="col-md-6 sign-in">
                             <img src="assets/images/authentication-bg-08.svg" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
                             style="opacity: .8">
                         </div>
                         <!-- Sign-in -->
-                        <div class="col-md-6 col-sm-6 sign-in" id="signin-form">
-                         <form action="/userlogin" method="post" class="register-form outer-top-xs" id="form" onsubmit="return validateLogin()">
-                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                                <div class="form-group">
-                                    <label class="info-title" for="exampleInputEmailLogin">Email Address <span>*</span></label>
-                                    <input type="email" name="username" class="form-control unicase-form-control text-input" id="email" />
-                                    <small id="login_error_email"></small>
-                                    
+                        <div class="col-md-6 col-sm-6 sign-in">
+                             <!-- Cart Section -->
+                             <div class="shopping-cart-table" id="cart-detail" style="display: none;">
+                                <h4>Cart</h4>
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th class="cart-description item">Image</th>
+                                                <!-- <th class="cart-edit item">Type</th> -->
+                                                <th class="cart-product-name item">Product Name</th>
+                                                <th class="cart-qty item">Quantity</th>
+                                                <th class="cart-sub-total item">Total</th>
+                                                <th class="cart-total last-item">Subtotal</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="cart-items">
+                                            <!-- Dynamic content will go here -->
+                                        </tbody>
+                                        <!-- /tbody -->
+                                    </table>
+                                    <!-- /table -->
                                 </div>
-                                <div class="form-group">
-                                    <label class="info-title" for="exampleInputPasswordLogin">Password <span>*</span></label>
-                                    <input type="password" name="password" class="form-control unicase-form-control text-input" id="pwd" />
-                                    <small id="login_error_pwd"></small>
+                            </div>
+                            <div id="signin-form">
+                                <form action="/userlogin" method="post" class="register-form outer-top-xs" id="form" onsubmit="return validateLogin()">
+                                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                    <div class="form-group">
+                                        <label class="info-title" for="exampleInputEmailLogin">Email Address <span>*</span></label>
+                                        <input type="email" name="username" class="form-control unicase-form-control text-input" id="email" />
+                                        <small id="login_error_email"></small>
+                                        
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="info-title" for="exampleInputPasswordLogin">Password <span>*</span></label>
+                                        <input type="password" name="password" class="form-control unicase-form-control text-input" id="pwd" />
+                                        <small id="login_error_pwd"></small>
+                                    </div>
+                                    <div class="radio outer-xs">
+                                        <label> <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2" />Remember me! </label>
+                                        <a href="/forgot-password" class="forgot-password pull-right">Forgot Password</a>
+                                    </div>
+                                    <button type="submit" class="btn-upper btn btn-primary checkout-page-button" style="width: 100%;">Login</button>
+                                    <div></div>
+                                </form>
+                                <div style="margin-top: 20px; text-align: center;">
+                                    <a href="javascript:void(0);" id="toggle-signup" onclick="toggleForms()">Don't have an account? Sign up</a>
                                 </div>
-                                <div class="radio outer-xs">
-                                    <label> <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2" />Remember me! </label>
-                                    <a href="/forgot-password" class="forgot-password pull-right">Forgot Password</a>
-                                </div>
-                                <button type="submit" class="btn-upper btn btn-primary checkout-page-button" style="width: 100%;">Login</button>
-                                <div></div>
-                            </form>
-                            <div style="margin-top: 20px; text-align: center;">
-                                <a href="javascript:void(0);" id="toggle-signup" onclick="toggleForms()">Don't have an account? Sign up</a>
                             </div>
                         </div>
                         <!-- Sign-in -->
@@ -160,6 +186,42 @@
         <script src="<%= baseURL %>assets/js/scripts.js"></script>
         
         <script>
+            function getURLParameter(name) {
+            let urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+            }
+            let product_id = getURLParameter('product_id');
+            if(product_id)
+            {
+                let product_id = getURLParameter('product_id');
+                let name = getURLParameter('name');
+                let quantity = getURLParameter('quantity');
+                let price = getURLParameter('price');
+                let image = getURLParameter('image');
+
+                var signinFormCart = document.getElementById('cart-detail');
+                if (signinFormCart.style.display === 'none') {
+                        signinFormCart.style.display = 'block';
+                        const cartItemsContainer = document.getElementById('cart-items');
+                        cartItemsContainer.innerHTML = ''; // Clear existing rows
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                        <td class="cart-description item">
+                            <img src="${image}" alt="${name}" style="width: 100px; height: 100px;">
+                        </td>
+                        <td class="cart-product-name item">${name}</td>
+                        <td class="cart-qty item">${quantity}</td>
+                        <td class="cart-sub-total item">₹${price}</td>
+                        <td class="cart-total last-item">₹${price}</td>
+                        `;
+
+                        // Append the row to the table
+                        cartItemsContainer.appendChild(row);
+                } 
+                else {
+                        signinFormCart.style.display = 'none';
+                }
+            }
             function validateRegister(){
                 var flag = false;
                 var userEmailValue = $("#userEmail").val();

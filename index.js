@@ -54,19 +54,19 @@ var parseForm = bodyParser.urlencoded({ extended: true });
 
 /* For local */
 
-var connection = mysql.createConnection({
-    host: "sriina.cts26q6uunut.ap-south-1.rds.amazonaws.com",
-    user: "admin",
-    password: "TA0n9vHclfoEsvHZ1wPN",
-    database: "sriina",
-});
-
 // var connection = mysql.createConnection({
-//     host: process.env.DB_HOST,
-//     user: process.env.DB_USERNAME,
-//     password: process.env.DB_PASSWORD,
-//     database: process.env.DB_NAME,
+//     host: "sriina.cts26q6uunut.ap-south-1.rds.amazonaws.com",
+//     user: "admin",
+//     password: "TA0n9vHclfoEsvHZ1wPN",
+//     database: "sriina",
 // });
+
+var connection = mysql.createConnection({
+    host: process.env.DB_HOST,
+    user: process.env.DB_USERNAME,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+});
 
 /* For local */
 connection.connect(function (err) {
