@@ -198,6 +198,9 @@
                                 <form action="/userlogin" method="post" class="register-form outer-top-xs" id="form" onsubmit="return validateLogin()">
                                     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                     <input type="hidden" id="quantity_form" name="quantity_form" value=""/>
+                                    <input type="hidden" id="name_form" name="name_form" value=""/>
+                                    <input type="hidden" id="image_form" name="image_form" value=""/>
+                                    <input type="hidden" id="price_form" name="price_form" value=""/>
                                     <div class="form-group">
                                         <label class="info-title" for="exampleInputEmailLogin">Email Address <span>*</span></label>
                                         <input type="email" name="username" class="form-control unicase-form-control text-input" id="email" />
@@ -320,6 +323,12 @@
 
                         // Append the row to the table
                         cartItemsContainer.appendChild(row);
+
+                    document.getElementById("quantity_form").value=quantity
+                    document.getElementById("name_form").value=name
+                    document.getElementById("image_form").value=image
+                    document.getElementById("price_form").value=parseFloat(price).toFixed(2)
+
                 } 
                 else {
                         signinFormCart.style.display = 'none';

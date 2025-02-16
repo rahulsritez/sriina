@@ -205,6 +205,7 @@ const { methods } = require('underscore');
 
 exports.userLogin = (req, res) => {
     if (req.method == "POST") {
+        var isCart = false;
         var post = req.body;
         var username = xss(post.username);
         var pass = xss(post.password);
@@ -213,14 +214,33 @@ exports.userLogin = (req, res) => {
 
         if (!username || username.search(/\w/) < 0) {
             req.flash('errors', 'Username name cannot be empty.');
-            res.redirect('/sign-in');
+            if (isCart) {
+                res.redirect(`/sign-in?product_id=${req.body.product_id}&quantity=${req.body.quantity_form}&name=${req.body.name_form}&image=${req.body.image_form}&price=${req.body.price_form}`);
+            }
+            else {
+                res.redirect('/sign-in');
+            }
         } else if (!emailReg.test(username)) {
             req.flash('errors', 'Invalid email id.');
-            res.redirect('/sign-in');
+            if (isCart) {
+                res.redirect(`/sign-in?product_id=${req.body.product_id}&quantity=${req.body.quantity_form}&name=${req.body.name_form}&image=${req.body.image_form}&price=${req.body.price_form}`);
+            }
+            else {
+                res.redirect('/sign-in');
+            }
         } else if (!pass || pass.search(/\w/) < 0) {
             req.flash('errors', 'Password name cannot be empty.');
-            res.redirect('/sign-in');
+            if (isCart) {
+                res.redirect(`/sign-in?product_id=${req.body.product_id}&quantity=${req.body.quantity_form}&name=${req.body.name_form}&image=${req.body.image_form}&price=${req.body.price_form}`);
+            }
+            else {
+                res.redirect('/sign-in');
+            }
         } else {
+            let cartData = req.session.addToCart;
+            if (cartData) {
+                isCart = true;
+            }
             var sql = "SELECT id, name, email, mobile, password FROM `users` WHERE `email`='" + username + "' and `type`= '" + 0 + "'";
             db.query(sql, function (err, results) {
                 if (results.length > 0) {
@@ -228,13 +248,11 @@ exports.userLogin = (req, res) => {
                         if (ress) {
                             req.session.userId = results[0].id;
                             req.session.user = results[0];
-
-                            let cartData = req.session.addToCart;
                             if (cartData) {
+                                isCart = true;
                                 delete req.session.addToCart;
                                 req.body.quantity = cartData.quantity;
                                 req.body.product_id = cartData.product_id;
-                                console.log(req.body)
 
                                 if (parseInt(req.body.quantity_form) > parseInt(cartData.quantity)) {
                                     req.body.quantity = parseInt(req.body.quantity_form);
@@ -245,12 +263,22 @@ exports.userLogin = (req, res) => {
                             }
                         } else {
                             req.flash('errors', 'Invalid Credential.');
-                            res.redirect('/sign-in');
+                            if (isCart) {
+                                res.redirect(`/sign-in?product_id=${req.body.product_id}&quantity=${req.body.quantity_form}&name=${req.body.name_form}&image=${req.body.image_form}&price=${req.body.price_form}`);
+                            }
+                            else {
+                                res.redirect('/sign-in');
+                            }
                         }
                     });
                 } else {
                     req.flash('errors', 'Invalid Credential.');
-                    res.redirect('/sign-in');
+                    if (isCart) {
+                        res.redirect(`/sign-in?product_id=${req.body.product_id}&quantity=${req.body.quantity_form}&name=${req.body.name_form}&image=${req.body.image_form}&price=${req.body.price_form}`);
+                    }
+                    else {
+                        res.redirect('/sign-in');
+                    }
                 }
             });
         }
