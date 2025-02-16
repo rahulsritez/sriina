@@ -24,7 +24,6 @@
         <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet" type="text/css" />
         <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,300,400italic,600,600italic,700,700italic,800" rel="stylesheet" type="text/css" />
         <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
-
     </head>
     <body class="cnt-home">
         <header class="header-style-1">
@@ -38,7 +37,7 @@
                 <div class="breadcrumb-inner">
                     <ul class="list-inline list-unstyled">
                         <li><a href="/">Home</a></li>
-                        <li class="active">Login / Sign In</li>
+                        <li class="active">Login / Sign up</li>
                     </ul>
                 </div>
                 <!-- /.breadcrumb-inner -->
@@ -47,7 +46,7 @@
         </div>
         <!-- /.breadcrumb -->
 
-        <div class="body-content" style="margin-bottom: 20px;">
+        <div class="body-content">
             <div class="container">
                 <div class="sign-in-page">
                     <div class="row">
@@ -68,13 +67,14 @@
                         </div>
                         <% } %>
                         
-                        <div class="col-md-6 sign-in">
-                            <img src="assets/images/authentication-bg-08.svg" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
-                            style="opacity: .8">
-                        </div>
                         <!-- Sign-in -->
-                        <div class="col-md-6 col-sm-6 sign-in" id="signin-form">
-                         <form action="/userlogin" method="post" class="register-form outer-top-xs" id="form" onsubmit="return validateLogin()">
+                        <div class="col-md-6 col-sm-6 sign-in">
+                            <h4 class="">Sign in</h4>
+                            <!-- <div class="social-sign-in outer-top-xs">
+                                <a href="#" class="facebook-sign-in"><i class="fa fa-facebook"></i> Sign In with Facebook</a>
+                                <a href="#" class="twitter-sign-in"><i class="fa fa-twitter"></i> Sign In with Twitter</a>
+                            </div> -->
+                            <form action="/userlogin" method="post" class="register-form outer-top-xs" id="form" onsubmit="return validateLogin()">
                                 <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                 <div class="form-group">
                                     <label class="info-title" for="exampleInputEmailLogin">Email Address <span>*</span></label>
@@ -91,17 +91,14 @@
                                     <label> <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2" />Remember me! </label>
                                     <a href="/forgot-password" class="forgot-password pull-right">Forgot Password</a>
                                 </div>
-                                <button type="submit" class="btn-upper btn btn-primary checkout-page-button" style="width: 100%;">Login</button>
-                                <div></div>
+                                <button type="submit" class="btn-upper btn btn-primary checkout-page-button">Login</button>
                             </form>
-                            <div style="margin-top: 20px; text-align: center;">
-                                <a href="javascript:void(0);" id="toggle-signup" onclick="toggleForms()">Don't have an account? Sign up</a>
-                            </div>
                         </div>
                         <!-- Sign-in -->
 
-                        <div class="col-md-6 col-sm-6 create-new-account" id="signup-form" style="display: none;">
-                          
+                        <!-- create a new account -->
+                        <div class="col-md-6 col-sm-6 create-new-account">
+                            <h4 class="checkout-subtitle">Create a new account</h4>
                             <form action="/registerusers" method="post" class="register-form outer-top-xs" enctype="application/x-www-form-urlencoded" id="register-form" onsubmit="return validateRegister()" autocomplete="off">
                                 <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                 <div class="form-group success">
@@ -133,14 +130,9 @@
                                     <small id="error_pwd"></small>
                                 </div>
                                 <!-- <input type="hidden" name="login" value="true"> -->
-                                <button type="submit" class="btn-upper btn btn-primary checkout-page-button" style="width: 100%;">Sign Up</button>
+                                <button type="submit" class="btn-upper btn btn-primary checkout-page-button">Sign Up</button>
                             </form>
-                            <div style="margin-top: 20px; text-align: center;">
-                                <a href="javascript:void(0);" id="toggle-signup" onclick="toggleForms()">Already have an account? Sign In</a>
-                            </div>
                         </div>
-
-                    
                     </div>
                 </div>
             </div>
@@ -267,20 +259,6 @@
                     return false;
                 });
             });*/
-
-            function toggleForms() {
-                // Toggle visibility of both forms
-                var signinForm = document.getElementById('signin-form');
-                var signupForm = document.getElementById('signup-form');
-
-                if (signinForm.style.display === 'none') {
-                    signinForm.style.display = 'block';
-                    signupForm.style.display = 'none';
-                } else {
-                    signinForm.style.display = 'none';
-                    signupForm.style.display = 'block';
-                }
-            }
 
             $(window).bind("load", function () {
                 $(".show-theme-options").delay(2000).trigger("click");

@@ -62,10 +62,10 @@ var connection = mysql.createConnection({
 });
 
 // var connection = mysql.createConnection({
-//     host: "localhost",
-//     user: "developer",
-//     password: "developer",
-//     database: "sriina",
+//     host: process.env.DB_HOST,
+//     user: process.env.DB_USERNAME,
+//     password: process.env.DB_PASSWORD,
+//     database: process.env.DB_NAME,
 // });
 
 /* For local */
@@ -354,9 +354,9 @@ app.get('/product.xml', (req, res) => {
     const filePath = path.join(__dirname, 'product.xml');
     res.set('Content-Type', 'application/xml');
     res.sendFile(filePath, (err) => {
-      if (err) {
-        res.status(500).send('Error sending the XML file');
-      }
+        if (err) {
+            res.status(500).send('Error sending the XML file');
+        }
     });
 });
 
