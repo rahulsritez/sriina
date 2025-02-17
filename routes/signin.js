@@ -365,6 +365,7 @@ exports.shoppingCheckOut = function (req, res, next) {
                                 var total = 0;
                                 var CartId = 0;
                                 var productId = 0;
+                                var delivery_charge = 0;
                                 console.log('totalAmount---->', totalAmount)
                                 /*totalAmount.forEach((list, index)=>{
                                     let newTotal = (list.price) * (list.cartquantity)
@@ -382,13 +383,13 @@ exports.shoppingCheckOut = function (req, res, next) {
 
                                     total += parseFloat(afterdiscount) + parseFloat(afterdiscountGrocery);
                                     CartId = list.CartId;
-                                    productId = list.productId,
-                                        delivery_charge = list.delivery_charge;
+                                    productId = list.productId;
+                                    delivery_charge += parseFloat(list.delivery_charge);
                                 });
 
                                 var on_rental = totalAmount[0].on_rental;
                                 var subtotal = parseFloat(total) + parseFloat(delivery_charge);
-                                var delivery_charge = parseFloat(delivery_charge);
+                                delivery_charge = parseFloat(delivery_charge);
 
                                 var SQL_RENT_STATE = "SELECT * FROM state_on_rent WHERE status='1' ORDER BY name";
                                 var query = db.query(SQL_RENT_STATE, function (error, get_rent_state) {
@@ -624,21 +625,24 @@ exports.razorpayPaymentStatus = async (req, res, next) => {
     } else {
         var sql1 = "INSERT INTO `bk_order`(`cart_id`,`reference`,`paid_amount`,`customer_id`,`payment_method`,created_at,updated_at) VALUES ('" + cartId + "','" + txtid + "', '" + paid_amount + "', '" + userId + "','" + 1 + "','" + today + "','" + today + "')";
         // console.log(sql1); return;
-        var query = db.query(sql1, async function (error, result) {
+        db.query(sql1, async function (error, result) {
             if (error) throw error;
             const orderId = result.insertId;
 
             var get_products = "select *, cart_product.quantity as cart_quantity from cart_product left join products on cart_product.product_id = products.id where cart_id='" + cartId + "'";
-            var product_details = db.query(get_products, async function (err, product) {
-                if (error) throw error;
+            db.query(get_products, async function (err, product) {
+                if (err) throw error;
                 let totalAmount = 0;
                 const cartProduct = product.map(data => {
-                    totalAmount += (parseInt(data.price * ((100 - data.discount) / 100)) * 100) * data.cart_quantity
+                    //     totalAmount += (((parseFloat(data.price * ((100 - data.discount) / 100)) * 100))+parseFloat(data.delivery_charge)) * parseInt(data.cart_quantity)
+                    totalAmount += ((parseFloat(data.price) * ((100 - parseFloat(data.discount)) / 100)) + parseFloat(data.delivery_charge)) * parseInt(data.cart_quantity);
+
                 })
-                let finalArr = await Promise.resolve(cartProduct)
+                console.log(totalAmount)
+                await Promise.resolve(cartProduct)
                 var options = {
                     // upi_link: false,
-                    amount: totalAmount,
+                    amount: totalAmount*100,
                     currency: "INR",
                     // receipt: orderId,
                     callback_url: `${URL}/payment_status?orderId=${orderId}&cartId=${cartId}&success=${true}`,
@@ -659,7 +663,7 @@ exports.razorpayPaymentStatus = async (req, res, next) => {
                     ...options
                 }).then((dataMain) => {
                     var sql = "UPDATE bk_order SET `payment_gateway_id` ='" + dataMain.id + "' WHERE `order_id` ='" + orderId + "'";
-                    var query = db.query(sql, function (error, updatecart) {
+                    db.query(sql, function (error, updatecart) {
                         if (error) throw error
                     })
                     res.redirect(dataMain.short_url)
