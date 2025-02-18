@@ -339,6 +339,19 @@ app.get("/sitemap_index.xml", (req, res) => {
         }
     });
 });
+app.get("/sitemaps/sitemap_:id.xml", (req, res) => {
+    const sitemapId = req.params.id; // This will capture the number after "sitemap_"
+    const filePath = path.join(__dirname, `/sitemaps/sitemap_${sitemapId}.xml`);
+    
+    res.sendFile(filePath, (err) => {
+        if (err) {
+            console.error("Error sending file:", err);
+            res.status(404).send("Sitemap not found.");
+        }
+    });
+});
+
+
 app.get("/sitemap/001.xml", pages.siteMapMethod);
 app.get("/sitemap/002.xml", pages.siteMapMethod);
 app.get("/sitemap/003.xml", pages.siteMapMethod);
