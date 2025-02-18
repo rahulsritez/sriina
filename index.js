@@ -330,8 +330,8 @@ app.post("/groceyaddtocart", parseForm, csrfProtection, grocery.addtoCartGrocery
 app.get("/electronic", electronic.electronicIndex);
 /* end */
 
-app.get("/sitemap.xml", (req, res) => {
-    const filePath = path.join(__dirname, "sitemap.xml");
+app.get("/sitemap_index.xml", (req, res) => {
+    const filePath = path.join(__dirname, "sitemap_index.xml");
     res.sendFile(filePath, (err) => {
         if (err) {
             console.error("Error sending file:", err);
