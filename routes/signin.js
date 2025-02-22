@@ -384,7 +384,7 @@ exports.shoppingCheckOut = function (req, res, next) {
                                     total += parseFloat(afterdiscount) + parseFloat(afterdiscountGrocery);
                                     CartId = list.CartId;
                                     productId = list.productId;
-                                    delivery_charge += parseFloat(list.delivery_charge);
+                                    delivery_charge += parseFloat(list.delivery_charge == null ? 0 : list.delivery_charge);
                                 });
 
                                 var on_rental = totalAmount[0].on_rental;
@@ -635,14 +635,15 @@ exports.razorpayPaymentStatus = async (req, res, next) => {
                 let totalAmount = 0;
                 const cartProduct = product.map(data => {
                     //     totalAmount += (((parseFloat(data.price * ((100 - data.discount) / 100)) * 100))+parseFloat(data.delivery_charge)) * parseInt(data.cart_quantity)
-                    totalAmount += ((parseFloat(data.price) * ((100 - parseFloat(data.discount)) / 100)) + parseFloat(data.delivery_charge)) * parseInt(data.cart_quantity);
-
+                    totalAmount += (
+                        ((parseFloat(data.price ?? 0) * ((100 - parseFloat(data.discount ?? 0)) / 100)) + parseFloat(data.delivery_charge ?? 0))
+                        * parseInt(data.cart_quantity ?? 0)
+                    );
                 })
-                console.log(totalAmount)
                 await Promise.resolve(cartProduct)
                 var options = {
                     // upi_link: false,
-                    amount: totalAmount*100,
+                    amount: totalAmount * 100,
                     currency: "INR",
                     // receipt: orderId,
                     callback_url: `${URL}/payment_status?orderId=${orderId}&cartId=${cartId}&success=${true}`,
