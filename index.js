@@ -84,6 +84,7 @@ app.get("/robots.txt", function (req, res) {
     res.send("User-agent: *\nDisallow: /admin/\nAllow: /\nSitemap: https://sriina.com/sitemap.xml" /* For live */);
 });
 
+
 app.use(cookieParser());
 app.use(
     session({
@@ -341,9 +342,11 @@ app.get("/sitemap_index.xml", (req, res) => {
         }
     });
 });
+
+
 app.get("/sitemaps/sitemap_:id.xml", (req, res) => {
     const sitemapId = req.params.id; // This will capture the number after "sitemap_"
-    const filePath = path.join(__dirname, `/sitemaps/sitemap_${sitemapId}.xml`);
+    const filePath = path.join(__dirname, `sitemaps/sitemap_${sitemapId}.xml`);
     
     res.sendFile(filePath, (err) => {
         if (err) {
