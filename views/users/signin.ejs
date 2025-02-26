@@ -318,7 +318,7 @@
                                 </div>
                             </td>
                             <td class="cart-sub-total item">₹${parseFloat(price).toFixed(2)}</td>
-                            <td class="cart-sub-total item">₹${parseFloat(price).toFixed(2)}</td>
+                            <td class="cart-total item" id="total-price">₹${(parseFloat(price) * parseInt(quantity, 10)).toFixed(2)}</td>
                         `;
 
                         // Append the row to the table
@@ -342,6 +342,18 @@
                 if (newValue > 0) { // Prevent negative quantity
                     input.value = newValue;
                     document.getElementById("quantity_form").value=newValue
+                    // Optionally, update the total price in the table
+        let price = parseFloat(document.getElementById("price_form").value);
+        let totalPrice = (price * newValue).toFixed(2);
+
+        // Ensure the total price cell exists
+        let row = button.closest("tr");
+        let totalPriceCell = row.querySelector(".cart-total");
+        if (totalPriceCell) {
+            totalPriceCell.innerText = `₹${totalPrice}`;
+        } else {
+            console.error("Total price cell not found");
+        }
                 }
             }
 

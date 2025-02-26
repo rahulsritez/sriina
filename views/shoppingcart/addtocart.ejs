@@ -396,6 +396,7 @@
                             type: 'get',
                             url: '/updatecart',
                             data: dataString,
+                             cache: false,
                                 success: function(result){
                                 if(result.status==1){
                                     errorsHtml = '<div class="alert alert-danger"><ul>';
@@ -411,8 +412,10 @@
                                 }
                             }
                         });
-                        window.location.reload();
-                    } else if (result.isDenied) {
+                        Swal.fire('Cart updated successfully!', '', 'success').then(() => {
+                            location.reload(); // Hard refresh after successful update
+                        });
+                        } else if (result.isDenied) {
                         Swal.fire('Changes are not saved', '', 'info')
                     }
                 });
