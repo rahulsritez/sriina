@@ -355,8 +355,6 @@ app.get("/sitemaps/sitemap_:id.xml", (req, res) => {
         }
     });
 });
-
-
 app.get("/sitemap/001.xml", pages.siteMapMethod);
 app.get("/sitemap/002.xml", pages.siteMapMethod);
 app.get("/sitemap/003.xml", pages.siteMapMethod);
