@@ -75,7 +75,7 @@ connection.connect(function (err) {
 });
 global.db = connection;
 global.baseURL = "https://sriina.com/"; /* For live */
-global.baseURL = "http://13.234.165.9:3000/"; /* For local */
+//global.baseURL = "http://13.234.165.9:3000/"; /* For local */
 // global.baseURL = "http://127.0.0.1:3000/"; /* For local */
 
 
