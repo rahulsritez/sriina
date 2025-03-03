@@ -607,75 +607,197 @@ exports.stripePayment = async (req, res, next) => {
     }
 }
 
+
 exports.razorpayPaymentStatus = async (req, res, next) => {
-    var post = req.body;
-    var txtid = cryptr.decrypt(post.txnid);
-    var paid_amount = cryptr.decrypt(post.paid_amount);
-    var cartId = cryptr.decrypt(post.cartId);
-    var today = new Date().toISOString().slice(0, 19).replace('T', ' ');
-    var userId = req.session.userId;
-    if (userId == null) {
-        res.redirect('/sign-in');
-    } else if (txtid == "") {
-        req.flash('errors', 'Transaction id cannot be null.');
-        res.redirect('checkout');
-    } else if (cartId == "") {
-        req.flash('errors', 'Cart Id cannot be empty.');
-        res.redirect('checkout');
-    } else {
-        var sql1 = "INSERT INTO `bk_order`(`cart_id`,`reference`,`paid_amount`,`customer_id`,`payment_method`,created_at,updated_at) VALUES ('" + cartId + "','" + txtid + "', '" + paid_amount + "', '" + userId + "','" + 1 + "','" + today + "','" + today + "')";
-        // console.log(sql1); return;
-        db.query(sql1, async function (error, result) {
-            if (error) throw error;
+    try {
+        var post = req.body;
+        var txtid = cryptr.decrypt(post.txnid);
+        var paid_amount = cryptr.decrypt(post.paid_amount);
+        var cartId = cryptr.decrypt(post.cartId);
+        var today = new Date().toISOString().slice(0, 19).replace('T', ' ');
+        var userId = req.session.userId;
+
+        if (!userId) {
+            return res.redirect('/sign-in');
+        }
+        if (!txtid) {
+            req.flash('errors', 'Transaction id cannot be null.');
+            return res.redirect('checkout');
+        }
+        if (!cartId) {
+            req.flash('errors', 'Cart Id cannot be empty.');
+            return res.redirect('checkout');
+        }
+
+        // Insert order
+     var sql1 = "INSERT INTO `bk_order`(`cart_id`,`reference`,`paid_amount`,`customer_id`,`payment_method`,created_at,updated_at) VALUES ('" + cartId + "','" + txtid + "', '" + paid_amount + "', '" + userId + "','" + 1 + "','" + today + "','" + today + "')";
+        db.query(sql1, [cartId, txtid, paid_amount, userId, 1, today, today], async (error, result) => {
+            if (error) {
+                console.error("Order Insert Error:", error);
+                req.flash('message', 'Error processing order. Please try again.');
+                return res.redirect('/checkout');
+            }
             const orderId = result.insertId;
 
-            var get_products = "select *, cart_product.quantity as cart_quantity from cart_product left join products on cart_product.product_id = products.id where cart_id='" + cartId + "'";
-            db.query(get_products, async function (err, product) {
-                if (err) throw error;
+            // Fetch cart products
+            var get_products = `SELECT *, cart_product.quantity as cart_quantity 
+                                FROM cart_product 
+                                LEFT JOIN products ON cart_product.product_id = products.id 
+                                WHERE cart_id = ?`;
+            db.query(get_products, [cartId], async (err, product) => {
+                if (err) {
+                    console.error("Fetch Cart Products Error:", err);
+                    req.flash('message', 'Error fetching cart products.');
+                    return res.redirect('/checkout');
+                }
+
                 let totalAmount = 0;
-                const cartProduct = product.map(data => {
-                    //     totalAmount += (((parseFloat(data.price * ((100 - data.discount) / 100)) * 100))+parseFloat(data.delivery_charge)) * parseInt(data.cart_quantity)
-                    totalAmount += (
-                        ((parseFloat(data.price ?? 0) * ((100 - parseFloat(data.discount ?? 0)) / 100)) + parseFloat(data.delivery_charge ?? 0))
-                        * parseInt(data.cart_quantity ?? 0)
-                    );
-                })
-                await Promise.resolve(cartProduct)
+
+                // Calculate total amount
+                product.forEach(data => {
+                    let price = parseFloat(data.price || "0");
+                    let discount = parseFloat(data.discount || "0");
+                    let delivery_charge = parseFloat(data.delivery_charge || "0");
+                    let cart_quantity = parseInt(data.cart_quantity || "0");
+
+                    let discountedPrice = price * ((100 - discount) / 100);
+                    let finalPrice = (discountedPrice + delivery_charge) * cart_quantity;
+
+                    console.log(`Product: ${data.name}, Price: ${price}, Discount: ${discount}, Delivery: ${delivery_charge}, Quantity: ${cart_quantity}, Final Price: ${finalPrice}`);
+
+                    totalAmount += finalPrice;
+                });
+
+                console.log("Final Total Amount Before Payment:", totalAmount);
+
+                if (isNaN(totalAmount) || totalAmount <= 0) {
+                    console.error("Error: Invalid Total Amount!");
+                    req.flash('message', 'Invalid payment amount. Please check your cart.');
+                    return res.redirect('/addtocart');
+                }
+
+                // Razorpay payment options
                 var options = {
-                    // upi_link: false,
-                    amount: totalAmount * 100,
+                    amount: Math.round(totalAmount * 100), // Ensure it's an integer
                     currency: "INR",
-                    // receipt: orderId,
-                    callback_url: `${URL}/payment_status?orderId=${orderId}&cartId=${cartId}&success=${true}`,
+                    callback_url: `${URL}/payment_status?orderId=${orderId}&cartId=${cartId}&success=true`,
                     callback_method: "get",
                     description: "Books",
                     customer: {
-                        name: req.session.user.name,
-                        email: req.session.user.email,
-                        contact: req.session.user.mobile
+                        name: req.session.user?.name || "Customer",
+                        email: req.session.user?.email || "no-email@example.com",
+                        contact: req.session.user?.mobile || "0000000000"
                     },
                     notify: {
                         sms: true,
                         email: false
                     },
-                }
+                };
 
-                instance.paymentLink.create({
-                    ...options
-                }).then((dataMain) => {
-                    var sql = "UPDATE bk_order SET `payment_gateway_id` ='" + dataMain.id + "' WHERE `order_id` ='" + orderId + "'";
-                    db.query(sql, function (error, updatecart) {
-                        if (error) throw error
+
+                console.log("Payment Options:", JSON.stringify(options, null, 2));
+
+                // Create Razorpay payment link
+                instance.paymentLink.create(options)
+                    .then((dataMain) => {
+                        var sql = "UPDATE bk_order SET payment_gateway_id = ? WHERE order_id = ?";
+                        db.query(sql, [dataMain.id, orderId], function (error, updatecart) {
+                            if (error) {
+                                console.error("Payment Gateway ID Update Error:", error);
+                            }
+                        });
+                        res.redirect(dataMain.short_url);
                     })
-                    res.redirect(dataMain.short_url)
-                }).catch(err => {
-                    req.flash('message', err);
-                    res.redirect('/addtocart');
-                })
+                    .catch(err => {
+                        console.error("Payment Link Creation Error:", err);
+                        req.flash('errors', err.message || "Error creating payment link.");
+                        res.redirect('/addtocart');
+                    });
             });
         });
-    }
-}
+    } catch (err) {
+        console.error("Unexpected Error:", err);
+        req.flash('errors', err.message || "Unexpected error occurred.");
+        res.redirect('/addtocart');
+    }   
+    
+};
+
+// exports.razorpayPaymentStatus = async (req, res, next) => {
+//     var post = req.body;
+//     var txtid = cryptr.decrypt(post.txnid);
+//     var paid_amount = cryptr.decrypt(post.paid_amount);
+//     var cartId = cryptr.decrypt(post.cartId);
+//     var today = new Date().toISOString().slice(0, 19).replace('T', ' ');
+//     var userId = req.session.userId;
+//     if (userId == null) {
+//         res.redirect('/sign-in');
+//     } else if (txtid == "") {
+//         req.flash('errors', 'Transaction id cannot be null.');
+//         res.redirect('checkout');
+//     } else if (cartId == "") {
+//         req.flash('errors', 'Cart Id cannot be empty.');
+//         res.redirect('checkout');
+//     } else {
+//         var sql1 = "INSERT INTO `bk_order`(`cart_id`,`reference`,`paid_amount`,`customer_id`,`payment_meˀthod`,created_at,updated_at) VALUES ('" + cartId + "','" + txtid + "', '" + paid_amount + "', '" + userId + "','" + 1 + "','" + today + "','" + today + "')";
+//         // console.log(sql1); return;
+//         db.query(sql1, async function (error, result) {
+//             if (error) throw error;
+//             const orderId = result.insertId;
+
+//             var get_products = "select *, cart_product.quantity as cart_quantity from cart_product left join products on cart_product.product_id = products.id where cart_id='" + cartId + "'";
+//             db.query(get_products, async function (err, product) {
+//                 if (err) throw error;
+//                 let totalAmount = 0;
+//                 const cartProduct = product.map(data => {
+//                     //     totalAmount += (((parseFloat(data.price * ((100 - data.discount) / 100)) * 100))+parseFloat(data.delivery_charge)) * parseInt(data.cart_quantity)
+//                     totalAmount += (
+//                         ((parseFloat(data.price ?? 0) * ((100 - parseFloat(data.discount ?? 0)) / 100)) + parseFloat(data.delivery_charge ?? 0))
+//                         * parseInt(data.cart_quantity ?? 0)
+//                     );
+//                 })
+//                 await Promise.resolve(cartProduct)
+//                 var options = {
+//                     // upi_link: false,
+//                     amount: Math.round(totalAmount * 100), // Ensure it's an integer
+//                     currency: "INR",
+//                     // receipt: orderId,
+//                     callback_url: `${URL}/payment_status?orderId=${orderId}&cartId=${cartId}&success=${true}`,
+//                     callback_method: "get",
+//                     description: "Books",
+//                     customer: {
+//                         name: req.session.user.name,
+//                         email: req.session.user.email,
+//                         contact: req.session.user.mobile
+//                     },
+//                     notify: {
+//                         sms: true,
+//                         email: false
+//                     },
+//                 }
+
+//                 instance.paymentLink.create({
+//                     ...options
+//                 }).then((dataMain) => {
+//                     var sql = "UPDATE bk_order SET `payment_gateway_id` ='" + dataMain.id + "' WHERE `order_id` ='" + orderId + "'";
+//                     db.query(sql, function (error, updatecart) {
+//                         if (error) throw error
+//                     })
+//                     res.redirect(dataMain.short_url)
+//                 }).catch(err => {
+//                     console.error("Payment Link Creation Error:", err);
+                    
+//                     // Check if err is an array and extract the first error message
+//                     let errorMessage = err.message || (Array.isArray(err) ? JSON.stringify(err[0], null, 2) : JSON.stringify(err, null, 2));
+                
+//                     req.flash('message', errorMessage); // Store human-readable error
+//                     res.redirect('/addtocart');
+//                 });
+                                           
+//             });
+//         }); 
+//     }
+// }
 
 exports.orderPaymentStatus = (req, res, next) => {
     const orderId = req.query.orderId;

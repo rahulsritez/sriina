@@ -43,7 +43,7 @@
             <div class="container">
                 <div class="row">
                     <div class="shopping-cart" id="shopping-cart">
-                        <% if(message.length > 0) {%>
+                        <!-- <% if(message.length > 0) {%>
                         <div class="alert alert-success alert-dismissible show" role="alert">
                           <%= message %>
                           <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -58,7 +58,27 @@
                                 <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
+                        <% } %> -->
+                        <% if (message && message.length > 0) { %>
+                            <div class="alert alert-success alert-dismissible show" role="alert">
+                                <pre><%= typeof message === 'object' ? JSON.stringify(message, null, 2) : message %></pre>
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
                         <% } %>
+                        
+                        <% if (errors && errors.length > 0) { %>
+                            <div class="alert alert-danger alert-dismissible show" role="alert">
+                                <pre><%= typeof errors === 'object' ? JSON.stringify(errors, null, 2) : errors %></pre>
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        <% } %>
+                        
+                        
+                        
                         <div class="shopping-cart-table">
                             <div class="table-responsive">
                                 <table class="table">
