@@ -1,4 +1,4 @@
 User-agent: *
 Disallow: /admin/
 Allow: /
-Sitemap: https://sriina.com/sitemap.xml
+Sitemap: https://sriina.com/sitemap_index.xml

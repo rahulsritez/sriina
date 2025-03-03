@@ -15,6 +15,8 @@ var express = require("express"),
     grocery = require("./routes/grocery"),
     electronic = require("./routes/electronic"),
     uploadcsv = require("./routes/uploadcsv"),
+    updateexcel = require("./routes/updateexcel"),
+
     state = require("./routes/state"),
     http = require("http"),
     path = require("path");
@@ -81,7 +83,7 @@ global.baseURL = "https://sriina.com/"; /* For live */
 
 app.get("/robots.txt", function (req, res) {
     res.type("text/plain");
-    res.send("User-agent: *\nDisallow: /admin/\nAllow: /\nSitemap: https://sriina.com/sitemap.xml" /* For live */);
+    res.send("User-agent: *\nDisallow: /admin/\nAllow: /\nSitemap: https://sriina.com/sitemap_index.xml" /* For live */);
 });
 
 
@@ -424,7 +426,18 @@ app.post("/uploadexcelfile", uploadFile.single("uploadexcel"), routes.authGaurd,
 app.post("/upload-xlsx", routes.authGaurd, uploadcsv.saveExcelFileData);
 app.get("/:slug/:id", csrfProtection, product.viewProduct);
 
+
+    //Stock Update Through Excel File //
+    app.get("/updateexcel", routes.authGaurd, csrfProtection, updateexcel.uploadExcel);
+    app.post("/updateexcelfile", uploadFile.single("updateexcel"), routes.authGaurd, updateexcel.uploadExcelFile);
+    app.post("/upload-xlsx", routes.authGaurd, updateexcel.saveExcelFileData);
+
+
+
+
+
 app.get("/:id", pages.getCategories);
+
 
 //Middleware
 app.listen(port, () => {
