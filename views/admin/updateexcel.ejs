@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+  <!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
@@ -73,8 +73,15 @@
             </button>
           </div>
           <!--end modal-header-->
-          <form action="/upload-xlsx" method="post" id="map-form-sub" class="map-form" enctype="multipart/form-data">
+          <form action="/update-xlsx" method="post" id="map-form-sub" class="map-form" enctype="multipart/form-data">
             <div class="modal-body">
+              <div id="loading" style="display: none; text-align: center; margin-top: 10px;">
+                <div class="spinner"></div>
+                <p>Processing...</p>
+            </div>
+            
+            <div id="success_message" style="display: none;" class="alert alert-success"></div>
+            
               <div id="error_message"></div>
               <div>
                 <input type="hidden" name="xlsx_file_name" id="xlsx_file_name" value="" />
@@ -87,7 +94,7 @@
                       <th>DB Fields</th>
                       <th>Action</th>
                     </tr>
-                  </thead>
+                  </thead>                  
                   <tbody></tbody>
                 </table>
                 <div class="col-12">
@@ -100,6 +107,7 @@
       </div>
     </div>
   </div>
+  
 <%- include ("../../common/footer") %>
 </div>
 <%- include ("../../common/js") %>
@@ -112,61 +120,89 @@ $(function() {
   });
 
   $('.map-books').on("click", function(e){
+    e.preventDefault(); // Prevent default form submission
+    
     console.log('map books call');
 
     var data = new FormData(this.form);
     let formData = new FormData();
     for (var pair of data.entries()) {
-      formData.append(pair[0], pair[1]);
+        formData.append(pair[0], pair[1]);
     }
 
+    // Show loading indicator and disable button
+    $('#loading').show();
+    $('.map-books').prop('disabled', true);
+
     $.ajax({
-      url: "/updateexcelfile",
-      method: 'POST',
-      dataType: "json",
-      data: formData,
-      enctype: "multipart/form-data",
-      processData: false,
-      contentType: false,
-      cache: false,
-      success: function(response) {
-        if(response.status){
-          $('#error_message').html('');
-          $("table tbody").html('');
-          var fileName = response.file_name;
-          var headers = response.headers;
-          var db_fields = response.db_fields_books
-          $('#xlsx_file_name').val(fileName);
-          $('#header').val(JSON.stringify(headers));
-          $.each(headers, function (i, item) {
-            var html = '<tr id="'+ capitalizeFirstLetter(item) +'">';
-                html += '<td id="tdf_'+ capitalizeFirstLetter(item) +'" data-val="'+ capitalizeFirstLetter(item) +'">'+ capitalizeFirstLetter(item) +'</td>';
-                html += '<td>'+ `<select class="form-control fields" required id="db_${capitalizeFirstLetter(item)}" name="fields[${capitalizeFirstLetter(item)}]">`;
+        url: "/updateexcelfile",
+        method: 'POST',
+        dataType: "json",
+        data: formData,
+        enctype: "multipart/form-data",
+        processData: false,
+        contentType: false,
+        cache: false,
+        success: function(response) {
+            $('#loading').hide(); // Hide loader
+            $('.map-books').prop('disabled', false); // Re-enable button
+
+            if(response.status){
+                $('#error_message').html('');
+                $("table tbody").html('');
+                
+                var fileName = response.file_name;
+                var headers = response.headers;
+                var db_fields = response.db_fields_books;
+
+                $('#xlsx_file_name').val(fileName);
+                $('#header').val(JSON.stringify(headers));
+
+                $.each(headers, function (i, item) {
+                    var html = '<tr id="'+ capitalizeFirstLetter(item) +'">';
+                    html += '<td id="tdf_'+ capitalizeFirstLetter(item) +'" data-val="'+ capitalizeFirstLetter(item) +'">'+ capitalizeFirstLetter(item) +'</td>';
+                    html += '<td>'+ `<select class="form-control fields" required id="db_${capitalizeFirstLetter(item)}" name="fields[${capitalizeFirstLetter(item)}]">`;
                     $.each(db_fields, function (i, db_field) {
-                      html += `<option value="${db_field}">${db_field}</option>`;
-                    })
-                html += `</select>` +'</td>';
-                html += '<td><button type="button" class="btn delete-field" data-id="'+ capitalizeFirstLetter(item) +'"><i class="fa fa-trash"></i></button></td>'
-                html += '</tr>';
-            $("table tbody").append(html);
-          });
-          $('#map_books').modal("show");
-        } else {
-            $('#error_message').html('<div class="alert alert-danger">' + response.error +'</div>');
+                        html += `<option value="${db_field}">${db_field}</option>`;
+                    });
+                    html += `</select>` +'</td>';
+                    html += '<td><button type="button" class="btn delete-field" data-id="'+ capitalizeFirstLetter(item) +'"><i class="fa fa-trash"></i></button></td>';
+                    html += '</tr>';
+                    $("table tbody").append(html);
+                });
+
+                // Show success message
+                $('#success_message').html('<div class="alert alert-success">Excel file processed successfully!</div>').fadeIn();
+
+                // Show updated records count if available
+                if (response.updated_count !== undefined) {
+                    $('#update-count').html(`Total Records Updated: <strong>${response.updated_count}</strong>`).fadeIn();
+                }
+
+                $('#map_books').modal("show");
+
+                // Hide success message after 3 seconds
+                setTimeout(function(){
+                    $('#success_message').fadeOut();
+                }, 3000);
+
+            } else {
+                $('#error_message').html('<div class="alert alert-danger">' + response.error +'</div>');
+            }
+        },
+        error: function(response) {
+            if(response.responseJSON){
+                let errorsHtml = '<ul>';
+                $.each(response.responseJSON.errors, function( key, value ) {
+                    errorsHtml += '<li>'+ value[0] + '</li>';
+                });
+                errorsHtml += '</ul>';
+                $('#error_message').html('<div class="alert alert-danger">' + errorsHtml + '</div>');
+            }
         }
-      },
-      error: function(response) {
-        if(response.responseJSON){
-          errorsHtml = '<ul>';
-          $.each( response.responseJSON.errors, function( key, value ) {
-              errorsHtml += '<li>'+ value[0] + '</li>';
-          });
-          errorsHtml += '</ul>';
-          $('#error_message').html('<div class="alert alert-danger">' + errorsHtml + '</div>');
-        }
-      }
     });
-  });
+});
+
 
   function capitalizeFirstLetter(string){
     string = string.replaceAll(" ", "_").trim().toLowerCase();

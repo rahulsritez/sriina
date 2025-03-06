@@ -423,14 +423,14 @@ const storage = multer.diskStorage({
 const uploadFile = multer({ storage: storage });
 
 app.post("/uploadexcelfile", uploadFile.single("uploadexcel"), routes.authGaurd, uploadcsv.uploadExcelFile);
-app.post("/upload-xlsx", routes.authGaurd, uploadcsv.saveExcelFileData);
+app.post("/uploads-xlsx", routes.authGaurd, uploadcsv.saveExcelFileData);
 app.get("/:slug/:id", csrfProtection, product.viewProduct);
 
 
     //Stock Update Through Excel File //
     app.get("/updateexcel", routes.authGaurd, csrfProtection, updateexcel.uploadExcel);
     app.post("/updateexcelfile", uploadFile.single("updateexcel"), routes.authGaurd, updateexcel.uploadExcelFile);
-    app.post("/upload-xlsx", routes.authGaurd, updateexcel.saveExcelFileData);
+    app.post("/update-xlsx", routes.authGaurd, updateexcel.saveExcelFileData);
 
 
 
