@@ -21,65 +21,101 @@
       }
     }
   };
-  exports.uploadExcelFile = async (req, res, next) => {
-    if (req.url == "/updateexcelfile") {
-    const path = require("path");
-    const __basedir = path.resolve();
-    const readXlsxFile = require("read-excel-file/node");
-
-    if (!req.file) {
-        req.flash("errors", "No file uploaded.");
-        return res.redirect("/updateexcel");
-    }
-
-    const exFile = __basedir + "/exceldata/" + req.file.filename;
-    console.log("Excel File Path:", exFile);
-
-    try {
+  
+  exports.uploadExcelFile = async (req, res) => {
+    if (req.url === "/updateexcelfile") {
+      try {
+        const path = require("path");
+        const __basedir = path.resolve();
+        const readXlsxFile = require("read-excel-file/node");
+        const exFile = __basedir + "/exceldata/" + req.file.filename;
+        console.log("req.file --->", exFile);
         const rows = await readXlsxFile(exFile);
-        rows.shift(); // Remove header row
-
-        console.log("Processing Rows:", rows.length);
-
-        for (let row of rows) {
-            let [ISBN,book_name,price,quantity] = row; // Extract required fields
-
-            // Check if the book with this ISBN exists
-            let checkQuery = "SELECT * FROM products WHERE isbn = ?";
-            let [existingBooks] = await db.promise().query(checkQuery, [ISBN]);
-
-            if (existingBooks.length > 0) {
-                // If the book exists, update name, price, and quantity
-                let updateQuery = `
-                    UPDATE products 
-                    SET name = ?, price = ?, quantity = ? 
-                    WHERE isbn = ?`;
-                await db.promise().query(updateQuery, [book_name, price, quantity, ISBN]);
-                console.log(`✅ Updated: ${book_name} (ISBN: ${ISBN})`);
-            } else {
-                console.log(`⏭️ Skipped: ISBN ${ISBN} not found`);
-            }
+        if (!rows || rows.length < 2) {
+          return res.status(400).json({ status: false, message: "Invalid Excel file format." });
         }
-
-        req.flash("message", "Excel File processed successfully.");
-        res.redirect("/updateexcel");
-
+  
+        const headers = rows[0]; // Extract headers
+        rows.shift(); // Remove header row
+  
+        const db_fields_books = [
+          "isbn",
+          "isbn13",
+          "name",
+          "author",
+          "publisher",
+          "book_edition",
+          "book_language",
+          "book_binding",
+          "currency_code",
+          "price",
+          "weight",
+          "delivery_charge",
+          "quantity",
+          "discount",
+          "publishing_year",
+          "description",
+          "no_of_pages",
+          "image",
+          "cat_id",
+          "cluster_subject",
+          "author_details",
+        ];
+        res.send({
+            status: true,
+            headers,
+            db_fields_books,
+            file_name: req.file.filename,
+            message: "xlsx file get successfully",
+          });
+          return;
+  
+        // Database update logic
+        let updatedCount = 0;
+        let skippedCount = 0;
+  
+        for (const row of rows) {
+          const [isbn, isbn13, name, , , , , , , price, , , quantity] = row; // Extract needed values
+  
+          if (!isbn13 || !price || !quantity || !name) continue; // Skip invalid rows
+  
+          // Check if ISBN exists in database
+          const checkQuery = "SELECT * FROM products WHERE isbn13 = ?";
+          const [existingProduct] = await db.promise().query(checkQuery, [isbn13]);
+  
+          if (existingProduct.length > 0) {
+            // Update product details if match found
+            const updateQuery = `
+              UPDATE products 
+              SET price = ?, quantity = ?, name = ?, updated_at = NOW() 
+              WHERE isbn13 = ?`;
+            await db.promise().query(updateQuery, [price, quantity, name, isbn13]);
+            updatedCount++;
+          } else {
+            skippedCount++;
+          }
+        }
+  
+        res.json({
+          status: true,
+          message: "Excel file processed successfully",
+          updatedRecords: updatedCount,
+          skippedRecords: skippedCount,
+        });
     } catch (error) {
-        console.error("❌ Error Processing Excel File:", error);
-        req.flash("errors", "Error processing file. Please try again.");
-        res.redirect("/updateexcel");
+        console.error("Error processing Excel file:", error);
+        res.status(500).json({ status: false, message: "Internal Server Error" });
     }
-} else {
-    console.log("Please check http request");
-  }
-};
-
+    } else {
+      res.status(400).json({ status: false, message: "Invalid request URL" });
+    }
+  };
+  
   
   function capitalizeFirstLetter(string) {
     string = string.replaceAll(" ", "_").trim().toLowerCase();
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
-  
   exports.saveExcelFileData = async (req, res, next) => {
     const userId = req.session.userId;
     const userType = req.session.type;
@@ -93,7 +129,6 @@
     const path = require("path");
     const readXlsxFile = require("read-excel-file/node");
     const slugify = require("slugify");
-    const CC = require("currency-converter-lt");
 
     const form = new formidable.IncomingForm();
 
@@ -118,16 +153,15 @@
                 }, {});
             });
 
-            let failedRecords = 0, updatedRecords = 0, insertedRecords = 0;
+            let failedRecords = 0, updatedRecords = 0, skippedRecords = 0;
 
             const promises = newBooksArr.map(async (row) => {
-                let isValid = true;
                 let data = {};
 
                 // Map fields dynamically
                 for (const [key, value] of Object.entries(mapped_fields)) {
                     let valueData = row[value];
-                    if (key === "isbn13" || key === "isbn") {
+                    if (key === "ISBN" || key === "ISBN13") {
                         valueData = valueData ? valueData.toString().replace(/\D/g, "") : null;
                     }
                     data[key] = valueData;
@@ -145,19 +179,19 @@
                 data.updated_at = data.created_at;
                 data.currency_code = "INR";
 
-                if (!data.IMPS) {
+                if (!data.isbn13) {
                     failedRecords++;
                     return;
                 }
 
-                // Check if IMPS exists in the database
-                let sqlCheck = "SELECT id FROM products WHERE IMPS = ?";
-                let existingProduct = await db.query(sqlCheck, [data.IMPS]);
+                let sqlCheck = "SELECT id FROM products WHERE isbn13 = ?";
+                let [existingProduct] = await db.promise().query(sqlCheck, [data.isbn13]);
 
                 if (existingProduct.length) {
-                    // IMPS exists, so update only qty, price, bookname
-                    let sqlUpdate = "UPDATE products SET qty = ?, price = ?, name = ?, updated_at = NOW() WHERE IMPS = ?";
-                    let result = await db.query(sqlUpdate, [data.qty, data.price, data.name, data.IMPS]);
+                    // console.log("Updating Product:", data.isbn13, "Quantity:", data.quantity, "Price:", data.price, "Name:", data.name);
+                    // If product exists, update its details
+                    let sqlUpdate = "UPDATE products SET quantity = ?, price = ?, name = ?, updated_at = NOW() WHERE isbn13 = ?";
+                    let [result] = await db.promise().query(sqlUpdate, [data.quantity, data.price, data.name, data.isbn13]);
 
                     if (result.affectedRows) {
                         updatedRecords++;
@@ -165,23 +199,14 @@
                         failedRecords++;
                     }
                 } else {
-                    // IMPS does not exist, insert a new record
-                    // let sqlInsert = "INSERT INTO products SET ?";
-                    // let result = await db.query(sqlInsert, data);
-
-                console.log('Data is not Matched');
-
-                    if (result.affectedRows) {
-                        insertedRecords++;
-                    } else {
-                        failedRecords++;
-                    }
+                    // If product does NOT exist, skip it (don't insert)
+                    skippedRecords++;
                 }
             });
 
             await Promise.all(promises);
 
-            req.flash("message", `Upload completed. ${insertedRecords} new, ${updatedRecords} updated, ${failedRecords} failed.`);
+            req.flash("message", `Upload completed. ${updatedRecords} updated, ${skippedRecords} skipped, ${failedRecords} failed.`);
             res.redirect("/productlist");
 
         } catch (error) {
@@ -191,5 +216,3 @@
         }
     });
 };
-
-  
