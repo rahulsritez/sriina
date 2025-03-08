@@ -378,7 +378,14 @@ exports.cartAdd = function (req, res) {
         // console.log(get_cart);
         var query = db.query(get_cart, function (err, getcartdata) {
             if (err) throw err;
-            res.render("shoppingcart/addtocart", { getcartdata: getcartdata, message: req.flash("message"), errors: req.flash("errors"), base64 });
+            // res.render("shoppingcart/addtocart", { getcartdata: getcartdata, message: req.flash("message"), errors: req.flash("errors"), base64 });
+            res.render("shoppingcart/addtocart", { 
+                getcartdata: getcartdata, 
+                message: req.flash("message")[0] || "",  // Get the first message or empty string
+                errors: req.flash("errors")[0] || "", 
+                base64 
+            });
+            
         });
     }
 };
