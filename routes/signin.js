@@ -669,8 +669,9 @@ exports.razorpayPaymentStatus = async (req, res, next) => {
                 });
 
                 console.log("Final Total Amount Before Payment:", totalAmount);
+                totalAmount = Math.round(totalAmount * 100); // Convert to paise
 
-                if (isNaN(totalAmount) || totalAmount <= 0) {
+                if (isNaN(totalAmount) || totalAmount <= 100) {
                     console.error("Error: Invalid Total Amount!");
                     req.flash('message', 'Invalid payment amount. Please check your cart.');
                     return res.redirect('/addtocart');
@@ -678,7 +679,7 @@ exports.razorpayPaymentStatus = async (req, res, next) => {
 
                 // Razorpay payment options
                 var options = {
-                    amount: Math.round(totalAmount * 100), // Ensure it's an integer
+                    amount: totalAmount,
                     currency: "INR",
                     callback_url: `${URL}/payment_status?orderId=${orderId}&cartId=${cartId}&success=true`,
                     callback_method: "get",
@@ -710,6 +711,8 @@ exports.razorpayPaymentStatus = async (req, res, next) => {
                     })
                     .catch(err => {
                         console.error("Payment Link Creation Error:", err);
+                        console.error("❌ Error Message:", err.message);
+                        console.error("📌 Error Details:", JSON.stringify(err, null, 2));
                         req.flash('errors', err.message || "Error creating payment link.");
                         res.redirect('/addtocart');
                     });
