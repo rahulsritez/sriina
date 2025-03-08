@@ -168,10 +168,15 @@ $(function() {
     });
   });
 
-  function capitalizeFirstLetter(string){
-    string = string.replaceAll(" ", "_").trim().toLowerCase();
+  // function capitalizeFirstLetter(string){
+  //   string = string.replaceAll(" ", "_").trim().toLowerCase();
+  //   return string.charAt(0).toUpperCase() + string.slice(1);
+  // }
+
+  function capitalizeFirstLetter(string) {
+    string = string.replace(/ /g, "_").trim().toLowerCase(); // Replaces all spaces with "_"
     return string.charAt(0).toUpperCase() + string.slice(1);
-  }
+}
 
   $(document).on('click', '.delete-field', function() {
     var rowCount = $('table#map-table tbody tr').length;
