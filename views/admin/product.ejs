@@ -107,8 +107,13 @@
                                       <div class="card">
                                         <div class="card-header">
                                           <h3 class="card-title float-right">
-                                            <button type="button" class="btn btn-default"> <a href="/updateexcel">Stock Update</a></button>
+                                            <% if (user.type === 1) { %>
+                                              <button type="button" class="btn btn-default">
+                                                <a href="/updateexcel">Stock Update</a>
+                                              </button>
+                                            <% } %>
                                           </h3>
+                                          
                                           <h3 class="card-title float-right">
                                             <button type="button" class="btn btn-default" data-toggle="modal"
                                               data-target="#modal-default"> Add Book</button>

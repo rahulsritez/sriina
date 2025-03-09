@@ -299,7 +299,7 @@ exports.deleteInCart = (req, res, next) => {
                 if (err) {
                     throw (err);
                 } else {
-                    req.flash('message', 'Your item has been successfully removed from your cart.');
+                    // req.flash('message', 'Your item has been successfully removed from your cart.');
                     res.redirect('/addtocart');
                 }
             });
@@ -634,7 +634,7 @@ exports.razorpayPaymentStatus = async (req, res, next) => {
         db.query(sql1, [cartId, txtid, paid_amount, userId, 1, today, today], async (error, result) => {
             if (error) {
                 console.error("Order Insert Error:", error);
-                req.flash('message', 'Error processing order. Please try again.');
+                req.flash('message', 'Error processing order. Please try again.');  
                 return res.redirect('/checkout');
             }
             const orderId = result.insertId;
@@ -677,6 +677,16 @@ exports.razorpayPaymentStatus = async (req, res, next) => {
                     return res.redirect('/addtocart');
                 }
 
+
+                const userMobile = req.session.user?.mobile;
+
+                // Validate mobile number (10 digits, starts with 6-9)
+                const isValidMobile = userMobile && /^[6-9]\d{9}$/.test(userMobile);
+                
+                if (!isValidMobile) {
+                    req.flash('errors', 'Invalid mobile number. Please update your profile.');
+                    return res.redirect('/profile'); // Redirect user to update mobile number
+                }
                 // Razorpay payment options
                 var options = {
                     amount: totalAmount,
@@ -687,7 +697,7 @@ exports.razorpayPaymentStatus = async (req, res, next) => {
                     customer: {
                         name: req.session.user?.name || "Customer",
                         email: req.session.user?.email || "no-email@example.com",
-                        contact: req.session.user?.mobile || "0000000000"
+                        contact: userMobile
                     },
                     notify: {
                         sms: true,
@@ -1187,7 +1197,7 @@ exports.forgotPwd = (req, res, next) => {
         var today = new Date().toISOString().slice(0, 19).replace('T', ' ');
         var username = post.username;
         var sql = "SELECT name,email,mobile FROM `users` WHERE `email`='" + username + "' and `type`= '" + 0 + "'";
-        //console.log(sql);
+        // console.log(sql);
         db.query(sql, function (err, results) {
             if (results.length > 0) {
                 var otp = Math.floor(100000 + Math.random() * 900000);
