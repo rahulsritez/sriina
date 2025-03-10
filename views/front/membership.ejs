@@ -286,9 +286,9 @@
                         <div class="description"></div>
                         <div class="product-price">
                             <span class="price"> ₹<%= new_price.toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,") %> </span> <span class="price-before-discount">₹ <%= (list.price) %></span> <span><%= list.discount %>% off</span> </div></div>
-                        <% if( maxplan[0].MaxPlanPrice >= list.price ) { %>
+                        <!-- <% if( maxplan[0].MaxPlanPrice >= list.price ) { %>
                             <div class="on_rent"><a href="membership?productId=<%= list.id %>">On Rent</a></div>
-                        <% } %>
+                        <% } %> -->
 
                         <div class="add_cart">
                           <a class="add-cart" href="<%= list.slug %>/<%= list.id %>"><i class="fa fa-shopping-cart"></i> Add to cart </a>
