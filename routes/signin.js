@@ -968,7 +968,8 @@ exports.confimOrder = (req, res, next) => {
                                                     console.log("email error ======================>", err);
                                                 } else {
                                                     const mailTransport = nodemailer.createTransport({
-                                                        host: "smtpout.secureserver.net",
+                                                        // host: "smtpout.secureserver.net",
+                                                        host: "smtp.gmail.com",
                                                         secure: true,
                                                         secureConnection: false, // TLS requires secureConnection to be false
                                                         tls: {
@@ -978,15 +979,15 @@ exports.confimOrder = (req, res, next) => {
                                                         port: 465,
                                                         debug: true,
                                                         auth: {
-                                                            user: 'order@sriina.com',
-                                                            pass: '$xwW6^LiV017'
+                                                            user: 'ordersriina@gmail.com',
+                                                            pass: 'tzhgntwdqnltwxjn'
                                                         }
                                                     });
 
                                                     const mailOptions = {
-                                                        from: 'Sriina Online ' + 'order@sriina.com',
+                                                        from: 'Sriina Online ' + 'ordersriina@gmail.com',
                                                         to: userquerys[0].email,
-                                                        cc: 'order@sriina.com',
+                                                        cc: 'ordersriina@gmail.com',
                                                         subject: 'Your order has been placed successfully',
                                                         html: data,
                                                     };
@@ -1196,7 +1197,9 @@ exports.forgotPwd = (req, res, next) => {
         var post = req.body;
         var today = new Date().toISOString().slice(0, 19).replace('T', ' ');
         var username = post.username;
-        var sql = "SELECT name,email,mobile FROM `users` WHERE `email`='" + username + "' and `type`= '" + 0 + "'";
+        // var sql = "SELECT name,email,mobile FROM `users` WHERE `email`='" + username + "' and `type`= '" + 0 + "'";
+        var sql = "SELECT name, email, mobile FROM `users` WHERE `email`='" + username + "' AND `type` IN (0, 1)";
+
         // console.log(sql);
         db.query(sql, function (err, results) {
             if (results.length > 0) {
