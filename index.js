@@ -2,24 +2,23 @@
  * Module dependencies.
  */
 var express = require("express"),
-    routes = require("./routes"),
-    user = require("./routes/user"),
-    admingrocery = require("./routes/admingrocery"),
-    order = require("./routes/order"),
-    product = require("./routes/product"),
-    search = require("./routes/search"),
-    signin = require("./routes/signin"),
-    pages = require("./routes/pages"),
-    myaccount = require("./routes/myaccount"),
-    payumoney = require("./routes/payumoney"),
-    grocery = require("./routes/grocery"),
-    electronic = require("./routes/electronic"),
-    uploadcsv = require("./routes/uploadcsv"),
-    updateexcel = require("./routes/updateexcel"),
-
-    state = require("./routes/state"),
-    http = require("http"),
-    path = require("path");
+  routes = require("./routes"),
+  user = require("./routes/user"),
+  admingrocery = require("./routes/admingrocery"),
+  order = require("./routes/order"),
+  product = require("./routes/product"),
+  search = require("./routes/search"),
+  signin = require("./routes/signin"),
+  pages = require("./routes/pages"),
+  myaccount = require("./routes/myaccount"),
+  payumoney = require("./routes/payumoney"),
+  grocery = require("./routes/grocery"),
+  electronic = require("./routes/electronic"),
+  uploadcsv = require("./routes/uploadcsv"),
+  updateexcel = require("./routes/updateexcel"),
+  state = require("./routes/state"),
+  http = require("http"),
+  path = require("path");
 
 const helmet = require("helmet");
 //var methodOverride = require('method-override');
@@ -64,43 +63,54 @@ var parseForm = bodyParser.urlencoded({ extended: true });
 // });
 
 var connection = mysql.createConnection({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USERNAME,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
+  host: process.env.DB_HOST,
+  user: process.env.DB_USERNAME,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
 });
+
+const categories = {
+  "academic-books": Array.from(
+    { length: 25000 },
+    (_, i) => `https://sriina.com/product/academic-book-${i + 1}`
+  ),
+  "account-books": Array.from(
+    { length: 15000 },
+    (_, i) => `https://sriina.com/product/account-book-${i + 1}`
+  ),
+};
 
 /* For local */
 connection.connect(function (err) {
-    if (err) throw err;
-    console.log("Connection Established Successfully!");
+  if (err) throw err;
+  console.log("Connection Established Successfully!");
 });
 global.db = connection;
 global.baseURL = "https://sriina.com/"; /* For live */
 //global.baseURL = "http://13.234.165.9:3000/"; /* For local */
 // global.baseURL = "http://127.0.0.1:3000/"; /* For local */
 
-
 app.get("/robots.txt", function (req, res) {
-    res.type("text/plain");
-    res.send("User-agent: *\nDisallow: /admin/\nAllow: /\nSitemap: https://sriina.com/sitemap_index.xml" /* For live */);
+  res.type("text/plain");
+  res.send(
+    "User-agent: *\nDisallow: /admin/\nAllow: /\nSitemap: https://sriina.com/sitemap_index.xml" /* For live */
+  );
 });
-
 
 app.use(cookieParser());
 app.use(
-    session({
-        secret: "sosecret",
-        cookie: { maxAge: 8 * 60 * 60 * 1000 },
-        saveUninitialized: true,
-        resave: true,
-    })
+  session({
+    secret: "sosecret",
+    cookie: { maxAge: 8 * 60 * 60 * 1000 },
+    saveUninitialized: true,
+    resave: true,
+  })
 );
 
 app.use(function (req, res, next) {
-    res.locals.user = req.session.user;
-    //res.locals.email = req.session.email;
-    next();
+  res.locals.user = req.session.user;
+  //res.locals.email = req.session.email;
+  next();
 });
 
 // all environments
@@ -113,7 +123,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static("public"));
 
 //app.get('/', routes.index);//call for main index page
-app.get("/test", (req, res) => res.send('Server is running'));
+app.get("/test", (req, res) => res.send("Server is running"));
 app.get("/", routes.landingpage); //call for main index page
 
 app.get("/admin", routes.admin); //call for main index page
@@ -163,7 +173,11 @@ app.post("/updatecartts", user.Updatecartts);
 app.post("/updatecatalog", routes.authGaurd, user.Updatecatalog);
 app.post("/deletecategory", routes.authGaurd, user.Deletecategory);
 app.get("/deletecatalog/:id", routes.authGaurd, user.Deletecatalog);
-app.get("/deletecatalogcondition/:id", routes.authGaurd, user.Deletecatalogcondition);
+app.get(
+  "/deletecatalogcondition/:id",
+  routes.authGaurd,
+  user.Deletecatalogcondition
+);
 app.get("/deletecarts/:id", user.Deletecarts);
 
 /*
@@ -184,7 +198,11 @@ app.post("/updatesubcategory", routes.authGaurd, user.Updatesubcategory);
  */
 app.post("/deletesubcategory", routes.authGaurd, user.Deletesubcategory);
 
-app.post("/categorywisesubcategory", routes.authGaurd, user.Categorywisesubactegory);
+app.post(
+  "/categorywisesubcategory",
+  routes.authGaurd,
+  user.Categorywisesubactegory
+);
 app.post("/addproduct", routes.authGaurd, user.Addproduct);
 app.post("/adminupdateproduct", routes.authGaurd, user.AdminUpdateProduct);
 app.post("/editproduct", routes.authGaurd, user.Editproduct);
@@ -192,9 +210,24 @@ app.post("/updateproduct", routes.authGaurd, user.Updateproduct);
 app.post("/deleteproduct", routes.authGaurd, user.Deleteproduct);
 app.post("/checkuniqueISBM13", user.checkUniqueISBM13);
 app.post("/userresetpwd", parseForm, csrfProtection, user.userResetPwd);
-app.post("/delay_box_massege", parseForm, csrfProtection, order.delayBoxMassege);
-app.post("/cancel_product_from_admin", parseForm, csrfProtection, order.cancelProductFromAdmin);
-app.post("/update_product_status", parseForm, csrfProtection, order.updateProductStatus);
+app.post(
+  "/delay_box_massege",
+  parseForm,
+  csrfProtection,
+  order.delayBoxMassege
+);
+app.post(
+  "/cancel_product_from_admin",
+  parseForm,
+  csrfProtection,
+  order.cancelProductFromAdmin
+);
+app.post(
+  "/update_product_status",
+  parseForm,
+  csrfProtection,
+  order.updateProductStatus
+);
 
 app.get("/statedeliverycharge", state.stateDeliveryCharge);
 app.post("/updatestatedeliverycharge", state.updateStateDeliveryCharge);
@@ -205,11 +238,21 @@ app.post("/addgroceryproduct", parseForm, admingrocery.addGroceryProduct);
 app.post("/get_grocery_sub_category", user.getGrocerySubCategory);
 app.post("/get_brands", admingrocery.getBrands);
 
-app.post("/updategroceyproducts", parseForm, csrfProtection, admingrocery.updateGroceryProducts);
+app.post(
+  "/updategroceyproducts",
+  parseForm,
+  csrfProtection,
+  admingrocery.updateGroceryProducts
+);
 
 app.get("/adminpwd", csrfProtection, myaccount.adminPassword);
 app.post("/saveadminpwd", parseForm, csrfProtection, myaccount.saveAdminPwd);
-app.post("/saveadminpwdotp", parseForm, csrfProtection, myaccount.saveAdminPwdOTP);
+app.post(
+  "/saveadminpwdotp",
+  parseForm,
+  csrfProtection,
+  myaccount.saveAdminPwdOTP
+);
 app.get("/adminpwdotp", csrfProtection, myaccount.adminPasswordOTP);
 
 app.get("/updatediscount", user.Updateddiscount);
@@ -223,8 +266,18 @@ app.get("/viewprimeorder", order.viewPrimeOrder);
 app.post("/addprimebook", order.addPrimeBook);
 
 app.get("/user/vieworder/:id", routes.authGaurd, myaccount.userViewOrder);
-app.get("/user/cancelitem", routes.authGaurd, csrfProtection, myaccount.cancelItem);
-app.post("/cancle_item_success", parseForm, csrfProtection, myaccount.cancleItemSuccess);
+app.get(
+  "/user/cancelitem",
+  routes.authGaurd,
+  csrfProtection,
+  myaccount.cancelItem
+);
+app.post(
+  "/cancle_item_success",
+  parseForm,
+  csrfProtection,
+  myaccount.cancleItemSuccess
+);
 app.get("/user/order-tracking", csrfProtection, myaccount.orderTracking);
 
 app.get("/error_page", signin.errorPage);
@@ -246,7 +299,12 @@ app.get("/admin-pre-order-products", user.adminPreOrderProducts);
 
 app.get("/state-on-rent", csrfProtection, user.stateONRent);
 app.post("/addstateonrent", parseForm, csrfProtection, user.addStateonRent);
-app.post("/update-state-onrent", parseForm, csrfProtection, user.updateStateonRent);
+app.post(
+  "/update-state-onrent",
+  parseForm,
+  csrfProtection,
+  user.updateStateonRent
+);
 app.post("/delete-state-onrent", user.deleteStateonRent);
 
 app.get("/updatecart", routes.authGaurd, product.updateCart);
@@ -255,13 +313,25 @@ app.get("/checkpincode", product.checkPinNumber);
 app.get("/myaccount", routes.authGaurd, myaccount.UserAccount);
 app.get("/profile", routes.authGaurd, myaccount.UserProfile);
 app.get("/sritezprime", csrfProtection, myaccount.sritezPrime);
-app.post("/membership_book_request", parseForm, csrfProtection, routes.authGaurd, myaccount.membershipBookRequest);
+app.post(
+  "/membership_book_request",
+  parseForm,
+  csrfProtection,
+  routes.authGaurd,
+  myaccount.membershipBookRequest
+);
 
 app.get("/vendorpage", csrfProtection, user.vendorPage);
 app.post("/updatevendor", user.updateVendor);
 
 app.get("/vendor_register", csrfProtection, signin.vendorRegister);
-app.post("/vendorregisterfrm", parseForm, csrfProtection, routes.authGaurd, signin.vendorRegisterFrm);
+app.post(
+  "/vendorregisterfrm",
+  parseForm,
+  csrfProtection,
+  routes.authGaurd,
+  signin.vendorRegisterFrm
+);
 
 /* users routes */
 app.get("/sign-in", csrfProtection, signin.userSignIn);
@@ -276,8 +346,20 @@ app.post("/delete-cart", routes.authGaurd, signin.deleteInCart);
 app.post("/addcallback", signin.addCallBack);
 app.get("/checkout", csrfProtection, routes.authGaurd, signin.shoppingCheckOut);
 app.get("/getcaptcha", signin.getCaptchaajax);
-app.post("/billing_information", parseForm, csrfProtection, routes.authGaurd, signin.billingInformation);
-app.post("/shipping_information", parseForm, csrfProtection, routes.authGaurd, signin.shippingInformation);
+app.post(
+  "/billing_information",
+  parseForm,
+  csrfProtection,
+  routes.authGaurd,
+  signin.billingInformation
+);
+app.post(
+  "/shipping_information",
+  parseForm,
+  csrfProtection,
+  routes.authGaurd,
+  signin.shippingInformation
+);
 
 app.get("/delete_shipping_address", signin.deleteShippingAddress);
 app.get("/delete_billing_address", signin.deleteBillingAddress);
@@ -289,14 +371,37 @@ app.post("/razorpay-checkout", routes.authGaurd, signin.razorpayPaymentStatus);
 app.get("/payment_status", signin.orderPaymentStatus);
 
 app.post("/confim_order", signin.confimOrder);
-app.post("/prime_confim_order", parseForm, csrfProtection, signin.PrimeConfimOrder);
+app.post(
+  "/prime_confim_order",
+  parseForm,
+  csrfProtection,
+  signin.PrimeConfimOrder
+);
 
 /* razorpay for membership plan */
-app.post("/razorpay-membership-checkout", routes.authGaurd, signin.razorpayMembershipPayment);
-app.get("/payment_membership_status", routes.authGaurd, signin.membershipPaymentStatus);
+app.post(
+  "/razorpay-membership-checkout",
+  routes.authGaurd,
+  signin.razorpayMembershipPayment
+);
+app.get(
+  "/payment_membership_status",
+  routes.authGaurd,
+  signin.membershipPaymentStatus
+);
 
-app.post("/register_user_plan", parseForm, csrfProtection, signin.registerUserPlan);
-app.get("/membership_checkout", csrfProtection, routes.authGaurd, signin.membershipCheckout);
+app.post(
+  "/register_user_plan",
+  parseForm,
+  csrfProtection,
+  signin.registerUserPlan
+);
+app.get(
+  "/membership_checkout",
+  csrfProtection,
+  routes.authGaurd,
+  signin.membershipCheckout
+);
 
 app.get("/forgot-password", csrfProtection, signin.forgotPassword);
 app.get("/verifyotp", csrfProtection, signin.otpVerify);
@@ -328,7 +433,12 @@ app.post("/payment/membership_failure", payumoney.PaymentMembershipFailure);
 /* for grocery page */
 app.get("/grocery", grocery.groceryIndex);
 app.get("/p/groceries/:slug/:id", csrfProtection, grocery.viewGroceryProduct);
-app.post("/groceyaddtocart", parseForm, csrfProtection, grocery.addtoCartGroceryProducts);
+app.post(
+  "/groceyaddtocart",
+  parseForm,
+  csrfProtection,
+  grocery.addtoCartGroceryProducts
+);
 /* end */
 
 /* for grocery page */
@@ -336,26 +446,86 @@ app.get("/electronic", electronic.electronicIndex);
 /* end */
 
 app.get("/sitemap_index.xml", (req, res) => {
-    const filePath = path.join(__dirname, "sitemap_index.xml");
-    res.sendFile(filePath, (err) => {
-        if (err) {
-            console.error("Error sending file:", err);
-            res.status(500).send("Error occurred while sending the file.");
-        }
-    });
+  const filePath = path.join(__dirname, "sitemap_index.xml");
+  res.sendFile(filePath, (err) => {
+    if (err) {
+      console.error("Error sending file:", err);
+      res.status(500).send("Error occurred while sending the file.");
+    }
+  });
 });
 
+app.get("/sitemap.xml", async (req, res) => {
+  try {
+    const categories = await product.getCategoriesxml();
+    let sitemapIndexXML = `<?xml version="1.0" encoding="UTF-8"?>\n`;
+    sitemapIndexXML += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
+
+    categories.forEach((category) => {
+      sitemapIndexXML += `  <url>\n`;
+      sitemapIndexXML += `    <loc>https://sriina.com/sitemap/${category.url_name}.xml</loc>\n`;
+      sitemapIndexXML += `    <lastmod>${
+        new Date().toISOString().split("T")[0]
+      }</lastmod>\n`;
+      sitemapIndexXML += `  </url>\n`;
+    });
+
+    sitemapIndexXML += `</urlset>`;
+
+    res.header("Content-Type", "application/xml");
+    res.send(sitemapIndexXML);
+  } catch (err) {
+    res.status(500).send("Error generating sitemap.");
+  }
+});
+
+app.get("/sitemap/:category.xml", async (req, res) => {
+  try {
+    // Fetch category URLs from the category_url table
+    const categorySql = "SELECT url_name FROM category_url WHERE status = 1";
+    const categories = await new Promise((resolve, reject) => {
+      db.query(categorySql, (err, results) => {
+        if (err) reject(err);
+        else
+          resolve(
+            results.map((row) => `https://sriina.com/category/${row.url_name}`)
+          );
+      });
+    });
+
+    if (categories.length === 0)
+      return res.status(404).send("No categories found");
+
+    // Generate XML sitemap in <urlset> format
+    let sitemapXML = `<?xml version="1.0" encoding="UTF-8"?>\n`;
+    sitemapXML += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
+
+    categories.forEach((url) => {
+      sitemapXML += `  <url>\n    <loc>${url}</loc>\n    <lastmod>${
+        new Date().toISOString().split("T")[0]
+      }</lastmod>\n  </url>\n`;
+    });
+
+    sitemapXML += `</urlset>`;
+
+    res.header("Content-Type", "application/xml");
+    res.send(sitemapXML);
+  } catch (err) {
+    console.error("Error:", err);
+    res.status(500).send("Error generating category sitemap.");
+  }
+});
 
 app.get("/sitemaps/sitemap_:id.xml", (req, res) => {
-    const sitemapId = req.params.id; // This will capture the number after "sitemap_"
-    const filePath = path.join(__dirname, `sitemaps/sitemap_${sitemapId}.xml`);
-    
-    res.sendFile(filePath, (err) => {
-        if (err) {
-            console.error("Error sending file:", err);
-            res.status(404).send("Sitemap not found.");
-        }
-    });
+  const sitemapId = req.params.id; // This will capture the number after "sitemap_"
+  const filePath = path.join(__dirname, `sitemaps/sitemap_${sitemapId}.xml`);
+
+  res.sendFile(filePath, (err) => {
+    if (err) {
+      console.error("Error sending file:", err);
+      res.status(404).send("Sitemap not found.");
+    }
+  });
 });
 app.get("/sitemap/001.xml", pages.siteMapMethod);
 app.get("/sitemap/002.xml", pages.siteMapMethod);
@@ -368,14 +538,14 @@ app.get("/sitemap/008.xml", pages.siteMapMethod);
 app.get("/sitemap/009.xml", pages.siteMapMethod);
 app.get("/sitemap/010.xml", pages.siteMapMethod);
 
-app.get('/product.xml', (req, res) => {
-    const filePath = path.join(__dirname, 'product.xml');
-    res.set('Content-Type', 'application/xml');
-    res.sendFile(filePath, (err) => {
-        if (err) {
-            res.status(500).send('Error sending the XML file');
-        }
-    });
+app.get("/product.xml", (req, res) => {
+  const filePath = path.join(__dirname, "product.xml");
+  res.set("Content-Type", "application/xml");
+  res.sendFile(filePath, (err) => {
+    if (err) {
+      res.status(500).send("Error sending the XML file");
+    }
+  });
 });
 
 app.get("/productRss/001.xml", pages.categoryXML);
@@ -407,39 +577,53 @@ app.get("/viewpost/:id", search.viewSearch);
 app.get("/adminplanpage", routes.authGaurd, order.adminPlanPage);
 app.post("/editmembershipplan", routes.authGaurd, order.editMembershipPlan);
 
-app.get("/uploadexcel", routes.authGaurd, csrfProtection, uploadcsv.uploadExcel);
+app.get(
+  "/uploadexcel",
+  routes.authGaurd,
+  csrfProtection,
+  uploadcsv.uploadExcel
+);
 app.get("/find-missing-image", uploadcsv.findMissingImage);
 
 const __basedir = path.resolve();
 const multer = require("multer");
 const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, __basedir + "/exceldata/");
-    },
-    filename: (req, file, cb) => {
-        cb(null, file.fieldname + "-" + Date.now() + "-" + file.originalname);
-    },
+  destination: (req, file, cb) => {
+    cb(null, __basedir + "/exceldata/");
+  },
+  filename: (req, file, cb) => {
+    cb(null, file.fieldname + "-" + Date.now() + "-" + file.originalname);
+  },
 });
 const uploadFile = multer({ storage: storage });
 
-app.post("/uploadexcelfile", uploadFile.single("uploadexcel"), routes.authGaurd, uploadcsv.uploadExcelFile);
+app.post(
+  "/uploadexcelfile",
+  uploadFile.single("uploadexcel"),
+  routes.authGaurd,
+  uploadcsv.uploadExcelFile
+);
 app.post("/uploads-xlsx", routes.authGaurd, uploadcsv.saveExcelFileData);
 app.get("/:slug/:id", csrfProtection, product.viewProduct);
 
-
-    //Stock Update Through Excel File //
-    app.get("/updateexcel", routes.authGaurd, csrfProtection, updateexcel.uploadExcel);
-    app.post("/updateexcelfile", uploadFile.single("updateexcel"), routes.authGaurd, updateexcel.uploadExcelFile);
-    app.post("/update-xlsx", routes.authGaurd, updateexcel.saveExcelFileData);
-
-
-
-
+//Stock Update Through Excel File //
+app.get(
+  "/updateexcel",
+  routes.authGaurd,
+  csrfProtection,
+  updateexcel.uploadExcel
+);
+app.post(
+  "/updateexcelfile",
+  uploadFile.single("updateexcel"),
+  routes.authGaurd,
+  updateexcel.uploadExcelFile
+);
+app.post("/update-xlsx", routes.authGaurd, updateexcel.saveExcelFileData);
 
 app.get("/:id", pages.getCategories);
 
-
 //Middleware
 app.listen(port, () => {
-    console.log(`Server running on port: ${port}`);
+  console.log(`Server running on port: ${port}`);
 });
