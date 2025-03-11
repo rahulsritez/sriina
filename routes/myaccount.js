@@ -40,7 +40,7 @@ exports.saveAdminPwd = (req, res) => {
                 let msg = "Dear Admin, \nYour forgot password OTP is . \nOTP: " + otp + " \n \n \nThanks Sriina Online team";
 
                 var mailOptions = {
-                    from: "sriinaonlinepvtltd@gmail.com",
+                    from: "ordersriina@gmail.com",
                     to: user_name,
                     subject: "Forgot Password OTP",
                     text: msg,
