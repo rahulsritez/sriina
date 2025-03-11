@@ -500,7 +500,7 @@ app.get("/sitemap/:category.xml", async (req, res) => {
     const catId = categoryData[0].cat_id;
 
     // Get products under this category
-    const productSql = "SELECT id FROM products WHERE cat_id = ?";
+    const productSql = "SELECT id, slug FROM products WHERE cat_id = ?";
     const [products] = await db.promise().query(productSql, [catId]);
 
     if (products.length === 0) {
@@ -513,9 +513,7 @@ app.get("/sitemap/:category.xml", async (req, res) => {
 
     products.forEach((product, index) => {
       sitemapXML += `  <url>\n`;
-      sitemapXML += `    <loc>https://sriina.com/sitemap/${category}${
-        index + 1
-      }</loc>\n`;
+      sitemapXML += `    <loc>https://sriina.com/${product?.slug}/${product?.id}</loc>\n`;
       sitemapXML += `    <lastmod>${new Date().toISOString()}</lastmod>\n`;
       sitemapXML += `  </url>\n`;
     });
