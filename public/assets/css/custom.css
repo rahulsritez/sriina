@@ -13,7 +13,10 @@ button.btn.btn.btn-primary a {
 } 
 .on_rent a:hover{background: #111922;}
 
-.add_cart{width:55%;float:right;margin-bottom:15px;}
+/* .add_cart{width:55%;float:right;margin-bottom:15px;} */
+
+.add_cart{width:100%;float:right;margin-bottom:15px;}
+
 
 
 .add_cart a{

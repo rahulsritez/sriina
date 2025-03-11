@@ -209,11 +209,18 @@ $(function() {
   //   return string.charAt(0).toUpperCase() + string.slice(1);
   // }
 
-
   function capitalizeFirstLetter(string) {
-    string = string.replace(/ /g, "_").trim().toLowerCase(); // Replaces all spaces with "_"
+    if (!string) return ""; // Return an empty string if null or undefined
+
+    string = string.replace(/ /g, "_").trim().toLowerCase(); // Replace spaces with "_"
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
+
+// Example test cases
+console.log(capitalizeFirstLetter(null));       // ""
+console.log(capitalizeFirstLetter(undefined));  // ""
+console.log(capitalizeFirstLetter(" hello"));   // "Hello"
+console.log(capitalizeFirstLetter("my name"));  // "My_name"
 
   $(document).on('click', '.delete-field', function() {
     var rowCount = $('table#map-table tbody tr').length;
