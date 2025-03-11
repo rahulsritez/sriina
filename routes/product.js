@@ -42,6 +42,38 @@ function requireLogin(req, res, next) {
     });
 };*/
 
+exports.getCategoriesWithProducts = async () => {
+  try {
+    // 1️⃣ Fetch all categories from category_url table
+    const [categories] = await db.query(
+      "SELECT cat_id, url_name FROM category_url"
+    );
+
+    let categoryUrls = [];
+
+    for (const category of categories) {
+      // 2️⃣ Check if the category has products in the product table
+      const [products] = await db.query(
+        "SELECT id FROM product WHERE cat_id = ?",
+        [category.cat_id]
+      );
+
+      if (products.length > 0) {
+        // 3️⃣ Add category URL only if products exist
+        categoryUrls.push({
+          url: `https://sriina.com/sitemap/${category.url_name}.xml`,
+          lastmod: new Date().toISOString().split("T")[0],
+        });
+      }
+    }
+
+    return categoryUrls;
+  } catch (err) {
+    console.error("❌ Error fetching categories with products:", err);
+    throw err;
+  }
+};
+
 exports.viewProduct = function (req, res, next) {
   let title = "Rent/Buy Online Books on Book Store";
   let Ids = req.params.id;
@@ -152,16 +184,19 @@ exports.viewProduct = function (req, res, next) {
   }
 };
 
-exports.getCategoriesxml = () => {
-  return new Promise((resolve, reject) => {
-    db.query(
-      "SELECT cat_id, url_name FROM category_url WHERE status = 1",
-      (err, categories) => {
-        if (err) return reject(err);
-        resolve(categories);
-      }
-    );
-  });
+exports.getCategoriesxml = async () => {
+  try {
+    const [categories] = await db.promise().query(`
+        SELECT DISTINCT c.cat_id, c.url_name
+        FROM category_url c
+        INNER JOIN products p ON c.cat_id = p.cat_id
+        WHERE c.status = 1
+      `);
+
+    return categories;
+  } catch (error) {
+    throw error;
+  }
 };
 
 exports.getProductsByCategory = (cat_id) => {

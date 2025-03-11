@@ -458,15 +458,20 @@ app.get("/sitemap_index.xml", (req, res) => {
 app.get("/sitemap.xml", async (req, res) => {
   try {
     const categories = await product.getCategoriesxml();
+
     let sitemapIndexXML = `<?xml version="1.0" encoding="UTF-8"?>\n`;
     sitemapIndexXML += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
+
+    if (categories.length === 0) {
+      sitemapIndexXML += `</urlset>`;
+      res.header("Content-Type", "application/xml");
+      return res.send(sitemapIndexXML);
+    }
 
     categories.forEach((category) => {
       sitemapIndexXML += `  <url>\n`;
       sitemapIndexXML += `    <loc>https://sriina.com/sitemap/${category.url_name}.xml</loc>\n`;
-      sitemapIndexXML += `    <lastmod>${
-        new Date().toISOString().split("T")[0]
-      }</lastmod>\n`;
+      sitemapIndexXML += `    <lastmod>${new Date().toISOString()}</lastmod>\n`;
       sitemapIndexXML += `  </url>\n`;
     });
 
@@ -481,29 +486,38 @@ app.get("/sitemap.xml", async (req, res) => {
 
 app.get("/sitemap/:category.xml", async (req, res) => {
   try {
-    // Fetch category URLs from the category_url table
-    const categorySql = "SELECT url_name FROM category_url WHERE status = 1";
-    const categories = await new Promise((resolve, reject) => {
-      db.query(categorySql, (err, results) => {
-        if (err) reject(err);
-        else
-          resolve(
-            results.map((row) => `https://sriina.com/category/${row.url_name}`)
-          );
-      });
-    });
+    const { category } = req.params;
 
-    if (categories.length === 0)
-      return res.status(404).send("No categories found");
+    // Get the category ID from the category_url table
+    const categorySql =
+      "SELECT cat_id FROM category_url WHERE url_name = ? AND status = 1";
+    const [categoryData] = await db.promise().query(categorySql, [category]);
 
-    // Generate XML sitemap in <urlset> format
+    if (categoryData.length === 0) {
+      return res.status(404).send("Category not found");
+    }
+
+    const catId = categoryData[0].cat_id;
+
+    // Get products under this category
+    const productSql = "SELECT id FROM products WHERE cat_id = ?";
+    const [products] = await db.promise().query(productSql, [catId]);
+
+    if (products.length === 0) {
+      return res.status(404).send("No products found in this category");
+    }
+
+    // Generate XML
     let sitemapXML = `<?xml version="1.0" encoding="UTF-8"?>\n`;
     sitemapXML += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
 
-    categories.forEach((url) => {
-      sitemapXML += `  <url>\n    <loc>${url}</loc>\n    <lastmod>${
-        new Date().toISOString().split("T")[0]
-      }</lastmod>\n  </url>\n`;
+    products.forEach((product, index) => {
+      sitemapXML += `  <url>\n`;
+      sitemapXML += `    <loc>https://sriina.com/sitemap/${category}${
+        index + 1
+      }</loc>\n`;
+      sitemapXML += `    <lastmod>${new Date().toISOString()}</lastmod>\n`;
+      sitemapXML += `  </url>\n`;
     });
 
     sitemapXML += `</urlset>`;
@@ -511,8 +525,8 @@ app.get("/sitemap/:category.xml", async (req, res) => {
     res.header("Content-Type", "application/xml");
     res.send(sitemapXML);
   } catch (err) {
-    console.error("Error:", err);
-    res.status(500).send("Error generating category sitemap.");
+    console.error("❌ Error:", err);
+    res.status(500).send("Error generating sitemap.");
   }
 });
 
