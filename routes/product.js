@@ -202,13 +202,6 @@ exports.viewProduct = function (req, res, next) {
                             "@type": "Organization",
                             name: "Sriina",
                           },
-                          itemWeight: {
-                            "@type": "QuantitativeValue",
-                            value: book.weight
-                              ? book.weight.trim().replace(" g", "")
-                              : "",
-                            unitText: "g",
-                          },
                         },
                         additionalProperty: [
                           {
