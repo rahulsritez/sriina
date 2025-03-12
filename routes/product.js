@@ -77,6 +77,7 @@ exports.getCategoriesWithProducts = async () => {
 exports.viewProduct = function (req, res, next) {
   let title = "Rent/Buy Online Books on Book Store";
   let Ids = req.params.id;
+  let slug = req.params.slug;
 
   if (Ids != "") {
     let sql1 = "SELECT * FROM `books_category` where `is_deleted`=0";
@@ -140,6 +141,64 @@ exports.viewProduct = function (req, res, next) {
                     settingData: settingData[0],
                     M_title,
                     M_description,
+                    jsonLD: JSON.stringify({
+                      "@context": "https://schema.org/",
+                      "@type": "Book",
+                      name: result[0].name,
+                      url: `https://sriina.com/${slug}/${Ids}`,
+                      image: result[0].image_url,
+                      description: result[0].description,
+                      author: {
+                        "@type": "Person",
+                        name: result[0].author || "Unknown",
+                      },
+                      publisher: {
+                        "@type": "Organization",
+                        name: result[0].publisher || "Unknown",
+                      },
+                      datePublished: result[0].publishing_year || "",
+                      bookEdition: result[0].edition || "",
+                      inLanguage: result[0].language || "English",
+                      isbn: result[0].isbn || "",
+                      weight: result[0].weight ? `${result[0].weight} kg` : "",
+                      offers: {
+                        "@type": "Offer",
+                        priceCurrency: "INR",
+                        price: result[0].price,
+                        availability:
+                          result[0].stock > 0
+                            ? "https://schema.org/InStock"
+                            : "https://schema.org/OutOfStock",
+                        seller: {
+                          "@type": "Organization",
+                          name: "Your Book Store",
+                        },
+                      },
+                      breadcrumb: {
+                        "@context": "https://schema.org",
+                        "@type": "BreadcrumbList",
+                        itemListElement: [
+                          {
+                            "@type": "ListItem",
+                            position: 1,
+                            name: "Home",
+                            item: "https://yourwebsite.com/",
+                          },
+                          {
+                            "@type": "ListItem",
+                            position: 2,
+                            name: "Books",
+                            item: "https://yourwebsite.com/books",
+                          },
+                          {
+                            "@type": "ListItem",
+                            position: 3,
+                            name: result[0].name,
+                            item: `https://yourwebsite.com/product/${Ids}`,
+                          },
+                        ],
+                      },
+                    }),
                   });
                 } else {
                   res.redirect("/");
