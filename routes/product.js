@@ -126,6 +126,60 @@ exports.viewProduct = function (req, res, next) {
                     var M_description = result[0].name;
                   }
 
+                  const book = result[0] || {}; // Assuming result[0] contains book details
+                  const bookSlug = slug || "default-slug";
+                  const bookId = Ids || "default-id";
+
+                  const jsonLDData = {
+                    "@context": "https://schema.org",
+                    "@type": "Book",
+                    name: book.name ? book.name.trim() : "Unknown",
+                    url: `https://sriina.com/${bookSlug}/${bookId}`,
+                    image: book.image
+                      ? `https://sriina-products.s3.ap-south-1.amazonaws.com/${book.image}`
+                      : "",
+                    description: book.description
+                      ? book.description.trim()
+                      : "",
+                    author: {
+                      "@type": "Person",
+                      name: book.author ? book.author.trim() : "Unknown",
+                    },
+                    publisher: {
+                      "@type": "Organization",
+                      name: book.publisher ? book.publisher.trim() : "Unknown",
+                    },
+                    datePublished: book.publishing_year
+                      ? book.publishing_year.trim()
+                      : "N/A",
+                    bookEdition: book.book_edition
+                      ? book.book_edition.trim()
+                      : "N/A",
+                    inLanguage: book.book_language
+                      ? book.book_language.trim()
+                      : "English",
+                    isbn: book.isbn13
+                      ? book.isbn13.trim()
+                      : book.isbn
+                      ? book.isbn.trim()
+                      : "",
+                    weight: book.weight ? book.weight.trim() : "",
+                    offers: {
+                      "@type": "Offer",
+                      priceCurrency: book.currency_code || "INR",
+                      price: book.price || "0",
+                      availability:
+                        book.quantity > 0
+                          ? "https://schema.org/InStock"
+                          : "https://schema.org/OutOfStock",
+                      seller: {
+                        "@type": "Organization",
+                        name: "Sriina",
+                      },
+                    },
+                  };
+                  // Convert to a string and escape for safe use in EJS
+                  const jsonLDString = JSON.stringify(jsonLDData);
                   res.render("front/productview", {
                     getCartData: "",
                     get_products: get_products,
@@ -141,74 +195,7 @@ exports.viewProduct = function (req, res, next) {
                     settingData: settingData[0] || {},
                     M_title: M_title || "",
                     M_description: M_description || "",
-                    jsonLD: JSON.stringify(
-                      [
-                        {
-                          "@context": "https://schema.org",
-                          "@type": "Book",
-                          name: result[0]?.name || "Unknown",
-                          url: `https://sriina.com/${slug}/${Ids}`,
-                          image: result[0]?.image
-                            ? `https://sriina-products.s3.ap-south-1.amazonaws.com/${result[0].image}`
-                            : "",
-                          description: result[0]?.description || "",
-                          author: {
-                            "@type": "Person",
-                            name: result[0]?.author || "Unknown",
-                          },
-                          publisher: {
-                            "@type": "Organization",
-                            name: result[0]?.publisher || "Unknown",
-                          },
-                          datePublished: result[0]?.publishing_year || "",
-                          bookEdition: result[0]?.edition || "",
-                          inLanguage: result[0]?.language || "en",
-                          isbn: result[0]?.isbn || "",
-                          weight: result[0]?.weight
-                            ? `${result[0].weight} g`
-                            : "",
-                          offers: {
-                            "@type": "Offer",
-                            priceCurrency: "INR",
-                            price: result[0]?.price || "0",
-                            availability:
-                              result[0]?.stock > 0
-                                ? "https://schema.org/InStock"
-                                : "https://schema.org/OutOfStock",
-                            seller: {
-                              "@type": "Organization",
-                              name: "Your Book Store",
-                            },
-                          },
-                        },
-                        {
-                          "@context": "https://schema.org",
-                          "@type": "BreadcrumbList",
-                          itemListElement: [
-                            {
-                              "@type": "ListItem",
-                              position: 1,
-                              name: "Home",
-                              item: "https://sriina.com/",
-                            },
-                            {
-                              "@type": "ListItem",
-                              position: 2,
-                              name: "Books",
-                              item: "https://sriina.com/books",
-                            },
-                            {
-                              "@type": "ListItem",
-                              position: 3,
-                              name: result[0]?.name || "Unknown",
-                              item: `https://sriina.com/${slug}/${Ids}`,
-                            },
-                          ],
-                        },
-                      ],
-                      null,
-                      2
-                    ), // ✅ Proper JSON Formatting
+                    jsonLD: jsonLDString,
                   });
                 } else {
                   res.redirect("/");
