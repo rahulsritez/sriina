@@ -282,32 +282,32 @@
                                                                                         <% } %>
                                                                         </span>
                                                                         <!-- <% if(viewlist.categoryname){%>
-                                        <h6 class="text_title_page"><strong>Category:</strong> <%= viewlist.categoryname %></h6>
+                                        <h2 class="text_title_page"><strong>Category:</strong> <%= viewlist.categoryname %></h2>
                                         <% } %> -->
                                                                         <% if(viewlist.author){%>
-                                                                            <h6 class="text_title_page">
+                                                                            <h2 class="text_title_page">
                                                                                 <strong>Author:</strong>
                                                                                 <%= viewlist.author %>
-                                                                            </h6>
+                                                                            </h2>
                                                                             <% } %>
                                                                                 <% if(viewlist.publisher){%>
-                                                                                    <h6 class="text_title_page">
+                                                                                    <h2 class="text_title_page">
                                                                                         <strong>Publisher:</strong>
                                                                                         <%= viewlist.publisher %>
-                                                                                    </h6>
+                                                                                    </h2>
                                                                                     <% } else {%>
-                                                                                        <h6 class="text_title_page">
+                                                                                        <h2 class="text_title_page">
                                                                                             <strong>Publisher:</strong>
                                                                                             <%= viewlist.imprint_name %>
                                                                                                 (<%= viewlist.book_edition
                                                                                                     %>)
-                                                                                        </h6>
+                                                                                        </h2>
                                                                                         <% } %>
                                                                                             <% if(viewlist.book_edition
                                                                                                 &&
                                                                                                 viewlist.imprint_name=="HarperCollins"
                                                                                                 ) {%>
-                                                                                                <h6
+                                                                                                <h2
                                                                                                     class="text_title_page">
                                                                                                     <strong>Edition:
                                                                                                     </strong>
@@ -315,65 +315,65 @@
                                                                                                         4)+'-'+viewlist.book_edition.slice(4,
                                                                                                         6)+'-'+viewlist.book_edition.slice(6,
                                                                                                         8) %>
-                                                                                                </h6>
+                                                                                                </h2>
                                                                                                 <% } else {%>
                                                                                                     <% if(viewlist.book_edition)
                                                                                                         {%>
-                                                                                                        <h6
+                                                                                                        <h2
                                                                                                             class="text_title_page">
                                                                                                             <strong>Edition:
                                                                                                             </strong>
                                                                                                             <%= viewlist.book_edition
                                                                                                                 %>
-                                                                                                        </h6>
+                                                                                                        </h2>
                                                                                                         <% } %>
                                                                                                             <% } %>
 
                                                                                                                 <% if(viewlist.isbn)
                                                                                                                     {%>
-                                                                                                                    <h6
+                                                                                                                    <h2
                                                                                                                         class="text_title_page">
                                                                                                                         <strong>ISBN-10:</strong>
                                                                                                                         <%= viewlist.isbn
                                                                                                                             %>
-                                                                                                                    </h6>
+                                                                                                                    </h2>
                                                                                                                     <% }
                                                                                                                         %>
 
                                                                                                                         <% if(viewlist.isbn13)
                                                                                                                             {
                                                                                                                             %>
-                                                                                                                            <h6
+                                                                                                                            <h2
                                                                                                                                 class="text_title_page">
                                                                                                                                 <strong>ISBN-13:</strong>
                                                                                                                                 <%= viewlist.isbn13
                                                                                                                                     %>
-                                                                                                                            </h6>
+                                                                                                                            </h2>
                                                                                                                             <% }
                                                                                                                                 %>
 
                                                                                                                                 <% if(viewlist.publishing_year)
                                                                                                                                     {%>
-                                                                                                                                    <h6
+                                                                                                                                    <h2
                                                                                                                                         class="text_title_page">
                                                                                                                                         <strong>Publishing
                                                                                                                                             year:</strong>
                                                                                                                                         <%= viewlist.publishing_year
                                                                                                                                             %>
-                                                                                                                                    </h6>
+                                                                                                                                    </h2>
                                                                                                                                     <% }
                                                                                                                                         %>
 
                                                                                                                                         <% if(viewlist.no_of_pages)
                                                                                                                                             {%>
-                                                                                                                                            <h6
+                                                                                                                                            <h2
                                                                                                                                                 class="text_title_page">
                                                                                                                                                 <strong>No
                                                                                                                                                     of
                                                                                                                                                     pages:</strong>
                                                                                                                                                 <%= viewlist.no_of_pages
                                                                                                                                                     %>
-                                                                                                                                            </h6>
+                                                                                                                                            </h2>
                                                                                                                                             <% }
                                                                                                                                                 %>
 
@@ -383,35 +383,35 @@
                                                                                                                                                     !="undefined"
                                                                                                                                                     )
                                                                                                                                                     {%>
-                                                                                                                                                    <h6
+                                                                                                                                                    <h2
                                                                                                                                                         class="text_title_page">
                                                                                                                                                         <strong>Weight:</strong>
                                                                                                                                                         <%= viewlist.weight
                                                                                                                                                             %>
-                                                                                                                                                    </h6>
+                                                                                                                                                    </h2>
                                                                                                                                                     <% }
                                                                                                                                                         %>
 
                                                                                                                                                         <% if(viewlist.book_language)
                                                                                                                                                             {%>
-                                                                                                                                                            <h6
+                                                                                                                                                            <h2
                                                                                                                                                                 class="text_title_page">
                                                                                                                                                                 <strong>Language:</strong>
                                                                                                                                                                 <%= viewlist.book_language
                                                                                                                                                                     %>
-                                                                                                                                                            </h6>
+                                                                                                                                                            </h2>
                                                                                                                                                             <% }
                                                                                                                                                                 %>
 
                                                                                                                                                                 <% if(viewlist.book_binding)
                                                                                                                                                                     {%>
-                                                                                                                                                                    <h6
+                                                                                                                                                                    <h2
                                                                                                                                                                         class="text_title_page">
                                                                                                                                                                         <strong>Book
                                                                                                                                                                             binding:</strong>
                                                                                                                                                                         <%= viewlist.book_binding
                                                                                                                                                                             %>
-                                                                                                                                                                    </h6>
+                                                                                                                                                                    </h2>
                                                                                                                                                                     <% }
                                                                                                                                                                         %>
 
