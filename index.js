@@ -487,9 +487,6 @@ app.get("/sitemap.xml", async (req, res) => {
 app.get("/sitemap/:category.xml", async (req, res) => {
   try {
     const { category } = req.params;
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 100; // Default limit: 100 items per page
-    const offset = (page - 1) * limit;
 
     // Get the category ID from the category_url table
     const categorySql =
@@ -502,55 +499,31 @@ app.get("/sitemap/:category.xml", async (req, res) => {
 
     const catId = categoryData[0].cat_id;
 
-    // Get total product count for pagination metadata
-    const countSql = "SELECT COUNT(*) AS total FROM products WHERE cat_id = ?";
-    const [countResult] = await db.promise().query(countSql, [catId]);
-    const totalProducts = countResult[0].total;
-    const totalPages = Math.ceil(totalProducts / limit);
-
-    // Get paginated products
-    const productSql =
-      "SELECT id, slug FROM products WHERE cat_id = ? LIMIT ? OFFSET ?";
-    const [products] = await db
-      .promise()
-      .query(productSql, [catId, limit, offset]);
+    // Get products under this category
+    const productSql = "SELECT id, slug FROM products WHERE cat_id = ?";
+    const [products] = await db.promise().query(productSql, [catId]);
 
     if (products.length === 0) {
       return res.status(404).send("No products found in this category");
     }
 
-    // Base URL and canonical URL
-    const baseUrl = "https://sriina.com";
-    const categoryUrl = `${baseUrl}/sitemap/${category}.xml`;
-
     // Generate XML
     let sitemapXML = `<?xml version="1.0" encoding="UTF-8"?>\n`;
-    sitemapXML += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"\n`;
-    sitemapXML += `        xmlns:xhtml="http://www.w3.org/1999/xhtml">\n`;
+    sitemapXML += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
 
-    // Add canonical URL on all paginated pages
-    sitemapXML += `  <url>\n`;
-    sitemapXML += `    <loc>${categoryUrl}?page=${page}</loc>\n`;
-    sitemapXML += `    <xhtml:link rel="canonical" href="${categoryUrl}"/>\n`;
-    sitemapXML += `  </url>\n`;
-
-    products.forEach((product) => {
-      const productUrl = `${baseUrl}/${product.slug}/${product.id}`;
+    products.forEach((product, index) => {
       sitemapXML += `  <url>\n`;
-      sitemapXML += `    <loc>${productUrl}</loc>\n`;
+      sitemapXML += `    <loc>https://sriina.com/${product?.slug}/${product?.id}</loc>\n`;
       sitemapXML += `    <lastmod>${new Date().toISOString()}</lastmod>\n`;
       sitemapXML += `  </url>\n`;
     });
 
     sitemapXML += `</urlset>`;
 
-    // Set response headers
     res.header("Content-Type", "application/xml");
-    res.header("X-Total-Pages", totalPages);
-    res.header("X-Current-Page", page);
-    res.header("X-Total-Products", totalProducts);
     res.send(sitemapXML);
   } catch (err) {
+    console.error("❌ Error:", err);
     res.status(500).send("Error generating sitemap.");
   }
 });
