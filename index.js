@@ -551,7 +551,6 @@ app.get("/sitemap/:category.xml", async (req, res) => {
     res.header("X-Total-Products", totalProducts);
     res.send(sitemapXML);
   } catch (err) {
-    console.error("❌ Error:", err);
     res.status(500).send("Error generating sitemap.");
   }
 });
