@@ -93,7 +93,7 @@ global.baseURL = "https://sriina.com/"; /* For live */
 app.get("/robots.txt", function (req, res) {
   res.type("text/plain");
   res.send(
-    "User-agent: *\nDisallow: /admin/\nAllow: /\nSitemap: https://sriina.com/sitemap_index.xml" /* For live */
+    "User-agent: *\nDisallow: /admin/\nSitemap: https://sriina.com/sitemap.xml"
   );
 });
 
