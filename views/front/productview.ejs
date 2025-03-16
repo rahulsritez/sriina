@@ -123,15 +123,18 @@
                                                         <% if(viewlist.image) {%>
                                                             <% if(/(http(s?)):\/\//i.test(viewlist.image)) {%>
                                                                 <img alt="<%= viewlist.name %>" class="xzoom"
-                                                                    id="xzoom-default" src="<%= viewlist.image %>"
-                                                                    xoriginal="<%= viewlist.image %>"
-                                                                    style="max-width: 450px;" />
+                                                                id="xzoom-default" 
+                                                                src="<%= viewlist.image %>"
+                                                                xoriginal="<%= viewlist.image %>"
+                                                                style="width: 100%; max-width: 1000px; height: auto;" />
+                                                           
                                                                 <% } else { %>
                                                                     <img alt="<%= viewlist.name %>" class="xzoom"
-                                                                        id="xzoom-default"
-                                                                        src="<%= process.env.IMAGE_URL %><%= viewlist.image %>"
-                                                                        xoriginal="<%= process.env.IMAGE_URL %><%= viewlist.image %>"
-                                                                        style="max-width:450px;width: 300px;" />
+                                                                    id="xzoom-default"
+                                                                    src="<%= process.env.IMAGE_URL %><%= viewlist.image %>"
+                                                                    xoriginal="<%= process.env.IMAGE_URL %><%= viewlist.image %>"
+                                                                    style="width: 100%; max-width: 1000px; height: auto;" />
+                                                               
                                                                     <% } %>
                                                                         <% } else { %>
                                                                             <img class="xzoom" id="xzoom-default"
@@ -143,32 +146,41 @@
                                                                                     <% if(viewlist.image) {%>
                                                                                         <% if(/(http(s?)):\/\//i.test(viewlist.image))
                                                                                             {%>
-                                                                                            <a
-                                                                                                href="<%= process.env.IMAGE_URL %><%= viewlist.image %>"><img
-                                                                                                    alt="<%= viewlist.name %>"
-                                                                                                    class="xzoom-gallery"
-                                                                                                    width="80"
-                                                                                                    src="<%= viewlist.image %>"
-                                                                                                    xpreview="<%= viewlist.image %>"
-                                                                                                    title="<%= viewlist.name %>"></a>
+                                                                                                <a href="<%= process.env.IMAGE_URL %><%= viewlist.image %>">
+                                                                                                    <img alt="<%= viewlist.name %>"
+                                                                                                         class="xzoom-gallery"
+                                                                                                         width="80"
+                                                                                                         height="auto"
+                                                                                                         src="<%= process.env.IMAGE_URL %><%= viewlist.image %>"
+                                                                                                         xpreview="<%= process.env.IMAGE_URL %><%= viewlist.image %>"
+                                                                                                         title="<%= viewlist.name %>">
+                                                                                                </a>
+                                                                                                
                                                                                             <% } else { %>
-                                                                                                <a
-                                                                                                    href="<%= process.env.IMAGE_URL %><%= viewlist.image %>"><img
-                                                                                                        alt="<%= viewlist.name %>"
-                                                                                                        class="xzoom-gallery"
-                                                                                                        width="80"
-                                                                                                        src="<%= process.env.IMAGE_URL %><%= viewlist.image %>"
-                                                                                                        xpreview="<%= process.env.IMAGE_URL %><%= viewlist.image %>"
-                                                                                                        title="<%= viewlist.name %>"></a>
+                                                                                                <a href="<%= process.env.IMAGE_URL %><%= viewlist.image %>">
+                                                                                                    <img alt="<%= viewlist.name %>"
+                                                                                                         class="xzoom-gallery"
+                                                                                                         width="80"
+                                                                                                         height="auto"
+                                                                                                         src="<%= process.env.IMAGE_URL %><%= viewlist.image %>"
+                                                                                                         xpreview="<%= process.env.IMAGE_URL %><%= viewlist.image %>"
+                                                                                                         title="<%= viewlist.name %>"
+                                                                                                         style="max-width: 100%; height: auto;">
+                                                                                                </a>
+                                                                                                
                                                                                                 <% } %>
                                                                                                     <% } else {%>
-                                                                                                        <a
-                                                                                                            href="<%= baseURL %>assets/images/404.jpg"><img
-                                                                                                                class="xzoom-gallery"
-                                                                                                                width="80"
-                                                                                                                src="<%= baseURL %>assets/images/404.jpg"
-                                                                                                                xpreview="<%= baseURL %>assets/images/404.jpg"
-                                                                                                                title="<%= viewlist.name %>"></a>
+                                                                                                        <a href="<%= baseURL %>assets/images/404.jpg">
+                                                                                                            <img class="xzoom-gallery"
+                                                                                                                 width="80"
+                                                                                                                 height="auto"
+                                                                                                                 src="<%= baseURL %>assets/images/404.jpg"
+                                                                                                                 xpreview="<%= baseURL %>assets/images/404.jpg"
+                                                                                                                 title="<%= viewlist.name %>"
+                                                                                                                 alt="Image Not Found"
+                                                                                                                 style="max-width: 100%; height: auto;">
+                                                                                                        </a>
+                                                                                                        
                                                                                                         <% } %>
                                                                                 </div>
                                                     </div>
@@ -612,23 +624,37 @@
                                                                                             <div class="image">
                                                                                                 <% if(/(http(s?)):\/\//i.test(list.image))
                                                                                                     {%>
-                                                                                                    <a target="_blank"
-                                                                                                        href="<%= baseURL %><%= list.slug %>/<%= list.id %>"><img
-                                                                                                            src="<%= list.image %>"
-                                                                                                            alt="<%= list.name %>"></a>
+                                                                                                        <a target="_blank" rel="noopener noreferrer" 
+                                                                                                        href="<%= baseURL %><%= list.slug %>/<%= list.id %>">
+                                                                                                         <img src="<%= baseURL %><%= list.image %>"
+                                                                                                              alt="<%= list.name %>"
+                                                                                                              width="150"
+                                                                                                              height="auto"
+                                                                                                              style="max-width: 100%; height: auto;">
+                                                                                                     </a>
+                                                                                                     
                                                                                                     <% } else { %>
-                                                                                                        <a target="_blank"
-                                                                                                            href="<%= baseURL %><%= list.slug %>/<%= list.id %>"><img
-                                                                                                                src="<%= process.env.IMAGE_URL %><%= list.image %>"
-                                                                                                                alt="<%= list.name %>"></a>
+                                                                                                        <a target="_blank" rel="noopener noreferrer" 
+                                                                                                        href="<%= baseURL %><%= list.slug %>/<%= list.id %>">
+                                                                                                         <img src="<%= process.env.IMAGE_URL %><%= list.image %>"
+                                                                                                              alt="<%= list.name %>"
+                                                                                                              width="150"
+                                                                                                              height="auto"
+                                                                                                              style="max-width: 100%; height: auto;">
+                                                                                                     </a>
+                                                                                                     
                                                                                                         <% } %>
                                                                                             </div>
                                                                                             <% } else {%>
-                                                                                                <div class="image"> <a
-                                                                                                        target="_blank"
-                                                                                                        href="<%= baseURL %><%= list.slug %>/<%= list.id %>"><img
-                                                                                                            src="<%= baseURL %>assets/images/404.jpg"
-                                                                                                            alt="<%= list.name %>"></a>
+                                                                                                <div class="image"><a target="_blank" rel="noopener noreferrer" 
+                                                                                                    href="<%= baseURL %><%= list.slug %>/<%= list.id %>">
+                                                                                                     <img src="<%= baseURL %>assets/images/404.jpg"
+                                                                                                          alt="<%= list.name %>"
+                                                                                                          width="150"
+                                                                                                          height="auto"
+                                                                                                          style="max-width: 100%; height: auto;">
+                                                                                                 </a>
+                                                                                                 
                                                                                                 </div>
                                                                                                 <% } %>
                                                                                     </div>
