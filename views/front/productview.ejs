@@ -49,6 +49,21 @@
         .addReadMoreWrapTxt.showmorecontent .readLess {
             display: block;
         }
+
+
+        .single-product .product-info .price-container {
+  border-bottom: 1px solid #F2F2F2;
+  border-top: 1px solid #F2F2F2;
+  margin-bottom: 0;
+  padding: 20px 0;
+}
+
+
+        .text_title_page {
+    border-top: solid 1px #e3e1e1;
+    padding-top: 7px;
+    font-size: 12px;
+}
     </style>
     <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-YN8Y6YGBF7"></script>
@@ -116,97 +131,55 @@
                                     you_save_money=(original_price-discounted_price).toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"
                                     ) %>
                                     <div class="row  wow fadeInUp">
-                                        <div class="col-xs-12 col-sm-6 col-md-5 gallery-holder">
-                                            <div class="col-xs-12 col-sm-6 col-md-5 gallery-holder">
-                                                <div class="large-5 column">
-                                                    <div class="xzoom-container">
-                                                        <% if(viewlist.image) {%>
-                                                            <% if(/(http(s?)):\/\//i.test(viewlist.image)) {%>
-                                                                <img alt="<%= viewlist.name %>" class="xzoom"
-                                                                id="xzoom-default" 
-                                                                src="<%= viewlist.image %>"
-                                                                xoriginal="<%= viewlist.image %>"
-                                                                style="width: 100%; max-width: 1000px; height: auto;" />
-                                                           
-                                                                <% } else { %>
-                                                                    <img alt="<%= viewlist.name %>" class="xzoom"
-                                                                    id="xzoom-default"
-                                                                    src="<%= process.env.IMAGE_URL %><%= viewlist.image %>"
-                                                                    xoriginal="<%= process.env.IMAGE_URL %><%= viewlist.image %>"
-                                                                    style="width: 100%; max-width: 1000px; height: auto;" />
-                                                               
-                                                                    <% } %>
-                                                                        <% } else { %>
-                                                                            <img class="xzoom" id="xzoom-default"
-                                                                                src="<%= baseURL %>assets/images/404.jpg"
-                                                                                xoriginal="<%= baseURL %>assets/images/404.jpg" />
-                                                                            <% } %>
-
-                                                                                <div class="xzoom-thumbs">
-                                                                                    <% if(viewlist.image) {%>
-                                                                                        <% if(/(http(s?)):\/\//i.test(viewlist.image))
-                                                                                            {%>
-                                                                                                <a href="<%= process.env.IMAGE_URL %><%= viewlist.image %>">
-                                                                                                    <img alt="<%= viewlist.name %>"
-                                                                                                         class="xzoom-gallery"
-                                                                                                         width="80"
-                                                                                                         height="auto"
-                                                                                                         src="<%= process.env.IMAGE_URL %><%= viewlist.image %>"
-                                                                                                         xpreview="<%= process.env.IMAGE_URL %><%= viewlist.image %>"
-                                                                                                         title="<%= viewlist.name %>">
-                                                                                                </a>
-                                                                                                
-                                                                                            <% } else { %>
-                                                                                                <a href="<%= process.env.IMAGE_URL %><%= viewlist.image %>">
-                                                                                                    <img alt="<%= viewlist.name %>"
-                                                                                                         class="xzoom-gallery"
-                                                                                                         width="80"
-                                                                                                         height="auto"
-                                                                                                         src="<%= process.env.IMAGE_URL %><%= viewlist.image %>"
-                                                                                                         xpreview="<%= process.env.IMAGE_URL %><%= viewlist.image %>"
-                                                                                                         title="<%= viewlist.name %>"
-                                                                                                         style="max-width: 100%; height: auto;">
-                                                                                                </a>
-                                                                                                
-                                                                                                <% } %>
-                                                                                                    <% } else {%>
-                                                                                                        <a href="<%= baseURL %>assets/images/404.jpg">
-                                                                                                            <img class="xzoom-gallery"
-                                                                                                                 width="80"
-                                                                                                                 height="auto"
-                                                                                                                 src="<%= baseURL %>assets/images/404.jpg"
-                                                                                                                 xpreview="<%= baseURL %>assets/images/404.jpg"
-                                                                                                                 title="<%= viewlist.name %>"
-                                                                                                                 alt="Image Not Found"
-                                                                                                                 style="max-width: 100%; height: auto;">
-                                                                                                        </a>
-                                                                                                        
-                                                                                                        <% } %>
-                                                                                </div>
+                                        <div class="gallery-holder col-xs-12 col-sm-6 col-md-5">
+                                            <div class="large-5 column">
+                                                <div class="xzoom-container">
+                                                    <% if (viewlist.image) { %>
+                                                        <% if (/(http(s?)):\/\//i.test(viewlist.image)) { %>
+                                                            <img alt="<%= viewlist.name %>" class="xzoom" id="xzoom-default" 
+                                                                 src="<%= viewlist.image %>" xoriginal="<%= viewlist.image %>" 
+                                                                 style="max-width: 450px; width: 100%;" />
+                                                        <% } else { %>
+                                                            <img alt="<%= viewlist.name %>" class="xzoom" id="xzoom-default" 
+                                                                 src="<%= process.env.IMAGE_URL %><%= viewlist.image %>" 
+                                                                 xoriginal="<%= process.env.IMAGE_URL %><%= viewlist.image %>" 
+                                                                 style="max-width: 450px; width: 100%;" />
+                                                        <% } %>
+                                                    <% } else { %>
+                                                        <img class="xzoom" id="xzoom-default" 
+                                                             src="<%= baseURL %>assets/images/404.jpg" 
+                                                             xoriginal="<%= baseURL %>assets/images/404.jpg" />
+                                                    <% } %>
+                                        
+                                                    <div class="xzoom-thumbs">
+                                                        <% if (viewlist.image) { %>
+                                                            <% if (/(http(s?)):\/\//i.test(viewlist.image)) { %>
+                                                                <a href="<%= viewlist.image %>">
+                                                                    <img alt="<%= viewlist.name %>" class="xzoom-gallery" width="80" 
+                                                                         src="<%= viewlist.image %>" xpreview="<%= viewlist.image %>" 
+                                                                         title="<%= viewlist.name %>">
+                                                                </a>
+                                                            <% } else { %>
+                                                                <a href="<%= process.env.IMAGE_URL %><%= viewlist.image %>">
+                                                                    <img alt="<%= viewlist.name %>" class="xzoom-gallery" width="80" 
+                                                                         src="<%= process.env.IMAGE_URL %><%= viewlist.image %>" 
+                                                                         xpreview="<%= process.env.IMAGE_URL %><%= viewlist.image %>" 
+                                                                         title="<%= viewlist.name %>">
+                                                                </a>
+                                                            <% } %>
+                                                        <% } else { %>
+                                                            <a href="<%= baseURL %>assets/images/404.jpg">
+                                                                <img class="xzoom-gallery" width="80" 
+                                                                     src="<%= baseURL %>assets/images/404.jpg" 
+                                                                     xpreview="<%= baseURL %>assets/images/404.jpg" 
+                                                                     title="No Image Available">
+                                                            </a>
+                                                        <% } %>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <!-- <div class="product-item-holder size-big single-product-gallery small-gallery">
-                        <div id="owl-single-product">
-                            <div class="single-product-gallery-item" id="slide1">
-                                <a data-lightbox="image-1" data-title="Gallery" href="<%= process.env.IMAGE_URL %><%= viewlist.image %>">
-                                    <img class="img-responsive" alt="<%= viewlist.name %>" src="<%= process.env.IMAGE_URL %><%= viewlist.image %>" data-echo="<%= process.env.IMAGE_URL %><%= viewlist.image %>" />
-                                </a>
-                            </div>
-                        </div>
-
-
-                        <div class="single-product-gallery-thumbs gallery-thumbs">
-                            <div id="owl-single-product-thumbnails">
-                                <div class="item">
-                                    <a class="horizontal-thumb active" data-target="#owl-single-product" data-slide="1" href="#slide1">
-                                        <img class="img-responsive" width="85" alt="" src="<%= process.env.IMAGE_URL %><%= viewlist.image %>" data-echo="<%= process.env.IMAGE_URL %><%= viewlist.image %>" />
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div> -->
-                                        </div><!-- /.gallery-holder -->
+                                        </div>
+                                        
                                         <div class='col-sm-6 col-md-7 product-info-block'>
                                             <div class="product-info">
                                                 <h1 class="name" id="product_name">
@@ -553,7 +526,7 @@
                                                                                 <% } %>
                                                                     </form>
                                                                     <% } %>
-                                                        </div><!-- /.product-info -->
+                                                        </div>
                                             </div><!-- /.col-sm-7 -->
                                         </div><!-- /.row -->
                                     </div>
