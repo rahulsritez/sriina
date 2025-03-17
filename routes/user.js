@@ -2,7 +2,7 @@ var bcrypt = require("bcryptjs");
 var xss = require("xss");
 var nodemailer = require("nodemailer");
 require("dotenv").config();
-
+const iso6391 = require("iso-639-1");
 const AWS = require("aws-sdk");
 const fs = require("fs");
 
@@ -243,6 +243,8 @@ exports.productpage = function (req, res) {
               errors: req.flash("errors"),
               query: req.query,
               totalpages: totalpages,
+              languages: iso6391.getAllNames(), // Passing all language names
+              languageCodes: iso6391.getAllCodes(), // Passing language codes
             });
           });
         });

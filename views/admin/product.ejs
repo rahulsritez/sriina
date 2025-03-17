@@ -367,16 +367,14 @@
                                       <label class="control-label label-margin">Language</label>
                                       <select class="form-control" name="language" id="language" required>
                                         <option value="">-Please select Language-</option>
-                                        <option value="1" selected="selected">English</option>
-                                        <option value="2">Hindi</option>
-                                        <option value="3">Bengali</option>
-                                        <option value="4">Marathi</option>
-                                        <option value="5">Kannada</option>
-                                        <option value="6">Malayalam</option>
-                                        <option value="7">Urdu</option>
-                                        <option value="8">Sanskrit</option>
+                                        
+                                        <% for (let i = 0; i < languages.length; i++) { %>
+                                          <option value="<%= languageCodes[i] %>"><%= languages[i] %></option>
+                                        <% } %>
+                                        
                                       </select>
                                     </div>
+                                    
                                     <div class="col-md-4">
                                       <label class="control-label label-margin">Categories</label>
                                       <select class="form-control" name="category" id="category" required>
@@ -632,18 +630,16 @@
                                       <div class="row mb-2">
                                         <div class="col-md-4">
                                           <label class="control-label label-margin">Language</label>
-                                          <select class="form-control" name="edit_language" id="edit_language">
+                                          <select class="form-control" name="language" id="language" required>
                                             <option value="">-Please select Language-</option>
-                                            <option value="1" selected="selected">English</option>
-                                            <option value="2">Hindi</option>
-                                            <option value="3">Bengali</option>
-                                            <option value="4">Marathi</option>
-                                            <option value="5">Kannada</option>
-                                            <option value="6">Malayalam</option>
-                                            <option value="7">Urdu</option>
-                                            <option value="8">Sanskrit</option>
+                                            
+                                            <% for (let i = 0; i < languages.length; i++) { %>
+                                              <option value="<%= languageCodes[i] %>"><%= languages[i] %></option>
+                                            <% } %>
+                                            
                                           </select>
                                         </div>
+                                        
                                         <div class="col-md-4">
                                           <label class="control-label label-margin">Category</label>
                                           <select class="form-control" name="edit_category" id="edit_category">
