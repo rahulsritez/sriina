@@ -3,6 +3,17 @@
 
 <head>
     <meta charset="utf-8">
+
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        Buy <%= viewlist.name ? viewlist.name : "Unknown Book" %> 
+        Book Online at ₹<%= new_price ? new_price.toFixed(2) : "0.00" %> 
+        - Free Delivery
+    </title>
+    <meta name="description" content="Buy <%= viewlist.name ? viewlist.name : "Unknown Book" %> Book Online at Best Price at Sriina.com. Free Shipping Charges.">
+    
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon.png">
     <meta name="description" content="<%= M_description %>">
@@ -64,6 +75,51 @@
     padding-top: 7px;
     font-size: 12px;
 }
+
+
+
+.popular-categories {
+    /* background: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); */
+    text-align: center;
+    /* max-width: 700px; */
+    /* margin: 20px auto; */
+
+    .section-title {
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: #333;
+    }
+
+    .category-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        justify-content: center;
+    }
+
+    .category-item {
+        background: #f0f0f0;
+        padding: 8px 12px;
+        border-radius: 5px;
+        font-size: 14px;
+        font-weight: 500;
+        text-decoration: none;
+        color: #333;
+        transition: 0.3s ease-in-out;
+        white-space: nowrap;
+
+        &:hover {
+            background: #e67a00;
+            color: #fff;
+        }
+    }
+}
+
+
     </style>
     <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-YN8Y6YGBF7"></script>
@@ -687,6 +743,37 @@
                                                         </div><!-- /.home-owl-carousel -->
                                                     </section><!-- /.section -->
                                                     <!-- ============================================== UPSELL PRODUCTS : END ============================================== -->
+
+
+
+                                                    <section class="popular-categories wow fadeInUp">
+                                                        <h3 class="section-title">Popular Categories</h3>
+                                                        <div class="category-container">
+                                                            <% let categories = [
+                                                                { name: "Academic Books", url: "https://sriina.com/academic-books" },
+                                                                { name: "Account Books", url: "https://sriina.com/account-books" },
+                                                                { name: "Aging Books", url: "https://sriina.com/aging-books" },
+                                                                { name: "Allied Health Books", url: "https://sriina.com/allied-health-books" },
+                                                                { name: "Astronomy Books", url: "https://sriina.com/astronomy-books" },
+                                                                { name: "Autobiography", url: "https://sriina.com/autobiography" },
+                                                                { name: "Banking Insurance Books", url: "https://sriina.com/banking-insurance-books" },
+                                                                { name: "Banking & Negotiable Instruments Books", url: "https://sriina.com/banking-and-negotiable-instruments-books" },
+                                                                { name: "Biography Books", url: "https://sriina.com/biography-books" },
+                                                                { name: "Biology Life Science", url: "https://sriina.com/biology-life-science" }
+                                                            ]; %>
+                                                    
+                                                            <% categories.forEach(category => { %>
+                                                                <a href="<%= category.url %>" target="_blank" rel="noopener noreferrer" class="category-item">
+                                                                    <%= category.name %>
+                                                                </a>
+                                                            <% }) %>
+                                                        </div>
+                                                    </section>
+                                                    
+                                                    
+
+
+
 
                             </div><!-- /.col -->
                             <div class="clearfix"></div>

@@ -455,27 +455,59 @@ app.get("/sitemap_index.xml", (req, res) => {
   });
 });
 
+app.get("/sitemap/categorypages.xml", (req, res) => {
+  const categories = [
+    "https://sriina.com/academic-books",
+    "https://sriina.com/account-books",
+    "https://sriina.com/aging-books",
+    "https://sriina.com/allied-health-books",
+    "https://sriina.com/astronomy-books",
+    "https://sriina.com/autobiography",
+    "https://sriina.com/banking-insurance-books",
+    "https://sriina.com/banking-and-negotiable-instruments-books",
+    "https://sriina.com/biography-books",
+    "https://sriina.com/biology-life-science",
+  ];
+
+  let sitemapXML = `<?xml version="1.0" encoding="UTF-8"?>\n`;
+  sitemapXML += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
+
+  categories.forEach((url) => {
+    sitemapXML += `  <url>\n`;
+    sitemapXML += `    <loc>${url}</loc>\n`;
+    sitemapXML += `    <lastmod>${new Date().toISOString()}</lastmod>\n`;
+    sitemapXML += `  </url>\n`;
+  });
+
+  sitemapXML += `</urlset>`;
+
+  res.header("Content-Type", "application/xml");
+  res.send(sitemapXML);
+});
+
 app.get("/sitemap.xml", async (req, res) => {
   try {
     const categories = await product.getCategoriesxml();
 
     let sitemapIndexXML = `<?xml version="1.0" encoding="UTF-8"?>\n`;
-    sitemapIndexXML += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
+    sitemapIndexXML += `<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
 
-    if (categories.length === 0) {
-      sitemapIndexXML += `</urlset>`;
-      res.header("Content-Type", "application/xml");
-      return res.send(sitemapIndexXML);
+    // Add the new category sitemap
+    sitemapIndexXML += `  <sitemap>\n`;
+    sitemapIndexXML += `    <loc>https://sriina.com/sitemap/categorypages.xml</loc>\n`;
+    sitemapIndexXML += `    <lastmod>${new Date().toISOString()}</lastmod>\n`;
+    sitemapIndexXML += `  </sitemap>\n`;
+
+    if (categories.length > 0) {
+      categories.forEach((category) => {
+        sitemapIndexXML += `  <sitemap>\n`;
+        sitemapIndexXML += `    <loc>https://sriina.com/sitemap/${category.url_name}.xml</loc>\n`;
+        sitemapIndexXML += `    <lastmod>${new Date().toISOString()}</lastmod>\n`;
+        sitemapIndexXML += `  </sitemap>\n`;
+      });
     }
 
-    categories.forEach((category) => {
-      sitemapIndexXML += `  <url>\n`;
-      sitemapIndexXML += `    <loc>https://sriina.com/sitemap/${category.url_name}.xml</loc>\n`;
-      sitemapIndexXML += `    <lastmod>${new Date().toISOString()}</lastmod>\n`;
-      sitemapIndexXML += `  </url>\n`;
-    });
-
-    sitemapIndexXML += `</urlset>`;
+    sitemapIndexXML += `</sitemapindex>`;
 
     res.header("Content-Type", "application/xml");
     res.send(sitemapIndexXML);
