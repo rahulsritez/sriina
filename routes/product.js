@@ -215,6 +215,16 @@ exports.viewProduct = function (req, res, next) {
                   };
 
                   const jsonLDString = JSON.stringify(jsonLDData);
+                  const original_price = result[0]?.price || 0;
+                  const discount = result[0]?.discount || 0;
+
+                  const discounted_price =
+                    original_price - (original_price * discount) / 100;
+                  const you_save_money = (
+                    original_price - discounted_price
+                  ).toFixed(2);
+                  const new_price = discounted_price; // Ensuring a valid price
+
                   res.render("front/productview", {
                     getCartData: "",
                     get_products: get_products,
@@ -231,6 +241,8 @@ exports.viewProduct = function (req, res, next) {
                     M_title: M_title || "",
                     M_description: M_description || "",
                     jsonLD: jsonLDString,
+                    new_price: parseFloat(new_price) || 0, // Ensure it's a valid float
+                    you_save_money: you_save_money,
                   });
                 } else {
                   res.redirect("/");
