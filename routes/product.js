@@ -224,7 +224,7 @@ exports.viewProduct = function (req, res, next) {
                     original_price - discounted_price
                   ).toFixed(2);
                   const new_price = discounted_price; // Ensuring a valid price
-
+                  console.log("get_products", get_products);
                   res.render("front/productview", {
                     getCartData: "",
                     get_products: get_products,
