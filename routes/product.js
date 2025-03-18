@@ -79,9 +79,26 @@ exports.viewProduct = function (req, res, next) {
   let Ids = req.params.id;
   let slug = req.params.slug;
   const bookBinding = req.query.book_binding || "Paperback"; // Default: Hardcopy
-
+  let selectedBinding = "Paperback"; // Default
+  let availableBindings = [];
   console.log("bookBinding", bookBinding);
   if (Ids != "") {
+    const sql = "SELECT * FROM `products` WHERE `status`=1 AND `slug`=?";
+    db.query(sql, [slug], (err, products) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).send("Database error");
+      }
+
+      // Extract unique book bindings from results
+      availableBindings = [...new Set(products.map((p) => p.book_binding))];
+
+      if (availableBindings.length === 1) {
+        selectedBinding = availableBindings[0]; // Use the only available option
+      } else if (bookBinding && availableBindings.includes(bookBinding)) {
+        selectedBinding = bookBinding; // Use query param if valid
+      }
+    });
     let sql1 = "SELECT * FROM `books_category` where `is_deleted`=0";
     let query = db.query(sql1, function (error, category) {
       if (error) new Error("Product view page");
@@ -97,161 +114,181 @@ exports.viewProduct = function (req, res, next) {
 
           const sql =
             "SELECT * FROM `products` WHERE `status`=1 AND `slug`=? AND `book_binding`=? ORDER BY `id` DESC LIMIT 10";
-          db.query(sql, [slug, bookBinding], function (error, get_products) {
-            if (error) throw new Error("failed to connect products");
-            var sql_plan = "SELECT MAX(plan_price) as MaxPlanPrice FROM plans";
-            var query = db.query(sql_plan, function (error, maxplan) {
-              if (error) throw new Error("failed to connect Max Plan");
-              var userId = req.session.userId;
-              //if(userId == null){
-              let sql3 =
-                "SELECT * FROM `products` WHERE `status`=1 and `product_type_id`=1 and id='" +
-                Ids +
-                "'";
-              db.query(sql3, function (error, result) {
-                if (error) throw new Error("failed to connect products tbl");
-                if (result.length > 0) {
-                  let meteTitle = result[0].meta_title;
-                  let metaDescription = result[0].meta_description;
-                  let description = result[0].description;
+          db.query(
+            sql,
+            [slug, selectedBinding],
+            function (error, get_products) {
+              if (error) throw new Error("failed to connect products");
+              var sql_plan =
+                "SELECT MAX(plan_price) as MaxPlanPrice FROM plans";
+              var query = db.query(sql_plan, function (error, maxplan) {
+                if (error) throw new Error("failed to connect Max Plan");
+                var userId = req.session.userId;
+                //if(userId == null){
+                // let sql3 =
+                //   "SELECT * FROM `products` WHERE `status`=1 and `product_type_id`=1 and id='" +
+                //   Ids +
+                //   "'";
 
-                  if (meteTitle === null || meteTitle == "") {
-                    var M_title = result[0].name;
-                  } else {
-                    var M_title = meteTitle;
-                  }
+                const sql3 =
+                  "SELECT * FROM `products` WHERE `status`=1 AND `slug`=? AND `book_binding`=?";
+                db.query(
+                  sql3,
+                  [slug, selectedBinding],
+                  function (error, result) {
+                    if (error)
+                      throw new Error("failed to connect products tbl");
+                    if (result.length > 0) {
+                      let meteTitle = result[0].meta_title;
+                      let metaDescription = result[0].meta_description;
+                      let description = result[0].description;
 
-                  if (metaDescription === null || metaDescription == "") {
-                    var M_description = result[0].description;
-                  } else if (metaDescription != "") {
-                    var M_description = metaDescription;
-                  } else {
-                    var M_description = result[0].name;
-                  }
+                      if (meteTitle === null || meteTitle == "") {
+                        var M_title = result[0].name;
+                      } else {
+                        var M_title = meteTitle;
+                      }
 
-                  const book = result[0] || {}; // Assuming result[0] contains book details
-                  const bookSlug = slug || "default-slug";
-                  const bookId = Ids || "default-id";
+                      if (metaDescription === null || metaDescription == "") {
+                        var M_description = result[0].description;
+                      } else if (metaDescription != "") {
+                        var M_description = metaDescription;
+                      } else {
+                        var M_description = result[0].name;
+                      }
 
-                  const jsonLDData = {
-                    "@context": "https://schema.org",
-                    "@graph": [
-                      {
-                        "@type": "BreadcrumbList",
-                        itemListElement: [
+                      const book = result[0] || {}; // Assuming result[0] contains book details
+                      const bookSlug = slug || "default-slug";
+                      const bookId = Ids || "default-id";
+
+                      const jsonLDData = {
+                        "@context": "https://schema.org",
+                        "@graph": [
                           {
-                            "@type": "ListItem",
-                            position: 1,
-                            name: "Home",
-                            item: "https://sriina.com/",
+                            "@type": "BreadcrumbList",
+                            itemListElement: [
+                              {
+                                "@type": "ListItem",
+                                position: 1,
+                                name: "Home",
+                                item: "https://sriina.com/",
+                              },
+                              {
+                                "@type": "ListItem",
+                                position: 2,
+                                name: "Books",
+                                item: "https://sriina.com/books",
+                              },
+                              {
+                                "@type": "ListItem",
+                                position: 3,
+                                name: book.name ? book.name.trim() : "Unknown",
+                                item: `https://sriina.com/${bookSlug}/${bookId}`,
+                              },
+                            ],
                           },
                           {
-                            "@type": "ListItem",
-                            position: 2,
-                            name: "Books",
-                            item: "https://sriina.com/books",
-                          },
-                          {
-                            "@type": "ListItem",
-                            position: 3,
+                            "@type": "Book",
                             name: book.name ? book.name.trim() : "Unknown",
-                            item: `https://sriina.com/${bookSlug}/${bookId}`,
+                            url: `https://sriina.com/${bookSlug}/${bookId}`,
+                            image: book.image
+                              ? `https://sriina-products.s3.ap-south-1.amazonaws.com/${book.image}`
+                              : "",
+                            description: book.description
+                              ? book.description.trim()
+                              : "",
+                            author: {
+                              "@type": "Person",
+                              name: book.author
+                                ? book.author.trim()
+                                : "Unknown",
+                            },
+                            publisher: {
+                              "@type": "Organization",
+                              name: book.publisher
+                                ? book.publisher.trim()
+                                : "Unknown",
+                            },
+                            datePublished: book.publishing_year
+                              ? book.publishing_year.trim()
+                              : "N/A",
+                            bookEdition: book.book_edition
+                              ? book.book_edition.trim()
+                              : "N/A",
+                            inLanguage: book.book_language
+                              ? book.book_language.trim()
+                              : "English",
+                            isbn: book.isbn13
+                              ? book.isbn13.trim()
+                              : book.isbn
+                              ? book.isbn.trim()
+                              : "",
+                            offers: {
+                              "@type": "Offer",
+                              priceCurrency: book.currency_code || "INR",
+                              price: book.price || "0",
+                              availability:
+                                book.quantity > 0
+                                  ? "https://schema.org/InStock"
+                                  : "https://schema.org/OutOfStock",
+                              seller: {
+                                "@type": "Organization",
+                                name: "Sriina",
+                              },
+                            },
+                            additionalProperty: [
+                              {
+                                "@type": "PropertyValue",
+                                name: "Weight",
+                                value: book.weight ? book.weight.trim() : "N/A",
+                              },
+                            ],
                           },
                         ],
-                      },
-                      {
-                        "@type": "Book",
-                        name: book.name ? book.name.trim() : "Unknown",
-                        url: `https://sriina.com/${bookSlug}/${bookId}`,
-                        image: book.image
-                          ? `https://sriina-products.s3.ap-south-1.amazonaws.com/${book.image}`
-                          : "",
-                        description: book.description
-                          ? book.description.trim()
-                          : "",
-                        author: {
-                          "@type": "Person",
-                          name: book.author ? book.author.trim() : "Unknown",
-                        },
-                        publisher: {
-                          "@type": "Organization",
-                          name: book.publisher
-                            ? book.publisher.trim()
-                            : "Unknown",
-                        },
-                        datePublished: book.publishing_year
-                          ? book.publishing_year.trim()
-                          : "N/A",
-                        bookEdition: book.book_edition
-                          ? book.book_edition.trim()
-                          : "N/A",
-                        inLanguage: book.book_language
-                          ? book.book_language.trim()
-                          : "English",
-                        isbn: book.isbn13
-                          ? book.isbn13.trim()
-                          : book.isbn
-                          ? book.isbn.trim()
-                          : "",
-                        offers: {
-                          "@type": "Offer",
-                          priceCurrency: book.currency_code || "INR",
-                          price: book.price || "0",
-                          availability:
-                            book.quantity > 0
-                              ? "https://schema.org/InStock"
-                              : "https://schema.org/OutOfStock",
-                          seller: {
-                            "@type": "Organization",
-                            name: "Sriina",
-                          },
-                        },
-                        additionalProperty: [
-                          {
-                            "@type": "PropertyValue",
-                            name: "Weight",
-                            value: book.weight ? book.weight.trim() : "N/A",
-                          },
-                        ],
-                      },
-                    ],
-                  };
+                      };
 
-                  const jsonLDString = JSON.stringify(jsonLDData);
-                  const original_price = result[0]?.price || 0;
-                  const discount = result[0]?.discount || 0;
+                      const jsonLDString = JSON.stringify(jsonLDData);
+                      const original_price = result[0]?.price || 0;
+                      const discount = result[0]?.discount || 0;
 
-                  const discounted_price =
-                    original_price - (original_price * discount) / 100;
-                  const you_save_money = (
-                    original_price - discounted_price
-                  ).toFixed(2);
-                  const new_price = discounted_price; // Ensuring a valid price
+                      const discounted_price =
+                        original_price - (original_price * discount) / 100;
+                      const you_save_money = (
+                        original_price - discounted_price
+                      ).toFixed(2);
+                      const new_price = discounted_price; // Ensuring a valid price
 
-                  res.render("front/productview", {
-                    getCartData: "",
-                    get_products: get_products,
-                    maxplan: maxplan,
-                    viewlist: result[0] || {},
-                    title: title,
-                    categorylist: category,
-                    message: req.flash("message"),
-                    csrfToken: req.csrfToken(),
-                    cryptr: cryptr,
-                    usersdata: "",
-                    data: "",
-                    settingData: settingData[0] || {},
-                    M_title: M_title || "",
-                    M_description: M_description || "",
-                    jsonLD: jsonLDString,
-                    new_price: parseFloat(new_price) || 0, // Ensure it's a valid float
-                    you_save_money: you_save_money,
-                  });
-                } else {
-                  res.redirect("/");
-                }
-              });
-              /* } else {
+                      console.log("selectedBinding", selectedBinding);
+
+                      res.render("front/productview", {
+                        getCartData: "",
+                        get_products: get_products,
+                        maxplan: maxplan,
+                        viewlist: result[0] || {},
+                        title: title,
+                        categorylist: category,
+                        message: req.flash("message"),
+                        csrfToken: req.csrfToken(),
+                        cryptr: cryptr,
+                        usersdata: "",
+                        data: "",
+                        settingData: settingData[0] || {},
+                        M_title: M_title || "",
+                        M_description: M_description || "",
+                        jsonLD: jsonLDString,
+                        new_price: parseFloat(new_price) || 0, // Ensure it's a valid float
+                        you_save_money: you_save_money,
+                        availableBindings: availableBindings,
+                        selectedBinding: selectedBinding,
+                        slug: slug,
+                        id: Ids,
+                      });
+                    } else {
+                      res.redirect("/");
+                    }
+                  }
+                );
+                /* } else {
                             var sql = "SELECT count(*) as totalrecord, p.user_id,p.name,p.email,p.mobile,p.message,c.name as categoryname from preorder_products p LEFT JOIN products c ON c.id=p.product_id where p.user_id='"+req.session.userId+"'";
                             let query = db.query(sql, function(error, usersdata){
                                 if(error) throw new Error('USER TABLE PROBLEM');
@@ -282,8 +319,9 @@ exports.viewProduct = function (req, res, next) {
                                 });
                             });
                         }*/
-            });
-          });
+              });
+            }
+          );
         });
       });
     });
