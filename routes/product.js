@@ -78,7 +78,9 @@ exports.viewProduct = function (req, res, next) {
   let title = "Rent/Buy Online Books on Book Store";
   let Ids = req.params.id;
   let slug = req.params.slug;
+  const bookBinding = req.query.book_binding || "Paperback"; // Default: Hardcopy
 
+  console.log("bookBinding", bookBinding);
   if (Ids != "") {
     let sql1 = "SELECT * FROM `books_category` where `is_deleted`=0";
     let query = db.query(sql1, function (error, category) {
@@ -92,9 +94,10 @@ exports.viewProduct = function (req, res, next) {
         var getsetting = "SELECT * FROM `settings` WHERE id='2'";
         var query = db.query(getsetting, function (error, settingData) {
           if (error) throw new Error("SETTING TABLE DATA PROBLEM");
-          var sql =
-            "SELECT * FROM `products` WHERE `status`=1 and `product_type_id`=1 order by `id` desc limit 10 ";
-          var query = db.query(sql, function (error, get_products) {
+
+          const sql =
+            "SELECT * FROM `products` WHERE `status`=1 AND `slug`=? AND `book_binding`=? ORDER BY `id` DESC LIMIT 10";
+          db.query(sql, [slug, bookBinding], function (error, get_products) {
             if (error) throw new Error("failed to connect products");
             var sql_plan = "SELECT MAX(plan_price) as MaxPlanPrice FROM plans";
             var query = db.query(sql_plan, function (error, maxplan) {
@@ -224,7 +227,7 @@ exports.viewProduct = function (req, res, next) {
                     original_price - discounted_price
                   ).toFixed(2);
                   const new_price = discounted_price; // Ensuring a valid price
-                  console.log("get_products", get_products);
+
                   res.render("front/productview", {
                     getCartData: "",
                     get_products: get_products,

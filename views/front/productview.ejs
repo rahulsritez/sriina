@@ -337,6 +337,23 @@
 <script type="application/ld+json">
     <%- jsonLD %>
   </script>
+
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        let bindingOptions = document.querySelectorAll('input[name="book_binding"]');
+    
+        bindingOptions.forEach(option => {
+            option.addEventListener("change", function () {
+                let selectedBinding = this.value;
+                let url = new URL(window.location.href);
+                url.searchParams.set("book_binding", selectedBinding);
+                window.location.href = url.toString(); // Reload with updated query param
+            });
+        });
+    });
+    </script>
+    
   
 <!-- Google Tag Manager -->
 <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -487,7 +504,14 @@
 
                                                         <div class="price-container info-container m-t-20">
                                                             <div class="row">
-
+                                                                <form id="bindingForm">
+                                                                    <label>
+                                                                        <input type="radio" name="book_binding" value="Hardcover" checked> Hardcopy
+                                                                    </label>
+                                                                    <label>
+                                                                        <input type="radio" name="book_binding" value="Paperback"> Paperback
+                                                                    </label>
+                                                                </form>
                                                                 <div class="col-sm-12">
                                                                     <div class="price-box">
                                                                         <span class="price">
