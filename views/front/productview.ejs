@@ -63,7 +63,7 @@
     max-width: 350px;
     width: 100%;
     border-radius: 8px;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+    /* box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1); */
     transition: transform 0.3s ease-in-out;
     image-rendering: crisp-edges;  /* Reduce pixelation */
     image-rendering: -webkit-optimize-contrast; /* Better quality in Webkit */
@@ -72,6 +72,27 @@
 /* Wrapper for carousel items */
 .carousel-item-wrapper {
     padding: 10px;
+    height: 434px;
+}
+
+
+.featured-product {
+    margin-bottom: 30px;
+    /* background-color: #fff; */
+    /* box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .08); */}
+
+
+.section-title-data {
+    font-size: 24px; /* Bigger and readable text */
+    font-weight: bold;
+    color: #333; /* Dark gray for better readability */
+    text-transform: uppercase; /* Makes it stand out */
+    letter-spacing: 1px; /* Adds spacing for a refined look */
+    padding-bottom: 8px; /* Space between text and border */
+    margin-bottom: 20px; /* Space between heading and content */
+    text-transform: none;
+    display: inline;
+    margin-left: 23px;
 }
 
 /* Product Card Styling */
@@ -89,6 +110,45 @@
     padding: 15px;
     transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 }
+
+
+
+.book-details-container {
+    background: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    /* box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); */
+    margin-top: 15px;
+
+    .detail-item {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-bottom: 10px;
+    }
+
+    .detail-label {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #333;
+        min-width: 180px;
+    }
+
+    .detail-value {
+        font-size: 1.3rem;
+        font-weight: 500;
+        color: #555;
+        flex: 1;
+    }
+
+    .divider {
+        border: 0;
+        height: 1px;
+        background: #ddd;
+        margin: 15px 0;
+    }
+}
+
 
 .product-card:hover {
     transform: translateY(-5px);
@@ -515,88 +575,102 @@
                                                                             <% } %>
                                                                 </div>
                                                                 <div class="col-sm-12">
-                                                                    <div class="favorite-button m-t-10">
-                                                                        <h2 class="text_title_page">
-                                                                            <b>Delivery:</b> 
+                                                                    <div class="book-details-container">
+                                                                        <div class="detail-item">
+                                                                            <span class="detail-label">Delivery:</span>
                                                                             <% if(viewlist.delivery_charge) { %>
-                                                                                <b>₹ <%= viewlist.delivery_charge %> Delivery charge</b>
+                                                                                <span class="detail-value">₹ <%= viewlist.delivery_charge %> Delivery charge</span>
                                                                             <% } else { %>
-                                                                                <b>FREE Delivery</b>
+                                                                                <span class="detail-value">FREE Delivery</span>
                                                                             <% } %>
-                                                                        </h2>
+                                                                        </div>
                                                                 
                                                                         <% if(viewlist.author) { %>
-                                                                            <h2 class="text_title_page">
-                                                                                <b>Author:</b> <b><%= viewlist.author %></b>
-                                                                            </h2>
+                                                                            <div class="detail-item">
+                                                                                <span class="detail-label">Author:</span>
+                                                                                <span class="detail-value"><%= viewlist.author %></span>
+                                                                            </div>
                                                                         <% } %>
                                                                 
                                                                         <% if(viewlist.publisher) { %>
-                                                                            <h2 class="text_title_page">
-                                                                                <b>Publisher:</b> <b><%= viewlist.publisher %></b>
-                                                                            </h2>
+                                                                            <div class="detail-item">
+                                                                                <span class="detail-label">Publisher:</span>
+                                                                                <span class="detail-value"><%= viewlist.publisher %></span>
+                                                                            </div>
                                                                         <% } else { %>
-                                                                            <h2 class="text_title_page">
-                                                                                <b>Publisher:</b> <b><%= viewlist.imprint_name %> (<%= viewlist.book_edition %>)</b>
-                                                                            </h2>
+                                                                            <div class="detail-item">
+                                                                                <span class="detail-label">Publisher:</span>
+                                                                                <span class="detail-value"><%= viewlist.imprint_name %> (<%= viewlist.book_edition %>)</span>
+                                                                            </div>
                                                                         <% } %>
                                                                 
-                                                                        <% if(viewlist.book_edition && viewlist.imprint_name == "HarperCollins") { %>
-                                                                            <h2 class="text_title_page">
-                                                                                <b>Edition:</b> 
-                                                                                <b><%= viewlist.book_edition.slice(0, 4) + '-' + viewlist.book_edition.slice(4, 6) + '-' + viewlist.book_edition.slice(6, 8) %></b>
-                                                                            </h2>
-                                                                        <% } else if(viewlist.book_edition) { %>
-                                                                            <h2 class="text_title_page">
-                                                                                <b>Edition:</b> <b><%= viewlist.book_edition %></b>
-                                                                            </h2>
+                                                                        <% if(viewlist.book_edition) { %>
+                                                                            <div class="detail-item">
+                                                                                <span class="detail-label">Edition:</span>
+                                                                                <span class="detail-value">
+                                                                                    <% if(viewlist.imprint_name == "HarperCollins") { %>
+                                                                                        <%= viewlist.book_edition.slice(0, 4) + '-' + viewlist.book_edition.slice(4, 6) + '-' + viewlist.book_edition.slice(6, 8) %>
+                                                                                    <% } else { %>
+                                                                                        <%= viewlist.book_edition %>
+                                                                                    <% } %>
+                                                                                </span>
+                                                                            </div>
                                                                         <% } %>
                                                                 
                                                                         <% if(viewlist.isbn) { %>
-                                                                            <h2 class="text_title_page">
-                                                                                <b>ISBN-10:</b> <b><%= viewlist.isbn %></b>
-                                                                            </h2>
+                                                                            <div class="detail-item">
+                                                                                <span class="detail-label">ISBN-10:</span>
+                                                                                <span class="detail-value"><%= viewlist.isbn %></span>
+                                                                            </div>
                                                                         <% } %>
                                                                 
                                                                         <% if(viewlist.isbn13) { %>
-                                                                            <h2 class="text_title_page">
-                                                                                <b>ISBN-13:</b> <b><%= viewlist.isbn13 %></b>
-                                                                            </h2>
+                                                                            <div class="detail-item">
+                                                                                <span class="detail-label">ISBN-13:</span>
+                                                                                <span class="detail-value"><%= viewlist.isbn13 %></span>
+                                                                            </div>
                                                                         <% } %>
                                                                 
                                                                         <% if(viewlist.publishing_year) { %>
-                                                                            <h2 class="text_title_page">
-                                                                                <b>Publishing Year:</b> <b><%= viewlist.publishing_year %></b>
-                                                                            </h2>
+                                                                            <div class="detail-item">
+                                                                                <span class="detail-label">Publishing Year:</span>
+                                                                                <span class="detail-value"><%= viewlist.publishing_year %></span>
+                                                                            </div>
                                                                         <% } %>
                                                                 
                                                                         <% if(viewlist.no_of_pages) { %>
-                                                                            <h2 class="text_title_page">
-                                                                                <b>No of Pages:</b> <b><%= viewlist.no_of_pages %></b>
-                                                                            </h2>
+                                                                            <div class="detail-item">
+                                                                                <span class="detail-label">No. of Pages:</span>
+                                                                                <span class="detail-value"><%= viewlist.no_of_pages %></span>
+                                                                            </div>
                                                                         <% } %>
                                                                 
                                                                         <% if(viewlist.weight && viewlist.weight != "undefined") { %>
-                                                                            <h2 class="text_title_page">
-                                                                                <b>Weight:</b> <b><%= viewlist.weight %></b>
-                                                                            </h2>
+                                                                            <div class="detail-item">
+                                                                                <span class="detail-label">Weight:</span>
+                                                                                <span class="detail-value"><%= viewlist.weight %></span>
+                                                                            </div>
                                                                         <% } %>
                                                                 
                                                                         <% if(viewlist.book_language) { %>
-                                                                            <h2 class="text_title_page">
-                                                                                <b>Language:</b> <b><%= viewlist.book_language %></b>
-                                                                            </h2>
+                                                                            <div class="detail-item">
+                                                                                <span class="detail-label">Language:</span>
+                                                                                <span class="detail-value"><%= viewlist.book_language %></span>
+                                                                            </div>
                                                                         <% } %>
                                                                 
                                                                         <% if(viewlist.book_binding) { %>
-                                                                            <h2 class="text_title_page">
-                                                                                <b>Book Binding:</b> <b><%= viewlist.book_binding %></b>
-                                                                            </h2>
+                                                                            <div class="detail-item">
+                                                                                <span class="detail-label">Book Binding:</span>
+                                                                                <span class="detail-value"><%= viewlist.book_binding %></span>
+                                                                            </div>
                                                                         <% } %>
                                                                 
-                                                                        <hr class="a-divider-normal" />
+                                                                        <hr class="divider" />
                                                                     </div>
                                                                 </div>
+                                                                
+                                                                
                                                                 
                                                             </div><!-- /.price-container -->
                                                             <% if(viewlist.product_type==4){%>
@@ -765,7 +839,8 @@
 
                                                     <!-- ============================================== UPSELL PRODUCTS ============================================== -->
                                                     <section class="section featured-product wow fadeInUp">
-                                                        <h3 class="section-title">Related to Items You've Viewed </h3>
+                                                        <h3 class="section-title-data">Viewed Items</h3>
+
                                                         <div class="owl-carousel home-owl-carousel upsell-product custom-carousel owl-theme outer-top-xs">
                                                             <% if (get_products.length > 0) { %>
                                                                 <% get_products.forEach((list, index) => { %>
@@ -830,7 +905,7 @@
                                                                                 </div>
                                                                                 <div class="product-actions">
                                                                                     <a target="_blank" href="<%= baseURL %><%= list.slug %>/<%= list.id %>"
-                                                                                        class="view-product-btn">
+                                                                                        class="btn btn-primary">
                                                                                         <i class="fa fa-shopping-cart"></i> View Product
                                                                                     </a>
                                                                                 </div>
