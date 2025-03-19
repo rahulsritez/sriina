@@ -54,20 +54,44 @@
 
 
         .xzoom-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 700px;
+  margin: auto;
 }
 
-.xzoom {
-    max-width: 350px;
-    width: 100%;
-    border-radius: 8px;
-    /* box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1); */
-    transition: transform 0.3s ease-in-out;
-    image-rendering: crisp-edges;  /* Reduce pixelation */
-    image-rendering: -webkit-optimize-contrast; /* Better quality in Webkit */
+.xzoom-image {
+  max-width: 100%; 
+  height: 450px; 
+  object-fit: contain; 
+  border-radius: 8px;
+  border: 2px solid #ddd;
+  background-color: #f8f8f8;
 }
+
+.xzoom-thumbs {
+  display: flex;
+  gap: 12px;
+  margin-top: 15px;
+}
+
+.xzoom-thumb {
+  width: 110px; 
+  height: 90px;
+  object-fit: contain;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  transition: transform 0.3s ease-in-out;
+  background-color: #fff;
+
+  &:hover {
+    transform: scale(1.1);
+  }
+}
+
+
+
 /* Ensure all cards have the same height */
 /* Wrapper for carousel items */
 .carousel-item-wrapper {
@@ -454,44 +478,50 @@
                                             <div class="xzoom-container">
                                                 <% if (viewlist.image) { %>
                                                     <% if (/(http(s?)):\/\//i.test(viewlist.image)) { %>
-                                                        <img alt="<%= viewlist.name %>" class="xzoom moveable" id="xzoom-default" 
+                                                        <img alt="<%= viewlist.name %>" class="xzoom-image moveable" id="xzoom-default" 
                                                              src="<%= viewlist.image %>" xoriginal="<%= viewlist.image %>" 
                                                              srcset="<%= viewlist.image %> 1x, <%= viewlist.image %> 2x, <%= viewlist.image %> 3x" />
                                                     <% } else { %>
-                                                        <img alt="<%= viewlist.name %>" class="xzoom moveable" id="xzoom-default" 
+                                                        <img alt="<%= viewlist.name %>" class="xzoom-image moveable" id="xzoom-default" 
                                                              src="<%= process.env.IMAGE_URL %><%= viewlist.image %>" 
                                                              xoriginal="<%= process.env.IMAGE_URL %><%= viewlist.image %>" 
-                                                             srcset="<%= process.env.IMAGE_URL %><%= viewlist.image %> 1x, <%= process.env.IMAGE_URL %><%= viewlist.image %> 2x, <%= process.env.IMAGE_URL %><%= viewlist.image %> 3x" />
+                                                             srcset="<%= process.env.IMAGE_URL %><%= viewlist.image %> 1x, 
+                                                                     <%= process.env.IMAGE_URL %><%= viewlist.image %> 2x, 
+                                                                     <%= process.env.IMAGE_URL %><%= viewlist.image %> 3x" />
                                                     <% } %>
                                                 <% } else { %>
-                                                    <img class="xzoom moveable" id="xzoom-default" 
+                                                    <img class="xzoom-image moveable" id="xzoom-default" 
                                                          src="<%= baseURL %>assets/images/404.jpg" 
                                                          xoriginal="<%= baseURL %>assets/images/404.jpg"
-                                                         srcset="<%= baseURL %>assets/images/404.jpg 1x, <%= baseURL %>assets/images/404.jpg 2x, <%= baseURL %>assets/images/404.jpg 3x" />
+                                                         srcset="<%= baseURL %>assets/images/404.jpg 1x, 
+                                                                 <%= baseURL %>assets/images/404.jpg 2x, 
+                                                                 <%= baseURL %>assets/images/404.jpg 3x" />
                                                 <% } %>
-                                        
+                                            
                                                 <div class="xzoom-thumbs">
                                                     <% if (viewlist.image) { %>
                                                         <% if (/(http(s?)):\/\//i.test(viewlist.image)) { %>
                                                             <a href="<%= viewlist.image %>">
-                                                                <img alt="<%= viewlist.name %>" class="xzoom-gallery" 
+                                                                <img alt="<%= viewlist.name %>" class="xzoom-thumb xzoom-gallery" 
                                                                      src="<%= viewlist.image %>" xpreview="<%= viewlist.image %>" />
                                                             </a>
                                                         <% } else { %>
                                                             <a href="<%= process.env.IMAGE_URL %><%= viewlist.image %>">
-                                                                <img alt="<%= viewlist.name %>" class="xzoom-gallery" 
+                                                                <img alt="<%= viewlist.name %>" class="xzoom-thumb xzoom-gallery" 
                                                                      src="<%= process.env.IMAGE_URL %><%= viewlist.image %>" 
                                                                      xpreview="<%= process.env.IMAGE_URL %><%= viewlist.image %>" />
                                                             </a>
                                                         <% } %>
                                                     <% } else { %>
                                                         <a href="<%= baseURL %>assets/images/404.jpg">
-                                                            <img class="xzoom-gallery" src="<%= baseURL %>assets/images/404.jpg" 
+                                                            <img class="xzoom-thumb xzoom-gallery" src="<%= baseURL %>assets/images/404.jpg" 
                                                                  xpreview="<%= baseURL %>assets/images/404.jpg" title="No Image Available">
                                                         </a>
                                                     <% } %>
                                                 </div>
                                             </div>
+                                            
+                                            
                                         </div>
                                         
                                         

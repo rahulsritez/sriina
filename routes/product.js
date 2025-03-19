@@ -224,7 +224,6 @@ exports.viewProduct = function (req, res, next) {
                     original_price - discounted_price
                   ).toFixed(2);
                   const new_price = discounted_price; // Ensuring a valid price
-                  console.log("get_products", get_products);
                   res.render("front/productview", {
                     getCartData: "",
                     get_products: get_products,
@@ -269,7 +268,7 @@ exports.viewProduct = function (req, res, next) {
                                         if(metaDescription==null){
                                             var M_description = getresult[0].description;
                                         } else if(metaDescription!="") {
-                                            var M_description = metaDescription;
+                                          var M_description = metaDescription;
                                         } else {
                                             var M_description = getresult[0].name;
                                         }
