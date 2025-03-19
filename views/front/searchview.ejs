@@ -54,6 +54,68 @@
     .addReadMoreWrapTxt.showmorecontent .readLess {
       display: block;
     }
+
+    .search-results-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+
+.product-thumbnail img {
+  max-width: 100%;
+  border-radius: 5px;
+  transition: transform 0.3s ease-in-out; /* Smooth animation */
+}
+
+.product-thumbnail img:hover {
+  transform: scale(1.1); /* Zoom-in effect */
+}
+
+
+
+.product-category-inner {
+  margin-bottom: 20px; /* Added spacing between product boxes */
+}
+.product-items {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); */
+    width: 100%;
+    max-width: 1122px;
+}
+.product-entry-row {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  transition: all 0.3s ease-in-out;
+}
+.product-entry-row:hover {
+  background-color: #f9f9f9;
+}
+.product-thumbnail img {
+  max-width: 100%;
+  border-radius: 5px;
+}
+.product-details .product-name {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+}
+.product-pricing {
+  font-size: 16px;
+  color: #d9534f;
+}
+.original-price {
+  text-decoration: line-through;
+  color: #777;
+  margin-left: 10px;
+}
+.product-actions .btn {
+  margin-top: 10px;
+}
+
+    
   </style>
   <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-YN8Y6YGBF7"></script>
@@ -409,103 +471,80 @@
 
 
 
-          <div class="search-result-container ">
-            <div id="myTabContent" class="tab-content category-list">
-              <div class="tab-pane active" id="list-container">
-                <div class="category-product">
-                  <% if (searchresult.length> 0) {%>
-                    <% searchresult.forEach((list, index)=> { %>
-                      <div class="category-product-inner wow fadeInUp animated"
-                        style="visibility: visible; animation-name: fadeInUp;">
-                        <div class="products">
-                          <div class="product-list product">
-                            <div class="row product-list-row">
-                              <div class="col col-sm-4 col-lg-2">
-                                <div class="product-image-search">
-                                  <% if(list.image){%>
-                                    <div class="image">
-                                      <% if(/(http(s?)):\/\//i.test(list.image)) {%>
-                                        <a target="_blank" href="<%= list.slug %>/<%= list.id %>"><img
-                                            src="<%= list.image %>" alt="<%= list.name %>"></a>
-                                        <% } else { %>
-                                          <a target="_blank" href="<%= list.slug %>/<%= list.id %>"><img
-                                              src="<%= process.env.IMAGE_URL %><%= list.image %>"
-                                              alt="<%= list.name %>"></a>
-                                          <% } %>
-                                    </div>
-                                    <% } else { %>
-                                      <div class="image"> <a target="_blank" href="<%= list.slug %>/<%= list.id %>"><img
-                                            src="<%= process.env.IMAGE_URL %>404.jpg" alt="<%= list.name %>"></a> </div>
+          <div class="search-results-wrapper d-flex justify-content-center">
+            <div id="myTabContent" class="tab-content product-category-list">
+              <div class="tab-pane active" id="product-list-container">
+                <div class="product-category">
+                  <% if (searchresult.length > 0) { %>
+                    <% searchresult.forEach((list, index) => { %>
+                      <div class="product-category-inner wow fadeInUp animated" style="visibility: visible; animation-name: fadeInUp;">
+                        <div class="product-items bg-white p-4 rounded shadow-sm">
+                          <div class="product-entry product">
+                            <div class="row product-entry-row align-items-center">
+                              <div class="col-12 col-sm-4 col-lg-2">
+                                <div class="product-thumbnail">
+                                  <% if (list.image) { %>
+                                    <div class="thumbnail">
+                                      <% if (/(http(s?)):\/\//i.test(list.image)) { %>
+                                        <a target="_blank" href="<%= list.slug %>/<%= list.id %>">
+                                          <img src="<%= list.image %>" alt="<%= list.name %>">
+                                        </a>
+                                      <% } else { %>
+                                        <a target="_blank" href="<%= list.slug %>/<%= list.id %>">
+                                          <img src="<%= process.env.IMAGE_URL %><%= list.image %>" alt="<%= list.name %>">
+                                        </a>
                                       <% } %>
+                                    </div>
+                                  <% } else { %>
+                                    <div class="thumbnail">
+                                      <a target="_blank" href="<%= list.slug %>/<%= list.id %>">
+                                        <img src="<%= process.env.IMAGE_URL %>404.jpg" alt="<%= list.name %>">
+                                      </a>
+                                    </div>
+                                  <% } %>
                                 </div>
-                                <!-- /.product-image -->
                               </div>
-                              <!-- /.col -->
-                              <div class="col col-sm-8 col-lg-8">
-                                <div class="product-info">
-                                  <h3 class="name"><a href="<%= list.slug %>/<%= list.id %>">
-                                      <%= list.name %>
-                                    </a></h3>
-                                  <div class="product-price"> <span class="price"> ₹<%=
-                                        parseFloat(((list.price)-(list.price/100)*list.discount)).toFixed(2) %> </span>
-                                    <span class="price-before-discount">₹ <%= parseFloat((list.price)).toFixed(2) %>
-                                        </span>
+                              <div class="col-12 col-sm-8 col-lg-8">
+                                <div class="product-details">
+                                  <h3 class="product-name">
+                                    <a href="<%= list.slug %>/<%= list.id %>"><%= list.name %></a>
+                                  </h3>
+                                  <div class="product-pricing">
+                                    <span class="current-price">₹<%= parseFloat(((list.price) - (list.price / 100) * list.discount)).toFixed(2) %></span>
+                                    <span class="original-price">₹<%= parseFloat(list.price).toFixed(2) %></span>
                                   </div>
-                                  <!-- /.product-price -->
-                                  <div class="description m-t-10 addReadMore showlesscontent">
+                                  <div class="product-description m-t-10 addReadMore showlesscontent">
                                     <%= list.description %>
                                   </div>
-                                  <div class="cart clearfix animate-effect">
-                                    <div class="action">
-                                      <ul class="list-unstyled">
-                                        <li class="add-cart-button btn-group">
-                                          <button class="btn btn-primary icon" data-toggle="dropdown" type="button"> <i
-                                              class="fa fa-shopping-cart"></i> </button>
-                                          <a class="btn btn-primary cart-btn"
-                                            href="<%= list.slug %>/<%= list.id %>">View Product</a>
+                                  <div class="product-actions clearfix animate-effect">
+                                    <div class="action-buttons">
+                                      <ul class="list-unstyled d-flex">
+                                        <li class="cart-button btn-group">
+                                          <button class="btn btn-primary icon" data-toggle="dropdown" type="button">
+                                            <i class="fa fa-shopping-cart"></i>
+                                          </button>
+                                          <a class="btn btn-primary view-product-btn" href="<%= list.slug %>/<%= list.id %>">View Product</a>
                                         </li>
                                       </ul>
                                     </div>
-                                    <!-- /.action -->
                                   </div>
-                                  <!-- /.cart -->
-
                                 </div>
-                                <!-- /.product-info -->
                               </div>
-                              <!-- /.col -->
                             </div>
-
                           </div>
-                          <!-- /.product-list -->
                         </div>
-                        <!-- /.products -->
                       </div>
-                      <% }) %>
-                        <% } else { %>
-                          <div class="col-md-12 mt-3">
-                            <div class="text-danger text-center">No Record Found.</div>
-                          </div>
-                          <% } %>
-
-
+                    <% }) %>
+                  <% } else { %>
+                    <div class="col-md-12 mt-3">
+                      <div class="text-danger text-center">No Record Found.</div>
+                    </div>
+                  <% } %>
                 </div>
-                <!-- /.category-product -->
               </div>
-              <!-- /.tab-pane #list-container -->
             </div>
-            <!-- /.tab-content -->
-            <div class="clearfix filters-container">
-              <div class="text-right">
-
-                <!-- /.pagination-container -->
-              </div>
-              <!-- /.text-right -->
-
-            </div>
-            <!-- /.filters-container -->
-
           </div>
+          
           <!-- /.search-result-container -->
 
         </div>
