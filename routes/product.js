@@ -309,7 +309,7 @@ exports.viewProduct = function (req, res, next) {
                                         if(metaDescription==null){
                                             var M_description = getresult[0].description;
                                         } else if(metaDescription!="") {
-                                            var M_description = metaDescription;
+                                          var M_description = metaDescription;
                                         } else {
                                             var M_description = getresult[0].name;
                                         }
