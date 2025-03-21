@@ -80,11 +80,38 @@ exports.searchResult = (req, res, next) => {
     .replace(/[\u2013\u2014]/g, "-")
     .replace(/[|!']/g, "");
 
-  if (sanitizedPhrase && sanitizedPhrase.length > 0) {
+  // Query for category list (fetch this first)
+  const sqlCategoryList = `
+    SELECT books_category.id, books_category.name, books_category.meta_title,
+      books_category.meta_description, books_category.meta_canonical_tag, 
+      products.cat_id, COUNT(*) as pro_count 
+    FROM products 
+    LEFT JOIN books_category ON books_category.id = products.cat_id 
+    WHERE products.cat_id != '0' AND books_category.id != '' 
+    GROUP BY products.cat_id 
+    HAVING pro_count > 10 
+    ORDER BY name 
+    LIMIT 10;
+  `;
+
+  db.query(sqlCategoryList, (error, categorylist) => {
+    if (error) {
+      console.error("Database Error (Category List):", error);
+      return res.redirect("/errorPage");
+    }
+
+    if (!sanitizedPhrase || sanitizedPhrase.length === 0) {
+      return res.render("front/searchview", {
+        searchresult: [],
+        categorylist: categorylist, // Now categorylist is always available
+        title: title,
+      });
+    }
+
     // Split the search query into individual words
     const words = sanitizedPhrase.split(" ");
 
-    // Build the SQL query
+    // Build the SQL query for search
     const sqlQuery = `
       SELECT p.*,
         CASE
@@ -116,7 +143,7 @@ exports.searchResult = (req, res, next) => {
       LIMIT 1000;
     `;
 
-    // Create the parameters for the exact match first, followed by partial matches
+    // Create parameters for query
     const params = [
       sanitizedPhrase,
       sanitizedPhrase,
@@ -134,37 +161,20 @@ exports.searchResult = (req, res, next) => {
     console.log("Executing SQL Query:", sqlQuery);
     console.log("With Parameters:", params);
 
-    // Execute the query
+    // Execute search query
+    db.query(sqlQuery, params, (error, searchresult) => {
+      if (error) {
+        console.error("Database Error (Search Query):", error);
+        return res.redirect("/errorPage");
+      }
 
-    var sql1 =
-      "SELECT `books_category`.id,`books_category`.name,`books_category`.meta_title,`books_category`.meta_description,`books_category`.meta_canonical_tag,`products`.`cat_id`,count(*) as `pro_count` FROM `products` left join `books_category` on `books_category`.id = `products`.cat_id where `products`.cat_id!='0' and `books_category`.id!='' group by `products`.cat_id having pro_count > 10 order by name limit 10";
-
-    var query = db.query(sql1, function (error, result) {
-      db.query(sqlQuery, params, (error, searchresult) => {
-        if (error) {
-          console.error("Database Error:", error);
-          return res.redirect("/errorPage");
-        }
-
-        if (!searchresult || searchresult.length === 0) {
-          console.log("No search results found.");
-          return res.render("front/searchview", {
-            searchresult: [],
-            title: title,
-          });
-        }
-
-        res.render("front/searchview", {
-          searchresult: searchresult,
-          categorylist: result,
-
-          title: title,
-        });
+      res.render("front/searchview", {
+        searchresult: searchresult || [], // Ensure it doesn't break if null
+        categorylist: categorylist, // Category list is always available
+        title: title,
       });
     });
-  } else {
-    res.render("front/searchview", { searchresult: [], title: title });
-  }
+  });
 };
 
 function convertDate(d) {
