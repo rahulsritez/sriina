@@ -115,6 +115,38 @@
   margin-top: 10px;
 }
 
+
+.no-record {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px;
+  background: #f8f9fa; 
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+  .icon {
+    font-size: 60px;
+    color: #dc3545; 
+    margin-bottom: 10px;
+  }
+
+  .message {
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+  }
+
+  .suggestion {
+    font-size: 16px;
+    color: #6c757d; 
+    margin-top: 5px;
+  }
+}
+
+
     
   </style>
   <!-- Google tag (gtag.js) -->
@@ -156,7 +188,7 @@
 
 
          <div class="col-md-3 sidebar">
-          <div class="side-menu animate-dropdown outer-bottom-xs category-menu">
+             <div class="side-menu animate-dropdown outer-bottom-xs category-menu">
             <div class="head"><i class="icon fa fa-align-justify fa-fw"></i> Categories</div>
             <%- include ("../../common/left_category") -%>
           </div>
@@ -237,9 +269,14 @@
                       </div>
                     <% }) %>
                   <% } else { %>
-                    <div class="col-md-12 mt-3 text-center">
-                      <div class="text-danger">No Record Found.</div>
+                    <div class="col-md-12 mt-3">
+                      <div class="no-record">
+                        <div class="message">No Books Found</div>
+                        <div class="suggestion">Try searching with a different title, author, or ISBN.</div>
+                      </div>
                     </div>
+                    
+                    
                   <% } %>
                 </div>
               </div>
