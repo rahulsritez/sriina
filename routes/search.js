@@ -135,23 +135,31 @@ exports.searchResult = (req, res, next) => {
     console.log("With Parameters:", params);
 
     // Execute the query
-    db.query(sqlQuery, params, (error, searchresult) => {
-      if (error) {
-        console.error("Database Error:", error);
-        return res.redirect("/errorPage");
-      }
 
-      if (!searchresult || searchresult.length === 0) {
-        console.log("No search results found.");
-        return res.render("front/searchview", {
-          searchresult: [],
+    var sql1 =
+      "SELECT `books_category`.id,`books_category`.name,`books_category`.meta_title,`books_category`.meta_description,`books_category`.meta_canonical_tag,`products`.`cat_id`,count(*) as `pro_count` FROM `products` left join `books_category` on `books_category`.id = `products`.cat_id where `products`.cat_id!='0' and `books_category`.id!='' group by `products`.cat_id having pro_count > 10 order by name limit 10";
+
+    var query = db.query(sql1, function (error, result) {
+      db.query(sqlQuery, params, (error, searchresult) => {
+        if (error) {
+          console.error("Database Error:", error);
+          return res.redirect("/errorPage");
+        }
+
+        if (!searchresult || searchresult.length === 0) {
+          console.log("No search results found.");
+          return res.render("front/searchview", {
+            searchresult: [],
+            title: title,
+          });
+        }
+
+        res.render("front/searchview", {
+          searchresult: searchresult,
+          categorylist: result,
+
           title: title,
         });
-      }
-
-      res.render("front/searchview", {
-        searchresult: searchresult,
-        title: title,
       });
     });
   } else {
