@@ -158,6 +158,18 @@
 
   gtag('config', 'G-YN8Y6YGBF7');
 </script>
+
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const searchQuery = urlParams.get("q");
+    if (searchQuery) {
+      document.getElementById("searchInput").value = searchQuery;
+    }
+  });
+</script>
 <!-- Google Tag Manager -->
 <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
   new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
