@@ -32,7 +32,7 @@ exports.saveAdminPwd = (req, res) => {
       user_name +
       "'";
     let query = db.query(sql, function (error, getData) {
-      if (getData.length > 0) {
+      if (getData?.length > 0) {
         var otp = Math.floor(100000 + Math.random() * 900000);
         var transporter = nodemailer.createTransport({
           service: "gmail",
