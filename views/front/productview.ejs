@@ -21,8 +21,11 @@
 
     <% 
     function truncateDescription(description, length) {
+        if (!description) return ""; // Handle undefined or null description
         if (description.length > length) {
-            return description.substring(0, description.lastIndexOf(" ", length)) + "...";
+            let truncated = description.substring(0, length);
+            let lastSpace = truncated.lastIndexOf(" ");
+            return (lastSpace > 0 ? truncated.substring(0, lastSpace) : truncated) + "...";
         }
         return description;
     }
