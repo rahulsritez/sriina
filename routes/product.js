@@ -3,7 +3,7 @@ const { encrypt, decrypt } = require("./crypto");
 const Cryptr = require("cryptr");
 const cryptr = new Cryptr("myTotalySecretKey");
 var base64 = require("base-64");
-
+const iso6391 = require("iso-639-1");
 function requireLogin(req, res, next) {
   if (!req.user) {
     res.redirect("/signup");
@@ -223,10 +223,13 @@ exports.viewProduct = function (req, res, next) {
                   const you_save_money = (
                     original_price - discounted_price
                   ).toFixed(2);
+                  let languageName = result[0]?.language;
+                  const languageCode = iso6391.getCode(languageName);
                   const new_price = discounted_price; // Ensuring a valid price
                   res.render("front/productview", {
                     getCartData: "",
                     get_products: get_products,
+                    languageCode,
                     maxplan: maxplan,
                     viewlist: result[0] || {},
                     title: title,
