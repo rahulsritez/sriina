@@ -1906,6 +1906,8 @@ exports.AdminUpdateProduct = (req, res, next) => {
         return;
       }
 
+      console.log("fieldsfields", fields, edit_language);
+
       if (productimage) {
         var fs = require("fs");
         fs.readFile(oldpath, function (err, data) {

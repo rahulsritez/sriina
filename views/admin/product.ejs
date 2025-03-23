@@ -491,14 +491,21 @@
                             
                               <!-- Dropdown for Selecting Pages -->
                               <p style="margin-left: 20px; margin-right: 20px;">Select Page</p>
-                              <select onchange="onPageChange('<%= query.count || 10 %>', this.value, '<%= query.search  %>')">
-                                <% 
-                                  let totalPagesSafe = Number(totalpages) || 1;
-                                  for (var i = 1; i <= totalPagesSafe; i++) { 
-                                %>
-                                  <option value="<%= i %>" <%= i === (query.page || 1) ? 'selected' : '' %>><%= i %></option>
-                                <% } %>
-                              </select>
+                              <%
+                              let totalPagesSafe = Number(totalpages);
+                              if (!totalPagesSafe || totalPagesSafe < 1) {
+                                totalPagesSafe = 1; // Default to 1 if invalid
+                              } else if (totalPagesSafe > 1000) { 
+                                totalPagesSafe = 1000; // Prevent large numbers from crashing
+                              }
+                            %>
+                            
+                            <select onchange="onPageChange('<%= query.count || 10 %>', this.value, '<%= query.search  %>')">
+                              <% for (var i = 1; i <= totalPagesSafe; i++) { %>
+                                <option value="<%= i %>" <%= i === (query.page || 1) ? 'selected' : '' %>><%= i %></option>
+                              <% } %>
+                            </select>
+                            
                             
                               <!-- Input and Button for Direct Page Entry -->
                               <input value="<%= query.page || 1 %>" id="page" />
@@ -630,11 +637,11 @@
                                       <div class="row mb-2">
                                         <div class="col-md-4">
                                           <label class="control-label label-margin">Language</label>
-                                          <select class="form-control" name="language" id="language" required>
+                                          <select class="form-control" name="edit_language" id="language" required>
                                             <option value="">-Please select Language-</option>
                                             
                                             <% for (let i = 0; i < languages.length; i++) { %>
-                                              <option value="<%= languageCodes[i] %>"><%= languages[i] %></option>
+                                              <option value="<%= languages[i] %>"><%= languages[i] %></option>
                                             <% } %>
                                             
                                           </select>
