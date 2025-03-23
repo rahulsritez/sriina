@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<%= viewlist.language ? viewlist.language.substring(0, 2).toLowerCase() : 'en' %>">
+
 
 <head>
     <meta charset="utf-8">
@@ -707,10 +708,10 @@
                                                                             </div>
                                                                         <% } %>
                                                                 
-                                                                        <% if(viewlist.book_language) { %>
+                                                                        <% if(viewlist.language) { %>
                                                                             <div class="detail-item">
                                                                                 <span class="detail-label">Language:</span>
-                                                                                <span class="detail-value"><%= viewlist.book_language %></span>
+                                                                                <span class="detail-value"><%= viewlist.language %></span>
                                                                             </div>
                                                                         <% } %>
                                                                 
