@@ -21,18 +21,17 @@
 
     <% 
     function truncateDescription(description, length) {
-        if (!description) return ""; // Handle undefined or null description
         if (description.length > length) {
-            let truncated = description.substring(0, length);
-            let lastSpace = truncated.lastIndexOf(" ");
-            return (lastSpace > 0 ? truncated.substring(0, lastSpace) : truncated) + "...";
+            return description.substring(0, description.lastIndexOf(" ", length)) + "...";
         }
         return description;
     }
-    var metaDescription = truncateDescription(viewlist.description, 160);
+    var metaDescription = truncateDescription(viewlist.description, 153);
 %>
 
 <meta name="description" content="<%= metaDescription %>">
+
+
     <link rel="canonical" href="http://sriina.com/<%= viewlist.slug %>/<%= viewlist.id %>">
     <meta name="robots" content="index, follow">
     <meta name="googlebot" content="index, follow" />
