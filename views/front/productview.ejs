@@ -16,7 +16,20 @@
     
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon.png">
-    <meta name="description" content="<%= M_description %>">
+    <!-- <meta name="description" content="<%= M_description %>"> -->
+
+
+    <% 
+    function truncateDescription(description, length) {
+        if (description.length > length) {
+            return description.substring(0, description.lastIndexOf(" ", length)) + "...";
+        }
+        return description;
+    }
+    var metaDescription = truncateDescription(viewlist.description, 160);
+%>
+
+<meta name="description" content="<%= metaDescription %>">
     <link rel="canonical" href="http://sriina.com/<%= viewlist.slug %>/<%= viewlist.id %>">
     <meta name="robots" content="index, follow">
     <meta name="googlebot" content="index, follow" />
