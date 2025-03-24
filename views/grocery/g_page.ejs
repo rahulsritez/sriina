@@ -69,7 +69,7 @@
           
           <div class="search-result-container ">
             <div class="clearfix filters-container m-t-10">
-          <h3>Categories: <%= getmeta.meta_title %></h3>
+          <h1><%= getmeta.meta_title %></h1>
         </div>
             <div id="myTabContent" class="tab-content category-list">
               <div class="tab-pane active"  id="list-container">
@@ -102,7 +102,7 @@
                                             <input class="form-control quantity" min="1" max="10" name="quantity" value="1" type="hidden">
                                             <input type="hidden" name="product_id" value="<%= list.id %>">
                                             <% if(list.groceryQuantity > 0) {%>
-                                              <a class="btn btn-primary" href="<%= baseURL %><%= list.slug %>/<%= list.id %>"> View Product </a>
+                                              <a class="btn btn-primary" href="<%= baseURL %><%= list.slug %>/<%= list.id %>"> Buy Book </a>
                                             <% } else {%>
                                             <div class="row">
                                               <div class="col-sm-6"><span class="comingsoon">Coming Soon</span></div>
