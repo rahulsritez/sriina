@@ -28,6 +28,8 @@ const bodyParser = require("body-parser");
 var session = require("express-session");
 var expressValidator = require("express-validator");
 var engines = require("consolidate");
+const fs = require("fs");
+const sharp = require("sharp");
 var cookieParser = require("cookie-parser");
 var csrf = require("csurf");
 //var csrfProtection = csrf();
@@ -35,6 +37,7 @@ const flash = require("connect-flash");
 const { SitemapStream, streamToPromise } = require("sitemap");
 const { createGzip } = require("zlib");
 const { Readable } = require("stream");
+const axios = require("axios");
 let sitemap;
 
 //app.use(helmet());
@@ -445,14 +448,98 @@ app.post(
 app.get("/electronic", electronic.electronicIndex);
 /* end */
 
-app.get("/sitemap_index.xml", (req, res) => {
-  const filePath = path.join(__dirname, "sitemap_index.xml");
-  res.sendFile(filePath, (err) => {
-    if (err) {
-      console.error("Error sending file:", err);
-      res.status(500).send("Error occurred while sending the file.");
+const AWS_BUCKET_URL = process.env.AWS_BUCKET_URL;
+async function isUrlBroken(url) {
+  try {
+    const response = await axios.get(url, {
+      timeout: 5000,
+      validateStatus: (status) => status < 400, // Treat 2xx and 3xx as valid
+    });
+
+    console.log("response status:", response.status);
+    return false; // If response is successful, the URL is working
+  } catch (error) {
+    // console.error("Error checking URL:", url, error.message);
+    return true; // If request fails, URL is broken
+  }
+}
+
+app.get("/sitemap_index.json", async (req, res) => {
+  try {
+    const AWS_BUCKET_URL = process.env.IMAGE_URL;
+
+    // Fetch image filenames and ISBN13 from MySQL (Removed 'category')
+    const sql = "SELECT id, image, isbn13 FROM products";
+    const [rows] = await db.promise().query(sql);
+
+    let invalidImages = [];
+
+    for (const row of rows) {
+      if (!row.image) continue; // Skip if no image
+
+      const fullImageUrl = `${AWS_BUCKET_URL}${row.image}`;
+      console.log("Checking URL:", fullImageUrl);
+
+      const extension = path.extname(row.image).toLowerCase();
+      const allowedFormats = [".jpg", ".jpeg", ".png", ".gif"];
+
+      // 1️⃣ **Check if file format is valid**
+      // if (!allowedFormats.includes(extension)) {
+      //   invalidImages.push({
+      //     isbn13: row.isbn13,
+      //     url: fullImageUrl,
+      //     reason: "Invalid file format",
+      //   });
+      //   continue;
+      // }
+
+      try {
+        // 2️⃣ **Check image dimensions (Default to 100x100)**
+        const response = await axios({
+          url: fullImageUrl,
+          responseType: "arraybuffer",
+        });
+
+        const image = sharp(response.data);
+        const metadata = await image.metadata();
+
+        const minWidth = 100;
+        const minHeight = 100;
+
+        if (metadata.width < minWidth || metadata.height < minHeight) {
+          invalidImages.push({
+            isbn13: row.isbn13,
+            url: fullImageUrl,
+            width: metadata.width,
+            height: metadata.height,
+            reason: `Image too small (Min: ${minWidth}x${minHeight}px)`,
+          });
+        }
+      } catch (error) {
+        // invalidImages.push({
+        //   isbn13: row.isbn13,
+        //   url: fullImageUrl,
+        //   reason: "Failed to fetch or process image",
+        // });
+      }
     }
-  });
+
+    // Save the invalid images list to a JSON file
+    const filePath = path.join(__dirname, "invalid_images.json");
+    fs.writeFileSync(filePath, JSON.stringify(invalidImages, null, 2));
+
+    res.json({
+      message: "Invalid images JSON file has been created.",
+      totalInvalid: invalidImages.length,
+      invalidImages: invalidImages,
+      filePath: filePath,
+    });
+  } catch (err) {
+    console.error("Error generating invalid images JSON:", err);
+    res
+      .status(500)
+      .json({ error: "Error occurred while generating the file." });
+  }
 });
 
 app.get("/sitemap/categorypages.xml", (req, res) => {
