@@ -263,9 +263,9 @@
                       <% if (myJsonString.pages> 0) { %>
                         <ul class="pagination">
                           <% if (myJsonString.current==1) { %>
-                            <li class="page-item disabled"><a class="page-link">First</a></li>
+                            <li class="page-item disabled"><a class="page-link"></a></li>
                             <% } else { %>
-                              <li><a class="page-link" href="<%= get_url_name %>?page=1">First</a></li>
+                              <li><a class="page-link" href="<%= get_url_name %>?page=1">1</a></li>
                               <% } %>
                                 <% var i=(Number(myJsonString.current)> 5 ? Number(myJsonString.current) - 4 : 1) %>
                                   <% if (i !==1) { %>
@@ -287,15 +287,28 @@
                                                 <% } %>
                                                   <% } %>
                                                     <% if (myJsonString.current==myJsonString.pages) { %>
-                                                      <li class="page-item disabled"><a class="page-link">Last</a></li>
+                                                      <li class="page-item disabled"><a class="page-link">2</a></li>
                                                       <% } else { %>
                                                         <li><a class="page-link"
-                                                            href="<%= get_url_name %>?page=<%= myJsonString.pages %>">Last</a>
+                                                            href="<%= get_url_name %>?page=<%= myJsonString.pages %>">2</a>
                                                         </li>
                                                         <% } %>
                         </ul>
                         <% } %>
                     </div>
+
+
+             
+              
+                    <div>
+                      <% if (get_url_name === 'account-books') { %>
+                          <%- include('../../common/account_books') %>
+                      <% } %>
+                  </div>
+              
+                  <!-- <footer style="background-color: #000000; color: #ffffff; text-align: center; padding: 10px; position: fixed; width: 100%; bottom: 0;">
+                      <p style="margin: 0;">© 2025 Best Accounting Books Guide. All rights reserved.</p>
+                  </footer> -->
                     <!-- /.tab-pane #list-container -->
                   </div>
                   <!-- /.tab-content -->
