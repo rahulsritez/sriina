@@ -8,7 +8,7 @@ exports.orderpage = function (req, res) {
     res.redirect("/admin");
   }
   if (userType != 1) {
-    res.redirect("/error_page");
+    res.redirect("/");
   }
   if (req.session.type == 1 || req.session.type == 5) {
     var sql1 =
@@ -153,7 +153,7 @@ exports.orderViewPage = (req, res, next) => {
 exports.adminPlanPage = function (req, res) {
   var userType = req.session.type;
   if (userType != 1) {
-    res.redirect("/error_page");
+    res.redirect("/");
   }
   let sql = "SELECT * FROM plans where 1";
   let title = "Membership Plan";
@@ -193,7 +193,7 @@ exports.editMembershipPlan = function (req, res) {
 exports.homeSlider = function (req, res) {
   var userType = req.session.type;
   if (userType != 1) {
-    res.redirect("/error_page");
+    res.redirect("/");
   }
   let sql = "SELECT * FROM home_slider where 1 order by id desc";
   let title = "Home Slider";
@@ -345,7 +345,7 @@ exports.UpdateSlider = (req, res, next) => {
 exports.primeMembership = (req, res) => {
   var userType = req.session.type;
   if (userType != 1) {
-    res.redirect("/error_page");
+    res.redirect("/");
   }
   if (req.method == "GET") {
     var sql =

@@ -1,10 +1,10 @@
 exports.findMissingImage = (req, res) => {
   const axios = require("axios");
   const { page, limit } = req.query;
-  console.log(page,limit)
-  const offset = (page-1)*limit;
+  console.log(page, limit);
+  const offset = (page - 1) * limit;
   var sql_plan = `SELECT isbn13, image from products limit ${limit} offset ${offset} `;
-  console.log(sql_plan)
+  console.log(sql_plan);
   db.query(sql_plan, async function (error, result) {
     const missingImage = [];
     for (let product of result) {
@@ -31,7 +31,7 @@ exports.uploadExcel = (req, res) => {
     userId = req.session.userId;
     var userType = req.session.type;
     if (userType != 1) {
-      res.redirect("/error_page");
+      res.redirect("/");
     }
     if (userId == null && userType == null) {
       res.render("admin/admin", {

@@ -364,7 +364,7 @@ exports.catalogpage = function (req, res) {
   var userId = req.session.userId;
   var userType = req.session.type;
   if (userType != 1) {
-    res.redirect("/error_page");
+    res.redirect("/");
   }
   if (userId == null && userType == null) {
     res.redirect("/admin");
@@ -395,7 +395,7 @@ exports.cartspage = function (req, res) {
   var userId = req.session.userId;
   var userType = req.session.type;
   if (userType != 1) {
-    res.redirect("/error_page");
+    res.redirect("/");
   }
   if (userId == null && userType == null) {
     res.redirect("/admin");
@@ -413,7 +413,7 @@ exports.cartspage = function (req, res) {
 exports.subcategorypage = function (req, res) {
   var userType = req.session.type;
   if (userType != 1 || userType != 2) {
-    res.redirect("/error_page");
+    res.redirect("/");
   }
   var sql1 =
     "Select id,name from books_category where is_deleted=0 order by id desc";
@@ -436,7 +436,7 @@ exports.customerpage = (req, res, next) => {
   var userType = req.session.type;
 
   if (userType != 1) {
-    res.redirect("/error_page");
+    res.redirect("/");
   }
   var sql1 = "SELECT * FROM `users` order by `id` DESC";
   let title = "User List";
@@ -2075,7 +2075,7 @@ exports.checkUniqueISBM13 = (req, res, next) => {
 exports.webPages = (req, res, next) => {
   var userType = req.session.type;
   if (userType != 1) {
-    res.redirect("/error_page");
+    res.redirect("/");
   }
   var sql = "SELECT * FROM pages order by id desc";
   var query = db.query(sql, function (error, gerPages) {
@@ -2172,7 +2172,7 @@ exports.menuPages = (req, res, next) => {
   var sql = "SELECT * FROM menu order by id desc";
   var userType = req.session.type;
   if (userType != 1) {
-    res.redirect("/error_page");
+    res.redirect("/");
   }
   var query = db.query(sql, function (error, menuslist) {
     if (error) throw error;
@@ -2235,7 +2235,7 @@ exports.menuPagesUpdate = (req, res, next) => {
 exports.Updateddiscount = (req, res, next) => {
   var userType = req.session.type;
   if (userType != 1) {
-    res.redirect("/error_page");
+    res.redirect("/");
   }
   if (req.method == "GET") {
     let title = "Publisher wise discount";
@@ -2290,7 +2290,7 @@ exports.adminPreOrderProducts = (req, res, next) => {
 exports.stateONRent = (req, res, next) => {
   var userType = req.session.type;
   if (userType != 1) {
-    res.redirect("/error_page");
+    res.redirect("/");
   }
   let title = "State on rent";
   let data = "SELECT * FROM state_on_rent order by id desc";
@@ -2384,7 +2384,7 @@ exports.deleteStateonRent = (req, res) => {
 exports.vendorPage = (req, res) => {
   var userType = req.session.type;
   if (userType != 1) {
-    res.redirect("/error_page");
+    res.redirect("/");
   }
   var sql1 =
     "SELECT u.id as userId,u.name,u.email,u.mobile,u.type,u.status,vi.* from users u left join vendor_info vi on u.id=vi.user_id where u.type='3' order by u.id DESC";
@@ -2517,7 +2517,7 @@ exports.updateVendor = (req, res) => {
 exports.webSetting = (req, res) => {
   var userType = req.session.type;
   if (userType != 1) {
-    res.redirect("/error_page");
+    res.redirect("/");
   }
   let title = "Web Page Setting";
   var sql1 = "SELECT * FROM settings ORDER BY id desc";

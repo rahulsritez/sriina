@@ -30,6 +30,7 @@ var expressValidator = require("express-validator");
 var engines = require("consolidate");
 var cookieParser = require("cookie-parser");
 var csrf = require("csurf");
+var fs = require("fs");
 //var csrfProtection = csrf();
 const flash = require("connect-flash");
 const { SitemapStream, streamToPromise } = require("sitemap");
@@ -454,6 +455,8 @@ app.get("/sitemap_index.xml", (req, res) => {
     }
   });
 });
+
+app.get("/getMarketingTSVfile", electronic.getProductionTSVfile);
 
 app.get("/sitemap/categorypages.xml", (req, res) => {
   const categories = [
