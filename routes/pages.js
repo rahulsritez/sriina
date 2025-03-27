@@ -354,7 +354,7 @@ exports.contactPage = (req, res) => {
             });
         });
         } else {
-            res.redirect("/error_page");
+            res.redirect("/");
         }
     });
     }catch(error){
@@ -502,7 +502,7 @@ exports.getCategories = function (req, res, next) {
           });
         });
       } else {
-        res.redirect("/error_page");
+        res.redirect("/");
       }
     });
   } catch (error) {
