@@ -29,6 +29,7 @@
     "crypto": "^1.0.1",
     "cryptr": "^6.0.2",
     "csurf": "^1.11.0",
+    "csv-writer": "^1.6.0",
     "currency-converter-lt": "^2.0.0",
     "dateformat": "^3.0.3",
     "dotenv": "^16.0.3",
@@ -66,6 +67,7 @@
     "twilio": "^4.15.0",
     "underscore": "^1.13.2",
     "validator": "^13.7.0",
+    "xlsx": "^0.18.5",
     "xmlbuilder2": "^3.1.1",
     "xss": "^1.0.8"
   },
