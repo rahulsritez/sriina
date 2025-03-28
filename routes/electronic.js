@@ -11,14 +11,14 @@ exports.electronicIndex = function (req, res) {
 
 exports.getProductionTSVfile = function (req, res) {
   const sql = `
-        SELECT id, name, description, pre_order_status, quantity, slug, image, price, discount, 
-               currency_code, isbn, isbn13, publisher, cluster_subject, author_details, media_file_link, 
-               book_binding, age_books, no_of_volumes, cat_id, unit, measure_unit_code, created_at
-        FROM products 
-        WHERE status = 1 
-        AND is_deleted = 0 
-        AND created_at > '2025-01-01'
-      `;
+      SELECT id, name, description, pre_order_status, quantity, slug, image, price, discount, 
+             currency_code, isbn, isbn13, publisher, cluster_subject, author_details, media_file_link, 
+             book_binding, age_books, no_of_volumes, cat_id, unit, measure_unit_code, created_at
+      FROM products 
+      WHERE status = 1 
+      AND is_deleted = 0 
+      AND created_at > '2025-01-01'
+    `;
 
   db.query(sql, (err, rows) => {
     if (err) {
@@ -31,6 +31,8 @@ exports.getProductionTSVfile = function (req, res) {
     }
 
     const seenIds = new Set();
+    const validImageExtensions = ["jpg", "jpeg", "png", "gif"];
+
     const productFeed = rows
       .filter((product) => {
         const id = product.id;
@@ -39,13 +41,37 @@ exports.getProductionTSVfile = function (req, res) {
         return true;
       })
       .map((product) => {
+        const currency = "INR"; // Ensure INR
+
+        // Ensure valid image format
+        const imageUrl =
+          product.image && process.env.IMAGE_URL
+            ? `${process.env.IMAGE_URL.replace(/\/$/, "")}/${product.image}`
+            : "";
+
+        const imageExtension = imageUrl.split(".").pop().toLowerCase();
+        const finalImageUrl = validImageExtensions.includes(imageExtension)
+          ? imageUrl
+          : process.env.DEFAULT_IMAGE_URL || "";
+
+        // Ensure valid price calculation
+        const price = parseFloat(product.price) || 0;
+        const discount = parseFloat(product.discount) || 0;
+        const finalSalePrice = (price - (price * discount) / 100).toFixed(2);
+        const youSaveMoney = (price - finalSalePrice).toFixed(2);
+
+        // Clean description (remove HTML tags & extra spaces)
+        const cleanDescription = product.description
+          ? product.description
+              .replace(/<[^>]*>/g, "")
+              .replace(/\s+/g, " ")
+              .trim()
+          : "Description not available";
+
         return {
-          id: product.id,
-          title: product.name.substring(0, 150),
-          description: (product.description || "")
-            .replace(/<[^>]*>/g, "") // Remove HTML tags
-            .replace(/\t/g, " ") // Remove tabs
-            .substring(0, 5000), // Limit to 5000 chars
+          id: product.id || "",
+          title: (product.name || "").substring(0, 150),
+          description: cleanDescription.substring(0, 5000),
           availability:
             product.pre_order_status === 1
               ? "preorder"
@@ -53,17 +79,14 @@ exports.getProductionTSVfile = function (req, res) {
               ? "in_stock"
               : "out_of_stock",
           link: product.slug
-            ? `${process.env.URL}/${product.slug}/${product.id}`
-            : "",
-          image_link: product.image
-            ? `${process.env.IMAGE_URL}${product.image}`
-            : "",
-          price: `${product.price} ${product.currency_code || "USD"}`,
-          sale_price: product.discount
-            ? `${(product.price - product.discount).toFixed(2)} ${
-                product.currency_code || "USD"
+            ? `${process.env.URL.replace(/\/$/, "")}/${product.slug}/${
+                product.id
               }`
             : "",
+          image_link: finalImageUrl,
+          price: `${finalSalePrice} INR`,
+          sale_price: `${finalSalePrice} INR`,
+          you_save: `${youSaveMoney} INR`,
           brand: product.publisher || "Unknown",
           isbn: product.isbn13 || product.isbn || "",
           author: product.author_details || "",
@@ -87,6 +110,7 @@ exports.getProductionTSVfile = function (req, res) {
       "image_link",
       "price",
       "sale_price",
+      "you_save",
       "brand",
       "isbn",
       "author",
@@ -99,10 +123,18 @@ exports.getProductionTSVfile = function (req, res) {
     ].join("\t");
 
     const tsvRows = productFeed.map((product) =>
-      Object.values(product).join("\t")
+      Object.values(product)
+        .map((value) =>
+          value !== null && value !== undefined ? `"${value}"` : '""'
+        )
+        .join("\t")
     );
 
-    const tsvContent = [tsvHeaders, ...tsvRows].join("\n");
+    const validRows = tsvRows.filter(
+      (row) => row.split("\t").length === tsvHeaders.split("\t").length
+    );
+
+    const tsvContent = [tsvHeaders, ...validRows].join("\n");
 
     const filePath = path.join(__dirname, "getMarketingUploadableProducts.tsv");
     fs.writeFileSync(filePath, tsvContent);
