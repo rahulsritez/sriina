@@ -260,42 +260,31 @@
                       <!-- /.category-product -->
                     </div>
                     <div class="text-center">
-                      <% if (myJsonString.pages> 0) { %>
+                      <% if (myJsonString.pages > 0) { %>
                         <ul class="pagination">
-                          <% if (myJsonString.current==1) { %>
-                            <li class="page-item disabled"><a class="page-link"></a></li>
+                          <% var currentPage = Number(myJsonString.current) || 1; %>
+                    
+                          <% var i = (currentPage > 5 ? currentPage - 4 : 1); %>
+                    
+                          <% if (i !== 1) { %>
+                            <li class="page-item disabled"><a class="page-link">...</a></li>
+                          <% } %>
+                    
+                          <% for (; i <= (currentPage + 4) && i <= myJsonString.pages; i++) { %>
+                            <% if (i == currentPage) { %>
+                              <li class="page-item active"><a class="page-link"><%= i %></a></li>
                             <% } else { %>
-                              <li><a class="page-link" href="<%= get_url_name %>?page=1">1</a></li>
-                              <% } %>
-                                <% var i=(Number(myJsonString.current)> 5 ? Number(myJsonString.current) - 4 : 1) %>
-                                  <% if (i !==1) { %>
-                                    <li class="page-item disabled"><a>...</a></li>
-                                    <% } %>
-                                      <% for (; i <=(Number(myJsonString.current) + 4) && i <=myJsonString.pages; i++) {
-                                        %>
-                                        <% if (i==myJsonString.current) { %>
-                                          <li class="page-item active"><a class="page-link">
-                                              <%= i %>
-                                            </a></li>
-                                          <% } else { %>
-                                            <li><a class="page-link" href="<%= get_url_name %>?page=<%= i %>">
-                                                <%= i %>
-                                              </a></li>
-                                            <% } %>
-                                              <% if (i==Number(myJsonString.current) + 4 && i < myJsonString.pages) { %>
-                                                <li class="page-item disabled"><a class="page-link">...</a></li>
-                                                <% } %>
-                                                  <% } %>
-                                                    <% if (myJsonString.current==myJsonString.pages) { %>
-                                                      <li class="page-item disabled"><a class="page-link">2</a></li>
-                                                      <% } else { %>
-                                                        <li><a class="page-link"
-                                                            href="<%= get_url_name %>?page=<%= myJsonString.pages %>">2</a>
-                                                        </li>
-                                                        <% } %>
+                              <li><a class="page-link" href="<%= get_url_name %>?page=<%= i %>"><%= i %></a></li>
+                            <% } %>
+                          <% } %>
+                    
+                          <% if (i <= myJsonString.pages) { %>
+                            <li class="page-item disabled"><a class="page-link">...</a></li>
+                          <% } %>
                         </ul>
-                        <% } %>
+                      <% } %>
                     </div>
+                    
 
 
              
