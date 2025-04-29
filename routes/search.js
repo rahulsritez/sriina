@@ -80,6 +80,14 @@ exports.searchResult = (req, res, next) => {
     .replace(/[\u2013\u2014]/g, "-")
     .replace(/[|!']/g, "");
 
+  // Escape special regex characters
+  const escapeRegex = (text) =>
+    text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+  const regexSearch = escapeRegex(sanitizedPhrase);
+
+  // Split the search query into individual words
+  const words = sanitizedPhrase.split(" ").filter((word) => word.length > 0);
+
   // Query for category list (fetch this first)
   const sqlCategoryList = `
     SELECT books_category.id, books_category.name, books_category.meta_title,
@@ -103,39 +111,36 @@ exports.searchResult = (req, res, next) => {
     if (!sanitizedPhrase || sanitizedPhrase.length === 0) {
       return res.render("front/searchview", {
         searchresult: [],
-        categorylist: categorylist, // Now categorylist is always available
+        categorylist: categorylist,
         title: title,
       });
     }
 
-    // Split the search query into individual words
-    const words = sanitizedPhrase.split(" ");
-
-    // Build the SQL query for search
+    // Build the SQL query for search with REGEXP
     const sqlQuery = `
       SELECT p.*,
         CASE
-          WHEN p.publisher LIKE ? THEN 1
-          WHEN p.name LIKE ? THEN 2
-          WHEN p.author LIKE ? THEN 3
-          WHEN p.isbn LIKE ? THEN 4
-          WHEN p.isbn13 LIKE ? THEN 5
+          WHEN p.publisher REGEXP ? THEN 1
+          WHEN p.name REGEXP ? THEN 2
+          WHEN p.author REGEXP ? THEN 3
+          WHEN p.isbn REGEXP ? THEN 4
+          WHEN p.isbn13 REGEXP ? THEN 5
           ELSE 6
         END AS relevance
       FROM products p
       WHERE p.is_deleted = 0
       AND (
-        p.publisher LIKE ? OR
-        p.name LIKE ? OR
-        p.author LIKE ? OR
-        p.isbn LIKE ? OR
-        p.isbn13 LIKE ?
+        p.publisher REGEXP ? OR
+        p.name REGEXP ? OR
+        p.author REGEXP ? OR
+        p.isbn REGEXP ? OR
+        p.isbn13 REGEXP ?
       )
       OR (
         ${words
           .map(
             () =>
-              `(INSTR(p.publisher, ?) > 0 OR INSTR(p.name, ?) > 0 OR INSTR(p.author, ?) > 0 OR INSTR(p.isbn, ?) > 0 OR INSTR(p.isbn13, ?) > 0)`
+              `(p.publisher REGEXP ? OR p.name REGEXP ? OR p.author REGEXP ? OR p.isbn REGEXP ? OR p.isbn13 REGEXP ?)`
           )
           .join(" AND ")}
       )
@@ -145,17 +150,17 @@ exports.searchResult = (req, res, next) => {
 
     // Create parameters for query
     const params = [
-      sanitizedPhrase,
-      sanitizedPhrase,
-      sanitizedPhrase,
-      sanitizedPhrase,
-      sanitizedPhrase,
-      `%${sanitizedPhrase}%`,
-      `%${sanitizedPhrase}%`,
-      `%${sanitizedPhrase}%`,
-      `%${sanitizedPhrase}%`,
-      `%${sanitizedPhrase}%`,
-      ...words.flatMap((word) => Array(5).fill(word)),
+      regexSearch, // For CASE relevance
+      regexSearch,
+      regexSearch,
+      regexSearch,
+      regexSearch,
+      regexSearch, // For WHERE condition
+      regexSearch,
+      regexSearch,
+      regexSearch,
+      regexSearch,
+      ...words.flatMap((word) => Array(5).fill(escapeRegex(word))),
     ];
 
     console.log("Executing SQL Query:", sqlQuery);
@@ -169,8 +174,8 @@ exports.searchResult = (req, res, next) => {
       }
 
       res.render("front/searchview", {
-        searchresult: searchresult || [], // Ensure it doesn't break if null
-        categorylist: categorylist, // Category list is always available
+        searchresult: searchresult || [],
+        categorylist: categorylist,
         title: title,
       });
     });
