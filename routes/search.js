@@ -73,6 +73,80 @@ exports.searchResult = (req, res, next) => {
   const xss = require("xss");
   const title = "Search result page";
 
+  // Define stop words (words that should be ignored)
+  const stopWords = new Set([
+    "books",
+    "the",
+    "a",
+    "an",
+    "of",
+    "in",
+    "on",
+    "for",
+    "and",
+    "to",
+    "by",
+    "edition",
+    "series",
+    "vol",
+    "volume",
+    "chapter",
+    "author",
+    "publisher",
+    "name",
+    "isbn",
+    "isbn13",
+    "title",
+    "price",
+    "sale",
+    "discount",
+    "year",
+    "new",
+    "used",
+    "from",
+    "through",
+    "with",
+    "this",
+    "that",
+    "which",
+    "as",
+    "at",
+    "about",
+    "after",
+    "before",
+    "into",
+    "during",
+    "until",
+    "when",
+    "where",
+    "how",
+    "on sale",
+    "best",
+    "seller",
+    "in stock",
+    "out of stock",
+    "store",
+    "shop",
+    "shopping",
+    "order",
+    "cart",
+    "buy",
+    "purchase",
+    "search",
+    "add",
+    "remove",
+    "cart",
+    "bookstore",
+    "library",
+    "author",
+    "book",
+    "copy",
+    "edition",
+    "language",
+    "publication",
+    "format",
+  ]);
+
   // Get and sanitize the search query
   let searchQuery = xss(req.query.q || "").trim();
   const sanitizedPhrase = searchQuery
@@ -80,13 +154,34 @@ exports.searchResult = (req, res, next) => {
     .replace(/[\u2013\u2014]/g, "-")
     .replace(/[|!']/g, "");
 
-  // Escape special regex characters
+  // Escape special regex characters for safer use in regex
   const escapeRegex = (text) =>
     text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
-  const regexSearch = escapeRegex(sanitizedPhrase);
 
-  // Split the search query into individual words
-  const words = sanitizedPhrase.split(" ").filter((word) => word.length > 0);
+  // If no search query, return empty results
+  if (!sanitizedPhrase || sanitizedPhrase.length === 0) {
+    return res.render("front/searchview", {
+      searchresult: [],
+      categorylist: [],
+      title: title,
+    });
+  }
+
+  // Split the search query into individual words and remove stop words
+  const words = sanitizedPhrase
+    .split(" ")
+    .filter((word) => word.length > 0 && !stopWords.has(word.toLowerCase()));
+
+  if (words.length === 0) {
+    // If all words are stop words, return no results
+    return res.render("front/searchview", {
+      searchresult: [],
+      categorylist: [],
+      title: title,
+    });
+  }
+
+  const escapedWords = words.map(escapeRegex).join("|");
 
   // Query for category list (fetch this first)
   const sqlCategoryList = `
@@ -108,73 +203,86 @@ exports.searchResult = (req, res, next) => {
       return res.redirect("/errorPage");
     }
 
-    if (!sanitizedPhrase || sanitizedPhrase.length === 0) {
-      return res.render("front/searchview", {
-        searchresult: [],
-        categorylist: categorylist,
-        title: title,
-      });
-    }
-
-    // Build the SQL query for search with REGEXP
-    const sqlQuery = `
-      SELECT p.*,
-        CASE
-          WHEN p.publisher REGEXP ? THEN 1
-          WHEN p.name REGEXP ? THEN 2
-          WHEN p.author REGEXP ? THEN 3
-          WHEN p.isbn REGEXP ? THEN 4
-          WHEN p.isbn13 REGEXP ? THEN 5
-          ELSE 6
-        END AS relevance
+    // Build the SQL query for search, matching partial word matches
+    let sqlQuery = `
+      SELECT p.*, 
+        (
+          (p.publisher REGEXP ?) + 
+          (p.name REGEXP ?) + 
+          (p.author REGEXP ?) + 
+          (p.isbn REGEXP ?) + 
+          (p.isbn13 REGEXP ?)
+        ) AS relevance
       FROM products p
       WHERE p.is_deleted = 0
-      AND (
-        p.publisher REGEXP ? OR
-        p.name REGEXP ? OR
-        p.author REGEXP ? OR
-        p.isbn REGEXP ? OR
-        p.isbn13 REGEXP ?
-      )
-      OR (
-        ${words
-          .map(
-            () =>
-              `(p.publisher REGEXP ? OR p.name REGEXP ? OR p.author REGEXP ? OR p.isbn REGEXP ? OR p.isbn13 REGEXP ?)`
-          )
-          .join(" AND ")}
-      )
-      ORDER BY relevance ASC, p.id DESC
+        AND (
+          p.publisher REGEXP ? OR
+          p.name REGEXP ? OR
+          p.author REGEXP ? OR
+          p.isbn REGEXP ? OR
+          p.isbn13 REGEXP ?
+        )
+      ORDER BY relevance DESC, p.id DESC
       LIMIT 1000;
     `;
 
-    // Create parameters for query
     const params = [
-      regexSearch, // For CASE relevance
-      regexSearch,
-      regexSearch,
-      regexSearch,
-      regexSearch,
-      regexSearch, // For WHERE condition
-      regexSearch,
-      regexSearch,
-      regexSearch,
-      regexSearch,
-      ...words.flatMap((word) => Array(5).fill(escapeRegex(word))),
+      escapedWords,
+      escapedWords,
+      escapedWords,
+      escapedWords,
+      escapedWords,
+      escapedWords,
+      escapedWords,
+      escapedWords,
+      escapedWords,
+      escapedWords,
     ];
 
-    console.log("Executing SQL Query:", sqlQuery);
-    console.log("With Parameters:", params);
-
-    // Execute search query
     db.query(sqlQuery, params, (error, searchresult) => {
       if (error) {
         console.error("Database Error (Search Query):", error);
         return res.redirect("/errorPage");
       }
 
+      // Calculate match percentage and apply a threshold for relevance
+      const matchThreshold = 0.5; // 50% match threshold
+
+      const filteredResults = searchresult.filter((result) => {
+        let matchCount = 0;
+
+        // Count how many words match for each product
+        words.forEach((word) => {
+          const regex = new RegExp(escapeRegex(word), "i");
+          if (
+            regex.test(result.publisher) ||
+            regex.test(result.name) ||
+            regex.test(result.author) ||
+            regex.test(result.isbn) ||
+            regex.test(result.isbn13)
+          ) {
+            matchCount++;
+          }
+        });
+
+        // Attach a relevance score to each product based on matching words
+        const matchPercentage = matchCount / words.length;
+
+        // Only include results that meet the match threshold
+        if (matchPercentage >= matchThreshold) {
+          result.relevanceScore = matchPercentage;
+          return true;
+        }
+        return false;
+      });
+
+      // Sort the results by relevance score (highest first)
+      const sortedResults = filteredResults.sort(
+        (a, b) => b.relevanceScore - a.relevanceScore
+      );
+
       res.render("front/searchview", {
-        searchresult: searchresult || [],
+        searchresult: sortedResults || [],
         categorylist: categorylist,
         title: title,
       });
