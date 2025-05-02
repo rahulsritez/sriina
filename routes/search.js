@@ -73,7 +73,7 @@ exports.searchResult = (req, res, next) => {
   const xss = require("xss");
   const title = "Search result page";
 
-  // Define stop words (words that should be ignored)
+  // Define stop words
   const stopWords = new Set([
     "books",
     "the",
@@ -135,30 +135,22 @@ exports.searchResult = (req, res, next) => {
     "search",
     "add",
     "remove",
-    "cart",
     "bookstore",
     "library",
-    "author",
     "book",
     "copy",
-    "edition",
     "language",
     "publication",
     "format",
   ]);
 
-  // Get and sanitize the search query
+  // Sanitize and prepare the search query
   let searchQuery = xss(req.query.q || "").trim();
   const sanitizedPhrase = searchQuery
     .normalize("NFKD")
     .replace(/[\u2013\u2014]/g, "-")
     .replace(/[|!']/g, "");
 
-  // Escape special regex characters for safer use in regex
-  const escapeRegex = (text) =>
-    text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
-
-  // If no search query, return empty results
   if (!sanitizedPhrase || sanitizedPhrase.length === 0) {
     return res.render("front/searchview", {
       searchresult: [],
@@ -167,13 +159,12 @@ exports.searchResult = (req, res, next) => {
     });
   }
 
-  // Split the search query into individual words and remove stop words
+  // Remove stop words
   const words = sanitizedPhrase
     .split(" ")
     .filter((word) => word.length > 0 && !stopWords.has(word.toLowerCase()));
 
   if (words.length === 0) {
-    // If all words are stop words, return no results
     return res.render("front/searchview", {
       searchresult: [],
       categorylist: [],
@@ -181,9 +172,10 @@ exports.searchResult = (req, res, next) => {
     });
   }
 
-  const escapedWords = words.map(escapeRegex).join("|");
+  // Prepare LIKE pattern
+  const likePattern = `%${sanitizedPhrase.replace(/\s+/g, "%")}%`;
 
-  // Query for category list (fetch this first)
+  // Query for category list
   const sqlCategoryList = `
     SELECT books_category.id, books_category.name, books_category.meta_title,
       books_category.meta_description, books_category.meta_canonical_tag, 
@@ -203,72 +195,92 @@ exports.searchResult = (req, res, next) => {
       return res.redirect("/errorPage");
     }
 
-    // Build the SQL query for search, matching partial word matches
-    let sqlQuery = `
-      SELECT p.*, 
+    // Search across multiple fields using LIKE
+    const sqlQuery = `
+      SELECT p.*,
         (
-          (p.publisher REGEXP ?) + 
-          (p.name REGEXP ?) + 
-          (p.author REGEXP ?) + 
-          (p.isbn REGEXP ?) + 
-          (p.isbn13 REGEXP ?)
+          (p.publisher LIKE ?) +
+          (p.name LIKE ?) +
+          (p.author LIKE ?) +
+          (p.isbn LIKE ?) +
+          (p.isbn13 LIKE ?) +
+          (p.sub_category LIKE ?) +
+          (p.book_edition LIKE ?) +
+          (p.language LIKE ?) +
+          (p.description LIKE ?) +
+          (p.slug LIKE ?) +
+          (p.publishing_year LIKE ?) +
+          (p.final_subject LIKE ?) +
+          (p.book_language LIKE ?) +
+          (p.book_binding LIKE ?) +
+          (p.currency_code LIKE ?) +
+          (p.meta_description LIKE ?)
         ) AS relevance
       FROM products p
       WHERE p.is_deleted = 0
         AND (
-          p.publisher REGEXP ? OR
-          p.name REGEXP ? OR
-          p.author REGEXP ? OR
-          p.isbn REGEXP ? OR
-          p.isbn13 REGEXP ?
+          p.publisher LIKE ? OR
+          p.name LIKE ? OR
+          p.author LIKE ? OR
+          p.isbn LIKE ? OR
+          p.isbn13 LIKE ? OR
+          p.sub_category LIKE ? OR
+          p.book_edition LIKE ? OR
+          p.language LIKE ? OR
+          p.description LIKE ? OR
+          p.slug LIKE ? OR
+          p.publishing_year LIKE ? OR
+          p.final_subject LIKE ? OR
+          p.book_language LIKE ? OR
+          p.book_binding LIKE ? OR
+          p.currency_code LIKE ? OR
+          p.meta_description LIKE ?
         )
       ORDER BY relevance DESC, p.id DESC
       LIMIT 1000;
     `;
 
-    const params = [
-      escapedWords,
-      escapedWords,
-      escapedWords,
-      escapedWords,
-      escapedWords,
-      escapedWords,
-      escapedWords,
-      escapedWords,
-      escapedWords,
-      escapedWords,
-    ];
+    const params = Array(16)
+      .fill(likePattern)
+      .concat(Array(16).fill(likePattern));
 
     db.query(sqlQuery, params, (error, searchresult) => {
       if (error) {
-        console.error("Database Error (Search Query):", error);
+        console.error("Database Error (Search):", error);
         return res.redirect("/errorPage");
       }
 
-      // Calculate match percentage and apply a threshold for relevance
-      const matchThreshold = 0.5; // 50% match threshold
-
+      // Filter based on match percentage
+      const matchThreshold = 0.5;
       const filteredResults = searchresult.filter((result) => {
         let matchCount = 0;
-
-        // Count how many words match for each product
         words.forEach((word) => {
-          const regex = new RegExp(escapeRegex(word), "i");
+          const regex = new RegExp(
+            word.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&"),
+            "i"
+          );
           if (
             regex.test(result.publisher) ||
             regex.test(result.name) ||
             regex.test(result.author) ||
             regex.test(result.isbn) ||
-            regex.test(result.isbn13)
+            regex.test(result.isbn13) ||
+            regex.test(result.sub_category) ||
+            regex.test(result.book_edition) ||
+            regex.test(result.language) ||
+            regex.test(result.description) ||
+            regex.test(result.slug) ||
+            regex.test(result.publishing_year) ||
+            regex.test(result.final_subject) ||
+            regex.test(result.book_language) ||
+            regex.test(result.book_binding) ||
+            regex.test(result.currency_code) ||
+            regex.test(result.meta_description)
           ) {
             matchCount++;
           }
         });
-
-        // Attach a relevance score to each product based on matching words
         const matchPercentage = matchCount / words.length;
-
-        // Only include results that meet the match threshold
         if (matchPercentage >= matchThreshold) {
           result.relevanceScore = matchPercentage;
           return true;
@@ -276,7 +288,6 @@ exports.searchResult = (req, res, next) => {
         return false;
       });
 
-      // Sort the results by relevance score (highest first)
       const sortedResults = filteredResults.sort(
         (a, b) => b.relevanceScore - a.relevanceScore
       );
