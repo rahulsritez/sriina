@@ -172,8 +172,11 @@ exports.searchResult = (req, res, next) => {
     });
   }
 
-  // Prepare LIKE pattern
-  const likePattern = `%${sanitizedPhrase.replace(/\s+/g, "%")}%`;
+  // Log to ensure words are correctly parsed
+  console.log("Search Words:", words);
+
+  // Prepare the LIKE pattern for each word
+  const wordPatterns = words.map((word) => `%${word}%`);
 
   // Query for category list
   const sqlCategoryList = `
@@ -195,62 +198,52 @@ exports.searchResult = (req, res, next) => {
       return res.redirect("/errorPage");
     }
 
-    // Search across multiple fields using LIKE
+    // Dynamically build the WHERE clause for the SQL query
+    const whereParts = [];
+    const params = [];
+
+    words.forEach((word) => {
+      const likeWord = `%${word}%`;
+      [
+        "publisher",
+        "name",
+        "author",
+        "isbn",
+        "isbn13",
+        "sub_category",
+        "book_edition",
+        "language",
+        "description",
+        "slug",
+        "publishing_year",
+        "final_subject",
+        "book_language",
+        "book_binding",
+        "currency_code",
+        "meta_description",
+      ].forEach((field) => {
+        whereParts.push(`p.${field} LIKE ?`);
+        params.push(likeWord);
+      });
+    });
+
     const sqlQuery = `
-      SELECT p.*,
-        (
-          (p.publisher LIKE ?) +
-          (p.name LIKE ?) +
-          (p.author LIKE ?) +
-          (p.isbn LIKE ?) +
-          (p.isbn13 LIKE ?) +
-          (p.sub_category LIKE ?) +
-          (p.book_edition LIKE ?) +
-          (p.language LIKE ?) +
-          (p.description LIKE ?) +
-          (p.slug LIKE ?) +
-          (p.publishing_year LIKE ?) +
-          (p.final_subject LIKE ?) +
-          (p.book_language LIKE ?) +
-          (p.book_binding LIKE ?) +
-          (p.currency_code LIKE ?) +
-          (p.meta_description LIKE ?)
-        ) AS relevance
+      SELECT p.*
       FROM products p
       WHERE p.is_deleted = 0
-        AND (
-          p.publisher LIKE ? OR
-          p.name LIKE ? OR
-          p.author LIKE ? OR
-          p.isbn LIKE ? OR
-          p.isbn13 LIKE ? OR
-          p.sub_category LIKE ? OR
-          p.book_edition LIKE ? OR
-          p.language LIKE ? OR
-          p.description LIKE ? OR
-          p.slug LIKE ? OR
-          p.publishing_year LIKE ? OR
-          p.final_subject LIKE ? OR
-          p.book_language LIKE ? OR
-          p.book_binding LIKE ? OR
-          p.currency_code LIKE ? OR
-          p.meta_description LIKE ?
-        )
-      ORDER BY relevance DESC, p.id DESC
+        AND (${whereParts.join(" OR ")})
+      ORDER BY p.id DESC
       LIMIT 1000;
     `;
 
-    const params = Array(16)
-      .fill(likePattern)
-      .concat(Array(16).fill(likePattern));
-
+    // Execute the search query
     db.query(sqlQuery, params, (error, searchresult) => {
       if (error) {
         console.error("Database Error (Search):", error);
         return res.redirect("/errorPage");
       }
 
-      // Filter based on match percentage
+      // Filter results based on word matching
       const matchThreshold = 0.5;
       const filteredResults = searchresult.filter((result) => {
         let matchCount = 0;
@@ -288,6 +281,7 @@ exports.searchResult = (req, res, next) => {
         return false;
       });
 
+      // Sort by relevance
       const sortedResults = filteredResults.sort(
         (a, b) => b.relevanceScore - a.relevanceScore
       );
