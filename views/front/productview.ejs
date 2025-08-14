@@ -13,6 +13,7 @@
         Book Online at ₹<%= new_price ? new_price.toFixed(2) : "0.00" %> 
         - Free Delivery
     </title>
+    <link rel="canonical" href="http://sriina.com/<%= viewlist.slug %>/<%= viewlist.id %>">
     <meta name="description" content="Buy <%= viewlist.name ? viewlist.name : "Unknown Book" %> Book Online at Best Price at Sriina.com. Free Shipping Charges.">
     
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -30,10 +31,10 @@
     var metaDescription = truncateDescription(viewlist.description, 153);
 %>
 
-<meta name="description" content="<%= metaDescription %>">
+<!-- <meta name="description" content="<%= metaDescription %>"> -->
 
 
-    <link rel="canonical" href="http://sriina.com/<%= viewlist.slug %>/<%= viewlist.id %>">
+   
     <meta name="robots" content="index, follow">
     <meta name="googlebot" content="index, follow" />
     <meta name="bingbot" content=" index, follow ">
@@ -54,8 +55,8 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/xzoom/1.0.15/xzoom.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/xzoom/1.0.15/xzoom.min.css">
 
-    <title><%= M_title %> - Sriina
-    </title>
+    <!-- <title><%= M_title %> - Sriina
+    </title> -->
     <link rel="stylesheet" href="<%= baseURL %>assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="<%= baseURL %>assets/css/main.css">
     <link rel="stylesheet" href="<%= baseURL %>assets/css/blue.css">

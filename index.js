@@ -38,7 +38,11 @@ const { createGzip } = require("zlib");
 const { Readable } = require("stream");
 let sitemap;
 
-//app.use(helmet());
+app.use(helmet());
+
+
+
+
 // console.log(cart);
 app.use(flash());
 
@@ -121,7 +125,22 @@ app.set("views", __dirname + "/views");
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({ extended: false }));
 //app.use(bodyParser.json());
+
 app.use(express.static("public"));
+
+
+// app.use(
+//   helmet.contentSecurityPolicy({
+//     directives: {
+//       defaultSrc: ["'self'"],
+//       imgSrc: ["'self'", "https://example.com", "data:"],
+//       scriptSrc: ["'self'", "https://trusted-cdn.com"],
+//       styleSrc: ["'self'", "https://fonts.googleapis.com"],
+//       fontSrc: ["'self'", "https://fonts.gstatic.com"],
+//     },
+//   })
+// );
+
 
 //app.get('/', routes.index);//call for main index page
 app.get("/test", (req, res) => res.send("Server is running"));
@@ -669,6 +688,10 @@ app.post(
 app.post("/update-xlsx", routes.authGaurd, updateexcel.saveExcelFileData);
 
 app.get("/:id", pages.getCategories);
+
+
+
+
 
 //Middleware
 app.listen(port, () => {
