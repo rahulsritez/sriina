@@ -38,7 +38,7 @@ const { createGzip } = require("zlib");
 const { Readable } = require("stream");
 let sitemap;
 
-app.use(helmet());
+// app.use(helmet());
 
 
 
