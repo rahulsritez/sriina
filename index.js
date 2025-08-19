@@ -303,7 +303,7 @@ app.get("/user/order-tracking", csrfProtection, myaccount.orderTracking);
 app.get("/error_page", signin.errorPage);
 
 app.get("/products", product.allProducts);
-app.get("/membership", parseForm, csrfProtection, product.membershipPlan);
+// app.get("/membership", parseForm, csrfProtection, product.membershipPlan);
 
 app.get("/homeslider", order.homeSlider);
 app.post("/addslider", order.addSlider);
