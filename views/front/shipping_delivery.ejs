@@ -3,11 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<meta name="description" content="">
+<meta name="description" content="Sriina Shipping Policy">
 <meta name="author" content="">
-<meta name="keywords" content="MediaCenter, Template, eCommerce">
+<meta name="keywords" content="MediaCenter, Template, eCommerce, Shipping Policy">
 <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon.png">
 <meta name="robots" content="all">
+<link rel="canonical" href="https://www.sriina.com/shipping-policy">
 <title>Sriina: <%= title %></title>
 <link rel="stylesheet" href="assets/css/bootstrap.min.css">
 <link rel="stylesheet" href="assets/css/main.css">
@@ -20,7 +21,7 @@
 <link href="assets/css/lightbox.css" rel="stylesheet">
 <link href="assets/css/custom.css" rel="stylesheet" />
 <link rel="stylesheet" href="assets/css/font-awesome.css">
-<link href='http://fonts.googleapis.com/css?family=Roboto:300,400,500,700' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700' rel='stylesheet' type='text/css'>
 <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,400italic,600,600italic,700,700italic,800' rel='stylesheet' type='text/css'>
 <link href='https://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
 <!-- Google tag (gtag.js) -->
@@ -29,7 +30,6 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
   gtag('config', 'G-YN8Y6YGBF7');
 </script>
 <!-- Google Tag Manager -->
@@ -38,26 +38,26 @@
   j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
   })(window,document,'script','dataLayer','GTM-T2VD4PM4');</script>
-  <!-- End Google Tag Manager -->
+<!-- End Google Tag Manager -->
 </head>
-    <body class="cnt-home">
-      <!-- Google Tag Manager (noscript) -->
+<body class="cnt-home">
+<!-- Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T2VD4PM4"
   height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-  <!-- End Google Tag Manager (noscript) -->
-    <!-- ============================================== HEADER ============================================== -->
-        <header class="header-style-1">
-            <%- include("top_bar") -%>
-            <%- include("search") -%>
-            <%- include("navigation") -%>
-        </header>
+<!-- End Google Tag Manager (noscript) -->
+<!-- ============================================== HEADER ============================================== -->
+<header class="header-style-1">
+    <%- include("top_bar") -%>
+    <%- include("search") -%>
+    <%- include("navigation") -%>
+</header>
 <!-- ============================================== HEADER : END ============================================== -->
 <div class="breadcrumb">
   <div class="container">
     <div class="breadcrumb-inner">
       <ul class="list-inline list-unstyled">
         <li><a href="/">Home</a></li>
-        <li><a href="about-us">About us</a></li>
+        <li><a href="/shipping-policy">Shipping Policy</a></li>
       </ul>
     </div><!-- /.breadcrumb-inner -->
   </div><!-- /.container -->
@@ -70,16 +70,14 @@
                     <div class="row wow fadeInUp" style="padding: 18px;line-height: 25px;font-size: 14px;">
                         <p>
                             <% if (getresult) { %>
-                                <%= //getresult.description %>
-                                <h4><strong>Shipping Policy</strong></h4>
+                                <h1><strong>Shipping Policy</strong></h1>
                                 <p>Over the order 1000 get free delivery. Fast delivery in Delhi.</p>
                                 <p>We will deliver product with 5 to 7 working days.</p>
                                 <p>Cash On Delivery Available 70 rupees as shipping charges applicable on COD orders</p>
                                 <p>Easy Return Low Prices wide range of Books 100% Product Quality.</p>
                                 <p>if the customer receives product damage and if you receive a wrong product that conditions customer can return their product & apply for a refund.</p>
                                 <p>If in any case, a wrong book has been erroneously shipped to the customer, then only return will be accepted. In that case, it will be desirable that customer ships the books back to us via book packet service of India Post.</p> 
-
-                                <h4><strong>SHIPPING AND DELIVERY :</strong></h4>
+                                <h2><strong>Shipping and Delivery</strong></h2>
                                 <p>All Products purchased from the Website shall be delivered to the User by standard courier services. All deliveries where applicable shall be made on a best efforts basis, and while the Website will endeavor to deliver the Products on the dates intimated, the Website disclaims any claims or liabilities arising from any delay in this regard. On behalf of the Seller, a nominal fee may be charged on all cash on delivery (“COD”) orders. </p>
                                 <p>The COD charge can be viewed at the time of placing the order and in all order related emails.</p>
                                 <p>This charge shall not be refunded if an item is returned or if the cancellation request is raised after the order is shipped.</p>
@@ -99,9 +97,8 @@
             </div>
             <div class="clearfix"></div>
         </div>
-  </div>
+    </div>
 </div>
-
 <%- include ("../front/book_footer") %>
 <script src="assets/js/jquery-1.11.1.min.js"></script>  
 <script src="assets/js/bootstrap.min.js"></script>

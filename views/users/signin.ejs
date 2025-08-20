@@ -5,10 +5,10 @@
         <meta charset="utf-8" />
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-        <meta name="description" content="" />
+        <meta name="description" content="Sign in or create an account at Sriina.com to shop for books and gadgets with hassle-free shipping and secure payment options." />
         <link rel="canonical" href="https://sriina.com/sign-in">
-        <meta name="author" content="" />
-        <meta name="keywords" content="MediaCenter, Template, eCommerce" />
+        <meta name="author" content="sriina.com" />
+        <meta name="keywords" content="MediaCenter, Template, eCommerce, Sign In, Sign Up" />
         <meta name="robots" content="INDEX,FOLLOW"/>
         <title>Sriina | <%= title %></title>
         <link rel="stylesheet" href="<%= baseURL %>assets/css/bootstrap.min.css" />
@@ -24,7 +24,6 @@
         <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet" type="text/css" />
         <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,300,400italic,600,600italic,700,700italic,800" rel="stylesheet" type="text/css" />
         <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
-
         <style>
             /* Responsive Cart Container */
             .cart-container {
@@ -32,8 +31,6 @@
                 overflow-x: auto;
                 padding: 10px;
             }
-            
-            /* Responsive Table */
             .cart-table {
                 width: 100%;
                 border-collapse: collapse;
@@ -41,8 +38,6 @@
                 border-radius: 10px;
                 box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
             }
-            
-            /* Table Headers */
             .cart-table th {
                 background-color: #f8f8f8;
                 padding: 12px;
@@ -50,37 +45,28 @@
                 font-weight: bold;
                 border-bottom: 2px solid #ddd;
             }
-            
-            /* Table Rows */
             .cart-table td {
                 padding: 15px;
                 text-align: left;
                 border-bottom: 1px solid #ddd;
             }
-            
-            /* Responsive Image */
             .cart-image {
                 width: 80px;
                 height: 80px;
                 object-fit: cover;
                 border-radius: 5px;
             }
-            
-            /* Wrap Product Name */
             .cart-product-name {
                 word-wrap: break-word;
                 white-space: normal;
                 max-width: 200px;
                 font-weight: bold;
             }
-            
-            /* Quantity Control */
             .qty-container {
                 display: flex;
                 align-items: center;
                 gap: 8px;
             }
-            
             button {
                 padding: 6px 10px;
                 border: 1px solid #ccc;
@@ -89,7 +75,6 @@
                 font-size: 14px;
                 border-radius: 5px;
             }
-            
             .quantity-input {
                 width: 40px;
                 text-align: center;
@@ -98,8 +83,6 @@
                 padding: 5px;
                 border-radius: 5px;
             }
-            
-            /* Responsive Adjustments */
             @media (max-width: 768px) {
                 .cart-table {
                     min-width: 100%;
@@ -119,8 +102,7 @@
                     width: 35px;
                 }
             }
-            </style>
-       
+        </style>
     </head>
     <body class="cnt-home">
         <header class="header-style-1">
@@ -128,24 +110,20 @@
             <%- include("../front/search") -%>
             <%- include("../front/navigation") -%>
         </header>
-
         <div class="breadcrumb">
             <div class="container">
                 <div class="breadcrumb-inner">
                     <ul class="list-inline list-unstyled">
                         <li><a href="/">Home</a></li>
-                        <li class="active">Login / Sign In</li>
+                        <li><a href="/sign-in">Sign In</a></li>
                     </ul>
                 </div>
-                <!-- /.breadcrumb-inner -->
             </div>
-            <!-- /.container -->
         </div>
-        <!-- /.breadcrumb -->
-
         <div class="body-content" style="margin-bottom: 20px;">
             <div class="container">
                 <div class="sign-in-page">
+                    <h1>Sign In / Sign Up</h1>
                     <div class="row">
                         <% if(errors.length > 0) {%>
                         <div class="alert alert-danger alert-dismissible show" role="alert">
@@ -163,23 +141,17 @@
                           </button>
                         </div>
                         <% } %>
-
-                        
                         <div class="col-md-6 sign-in">
-                            <img src="assets/images/authentication-bg-08.svg" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
-                            style="opacity: .8">
+                            <img src="assets/images/authentication-bg-08.svg" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
                         </div>
-                        <!-- Sign-in -->
                         <div class="col-md-6 col-sm-6 sign-in">
-                             <!-- Cart Section -->
-                             <div class="shopping-cart-table" id="cart-detail" style="display: none;">
-                               
+                            <h2>Sign In</h2>
+                            <div class="shopping-cart-table" id="cart-detail" style="display: none;">
                                 <div class="table-responsive">
                                     <table class="cart-table">
                                         <thead>
                                             <tr>
                                                 <th class="cart-description item">Image</th>
-                                                <!-- <th class="cart-edit item">Type</th> -->
                                                 <th class="cart-product-name item">Product Name</th>
                                                 <th class="cart-qty item">Quantity</th>
                                                 <th class="cart-sub-total item">Total</th>
@@ -187,11 +159,8 @@
                                             </tr>
                                         </thead>
                                         <tbody id="cart-items">
-                                            <!-- Dynamic content will go here -->
                                         </tbody>
-                                        <!-- /tbody -->
                                     </table>
-                                    <!-- /table -->
                                 </div>
                             </div>
                             <div id="signin-form">
@@ -223,17 +192,13 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- Sign-in -->
-
                         <div class="col-md-6 col-sm-6 create-new-account" id="signup-form" style="display: none;">
-                          
+                            <h2>Create New Account</h2>
                             <form action="/registerusers" method="post" class="register-form outer-top-xs" enctype="application/x-www-form-urlencoded" id="register-form" onsubmit="return validateRegister()" autocomplete="off">
                                 <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                 <div class="form-group success">
                                     <label class="info-title" for="exampleInputEmail2">Email Address <span>*</span></label>
                                     <input type="email" name="useremail" placeholder="Please enter Email" class="form-control success unicase-form-control text-input" id="userEmail" />
-                                    <!-- <i class="fa fa-check-circle"></i>
-                                    <i class="fa fa-exclamation-circle"></i> -->
                                     <small id="error_email"></small>
                                 </div>
                                 <div class="form-group error">
@@ -257,15 +222,12 @@
                                     <i class="fa fa-exclamation-circle"></i>
                                     <small id="error_pwd"></small>
                                 </div>
-                                <!-- <input type="hidden" name="login" value="true"> -->
                                 <button type="submit" class="btn-upper btn btn-primary checkout-page-button" style="width: 100%;">Sign Up</button>
                             </form>
                             <div style="margin-top: 20px; text-align: center;">
                                 <a href="javascript:void(0);" id="toggle-signup" onclick="toggleForms()">Already have an account? Sign In</a>
                             </div>
                         </div>
-
-                    
                     </div>
                 </div>
             </div>
@@ -283,96 +245,81 @@
         <script src="<%= baseURL %>assets/js/bootstrap-select.min.js"></script>
         <script src="<%= baseURL %>assets/js/wow.min.js"></script>
         <script src="<%= baseURL %>assets/js/scripts.js"></script>
-        
         <script>
             function getURLParameter(name) {
-            let urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get(name);
+                let urlParams = new URLSearchParams(window.location.search);
+                return urlParams.get(name);
             }
             let product_id = getURLParameter('product_id');
-            if(product_id)
-            {
+            if(product_id) {
                 let product_id = getURLParameter('product_id');
                 let name = getURLParameter('name');
                 let quantity = getURLParameter('quantity');
                 let price = getURLParameter('price');
                 let image = getURLParameter('image');
-
                 var signinFormCart = document.getElementById('cart-detail');
                 if (signinFormCart.style.display === 'none') {
-                        signinFormCart.style.display = 'block';
-                        const cartItemsContainer = document.getElementById('cart-items');
-                        cartItemsContainer.innerHTML = ''; // Clear existing rows
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td class="cart-description item">
-                                <img src="https://sriina-images.s3.ap-south-1.amazonaws.com/${image}" 
-                                    alt="${name}" class="cart-image">
-                            </td>
-                            <td class="cart-product-name item">${name}</td>
-                            <td class="cart-qty item">
-                                <div class="qty-container">
-                                    <button onclick="updateQuantity(this, -1)">−</button>
-                                    <input type="text" value="${quantity}" class="quantity-input" readonly id="quantity">
-                                    <button onclick="updateQuantity(this, 1)">+</button>
-                                </div>
-                            </td>
-                            <td class="cart-sub-total item">₹${parseFloat(price).toFixed(2)}</td>
-                            <td class="cart-total item" id="total-price">₹${(parseFloat(price) * parseInt(quantity, 10)).toFixed(2)}</td>
-                        `;
-
-                        // Append the row to the table
-                        cartItemsContainer.appendChild(row);
-
-                    document.getElementById("quantity_form").value=quantity
-                    document.getElementById("name_form").value=name
-                    document.getElementById("image_form").value=image
-                    document.getElementById("price_form").value=parseFloat(price).toFixed(2)
-
-                } 
-                else {
-                        signinFormCart.style.display = 'none';
+                    signinFormCart.style.display = 'block';
+                    const cartItemsContainer = document.getElementById('cart-items');
+                    cartItemsContainer.innerHTML = '';
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td class="cart-description item">
+                            <img src="https://sriina-images.s3.ap-south-1.amazonaws.com/${image}" 
+                                alt="${name}" class="cart-image">
+                        </td>
+                        <td class="cart-product-name item">${name}</td>
+                        <td class="cart-qty item">
+                            <div class="qty-container">
+                                <button onclick="updateQuantity(this, -1)">−</button>
+                                <input type="text" value="${quantity}" class="quantity-input" readonly id="quantity">
+                                <button onclick="updateQuantity(this, 1)">+</button>
+                            </div>
+                        </td>
+                        <td class="cart-sub-total item">₹${parseFloat(price).toFixed(2)}</td>
+                        <td class="cart-total item" id="total-price">₹${(parseFloat(price) * parseInt(quantity, 10)).toFixed(2)}</td>
+                    `;
+                    cartItemsContainer.appendChild(row);
+                    document.getElementById("quantity_form").value=quantity;
+                    document.getElementById("name_form").value=name;
+                    document.getElementById("image_form").value=image;
+                    document.getElementById("price_form").value=parseFloat(price).toFixed(2);
+                } else {
+                    signinFormCart.style.display = 'none';
                 }
             }
             function updateQuantity(button, change) {
                 let input = button.parentNode.querySelector(".quantity-input");
                 let currentValue = parseInt(input.value, 10);
                 let newValue = currentValue + change;
-
-                if (newValue > 0) { // Prevent negative quantity
+                if (newValue > 0) {
                     input.value = newValue;
-                    document.getElementById("quantity_form").value=newValue
-                    // Optionally, update the total price in the table
-        let price = parseFloat(document.getElementById("price_form").value);
-        let totalPrice = (price * newValue).toFixed(2);
-
-        // Ensure the total price cell exists
-        let row = button.closest("tr");
-        let totalPriceCell = row.querySelector(".cart-total");
-        if (totalPriceCell) {
-            totalPriceCell.innerText = `₹${totalPrice}`;
-        } else {
-            console.error("Total price cell not found");
-        }
+                    document.getElementById("quantity_form").value=newValue;
+                    let price = parseFloat(document.getElementById("price_form").value);
+                    let totalPrice = (price * newValue).toFixed(2);
+                    let row = button.closest("tr");
+                    let totalPriceCell = row.querySelector(".cart-total");
+                    if (totalPriceCell) {
+                        totalPriceCell.innerText = `₹${totalPrice}`;
+                    } else {
+                        console.error("Total price cell not found");
+                    }
                 }
             }
-
             function validateRegister(){
                 var flag = false;
                 var userEmailValue = $("#userEmail").val();
                 var usernameValue = $("#username").val().trim();
                 var userphoneValue = $("#userphone").val();
                 var passwordValue = $("#password").val();
-                
                 var username_len = $("#username").val().length;
                 var password_len = $("#password").val().length;
                 var minLength = 3;
                 var maxLength = 100;
                 var pwdLenght = 6;
                 var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
-
                 if(userEmailValue ===""){
-                    $("#error_email").html('Email Id cannot be empty.');  
+                    $("#error_email").html('Email Id cannot be empty.');
                     flag = true; 
                 } else if(!emailReg.test(userEmailValue)) {
                     $("#error_email").html('Invalid email address.');
@@ -380,9 +327,8 @@
                 } else {
                     $("#error_email").html('');
                 }
-
                 if(usernameValue ==="" || usernameValue.search(/\w/)< 0){ 
-                    $("#error_name").html('Name cannot be empty.'); 
+                    $("#error_name").html('Name cannot be empty.');
                     flag = true;  
                 } else if(username_len < minLength){
                     $("#error_name").html('Length is short, minimum '+minLength+' characters required.');
@@ -393,9 +339,8 @@
                 } else {
                     $("#error_name").html('');
                 }
-
                 if(userphoneValue ==="" || userphoneValue.search(/\w/)< 0){
-                    $("#error_phone").html('Mobile number cannot be empty.'); 
+                    $("#error_phone").html('Mobile number cannot be empty.');
                     flag = true;  
                 } else if($("#userphone").val().length!=10){
                     $("#error_phone").html('Please enter valid phone number.');
@@ -410,14 +355,12 @@
                     $("#error_pwd").html('Length is short, minimum 6 characters required.');
                     flag = true; 
                 } else {
-                    $("#error_pwd").html('');
+                    ("#error_pwd").html('');
                 }
-
                 if(flag){
                     return false;
                 }
             }
-
             function validateLogin(){
                 var flag = false;
                 var userEmailValue = $("#email").val();
@@ -426,7 +369,7 @@
                 var loginpwdLenght = 6;
                 var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
                 if(userEmailValue ===""){
-                    $("#login_error_email").html('Email Id cannot be empty.');  
+                    $("#login_error_email").html('Email Id cannot be empty.');
                     flag = true; 
                 } else if(!emailReg.test(userEmailValue)) {
                     $("#login_error_email").html('Invalid email address.');
@@ -434,7 +377,6 @@
                 } else {
                     $("#login_error_email").html('');
                 }
-                
                 if(passwordValue ===""){
                     $("#login_error_pwd").html('Password cannot be empty.');
                     flag = true;   
@@ -444,32 +386,19 @@
                 } else {
                     $("#login_error_pwd").html('');
                 }
-
                 if(flag){
                     return false;
                 }
             }
-
             function isNumberKey(evt){
                 var charCode = (evt.which) ? evt.which : evt.keyCode
                 if (charCode > 31 && (charCode < 48 || charCode > 57))
                     return false;
                 return true;
             }
-
-            /*$(document).ready(function () {
-                $(".changecolor").switchstylesheet({ seperator: "color" });
-                $(".show-theme-options").click(function () {
-                    $(this).parent().toggleClass("open");
-                    return false;
-                });
-            });*/
-
             function toggleForms() {
-                // Toggle visibility of both forms
                 var signinForm = document.getElementById('signin-form');
                 var signupForm = document.getElementById('signup-form');
-
                 if (signinForm.style.display === 'none') {
                     signinForm.style.display = 'block';
                     signupForm.style.display = 'none';
@@ -478,7 +407,6 @@
                     signupForm.style.display = 'block';
                 }
             }
-
             $(window).bind("load", function () {
                 $(".show-theme-options").delay(2000).trigger("click");
             });

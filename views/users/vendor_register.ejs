@@ -5,10 +5,11 @@
         <meta charset="utf-8" />
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-        <meta name="description" content="" />
+        <meta name="description" content="Sriina Vendor Registration" />
         <meta name="author" content="" />
-        <meta name="keywords" content="MediaCenter, Template, eCommerce" />
+        <meta name="keywords" content="MediaCenter, Template, eCommerce, Vendor Registration" />
         <meta name="robots" content="INDEX,FOLLOW"/>
+        <link rel="canonical" href="https://www.sriina.com/vendor">
         <title>Sriina | <%= title %></title>
         <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
         <link rel="stylesheet" href="assets/css/main.css" />
@@ -20,7 +21,7 @@
         <link rel="stylesheet" href="assets/css/bootstrap-select.min.css" />
         <link href="assets/css/custom.css" rel="stylesheet" />
         <link rel="stylesheet" href="assets/css/font-awesome.css" />
-        <link href="http://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet" type="text/css" />
+        <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet" type="text/css" />
         <style>
             input#captchaText {
                 width: 100px;
@@ -39,7 +40,7 @@
                 <div class="breadcrumb-inner">
                     <ul class="list-inline list-unstyled">
                         <li><a href="/">Home</a></li>
-                        <li class="active">Vendor</li>
+                        <li><a href="/vendor">Vendor</a></li>
                     </ul>
                 </div>
                 <!-- /.breadcrumb-inner -->
@@ -71,17 +72,15 @@
                         </div>
                         <% } %>
                         
-                        
                         <!-- create a new account -->
                         <div class="col-md-6 col-sm-6 col-md-offset-3 create-new-account">
-                            <h3 class="checkout-subtitle">Create vendor account</h3>
+                            <h1>Create Vendor Account</h1>
+                            <h2>Vendor Registration Form</h2>
                             <form action="/vendorregisterfrm" method="post" class="register-form outer-top-xs" id="register-form" onsubmit="return validateRegister()" autocomplete="off">
                                 <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                 <div class="form-group success">
                                     <label class="info-title" for="exampleInputEmail2">Company / Login Email Address <span>*</span></label>
                                     <input type="email" name="company_mail" placeholder="Please enter company / login email address" class="form-control success unicase-form-control text-input" id="userEmail" />
-                                    <!-- <i class="fa fa-check-circle"></i>
-                                    <i class="fa fa-exclamation-circle"></i> -->
                                     <small id="error_email"></small>
                                 </div>
                                 <div class="form-group error">
@@ -91,16 +90,14 @@
                                 </div>
                                 <div class="form-group">
                                     <label class="info-title" for="exampleInputEmail1">Company Phone Number <span>*</span></label>
-                                    <input type="text" name="company_phone" placeholder="Please enter compnay phone no." class="form-control unicase-form-control text-input" id="company_phone" minlength="10" maxlength="10" onkeypress="return isNumberKey(event)" />
+                                    <input type="text" name="company_phone" placeholder="Please enter company phone no." class="form-control unicase-form-control text-input" id="company_phone" minlength="10" maxlength="10" onkeypress="return isNumberKey(event)" />
                                     <small id="error_phone"></small>
                                 </div>
-
                                 <div class="form-group">
                                     <label class="info-title" for="exampleInputEmail1">Company Contact Person Name <span>*</span></label>
                                     <input type="text" name="company_contact_person" placeholder="Please enter company contact person" class="form-control unicase-form-control text-input" id="company_contact_person" />
                                     <small id="error_phone"></small>
                                 </div>
-
                                 <div class="form-group">
                                     <label class="info-title" for="exampleInputEmail1">Company Contact Person Phone No.<span>*</span></label>
                                     <input type="text" name="company_contact_phone_no" placeholder="Please enter company contact phone no." class="form-control unicase-form-control text-input" id="company_contact_phone_no" />
@@ -128,25 +125,22 @@
                                     <i class="fa fa-exclamation-circle"></i>
                                     <small id="error_pwd"></small>
                                 </div>
-
                                 <div class="form-group row">
                                     <div class="col-md-4">
-                                    <input class="form-control" id="captchaImage" type="hidden" name="captchaImage" value="<%= typeof captchaImage != 'undefined' ? captchaImage : '' %>">
-                                  
-                                  <div class="space">
-                                    <span id="captcha"></span>
-                                  </div>
-                                  </div>
-                                  <div class="col-md-4">
-                                  <button type="button" class="btn btn-info" onclick="addcaptcha_reload()">Refresh</button>
-                                  </div>
-                                  <div class="col-md-4">
-                                  <div class="space">
-                                    <input class="form-control" id="captchaText" type="text" name="captchaText" value="<%= typeof captchaText != 'undefined' ? captchaText : '' %>" placeholder="Enter captcha" maxlength="4" minlength="4">
-                                  </div>
+                                        <input class="form-control" id="captchaImage" type="hidden" name="captchaImage" value="<%= typeof captchaImage != 'undefined' ? captchaImage : '' %>">
+                                        <div class="space">
+                                            <span id="captcha"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <button type="button" class="btn btn-info" onclick="addcaptcha_reload()">Refresh</button>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="space">
+                                            <input class="form-control" id="captchaText" type="text" name="captchaText" value="<%= typeof captchaText != 'undefined' ? captchaText : '' %>" placeholder="Enter captcha" maxlength="4" minlength="4">
+                                        </div>
+                                    </div>
                                 </div>
-                                </div>
-                                
                                 <div class="row">
                                     <div class="col-md-12">
                                         <button type="submit" class="btn-upper btn btn-primary checkout-page-button">Register</button>
@@ -220,7 +214,7 @@
                     $("#error_phone").html('');
                 }
                 if(passwordValue ==="" || passwordValue.search(/\w/)< 0){
-                    $("#error_pwd").html('Password cannot be empty');
+                   ( "#error_pwd").html('Password cannot be empty');
                     flag = true;   
                 } else if(password_len < pwdLenght){
                     $("#error_pwd").html('Length is short, minimum 6 characters required');
@@ -234,25 +228,12 @@
                 }
             }
 
-
             function isNumberKey(evt){
                 var charCode = (evt.which) ? evt.which : evt.keyCode
                 if (charCode > 31 && (charCode < 48 || charCode > 57))
                     return false;
                 return true;
             }
-
-            /*$(document).ready(function () {
-                $(".changecolor").switchstylesheet({ seperator: "color" });
-                $(".show-theme-options").click(function () {
-                    $(this).parent().toggleClass("open");
-                    return false;
-                });
-            });*/
-
-            // $(window).bind("load", function () {
-            //     $(".show-theme-options").delay(2000).trigger("click");
-            // });
 
             function addcaptcha() {
                 var svgData = document.getElementById("captchaImage").value;
@@ -273,7 +254,6 @@
                     }
                 })
             }
-
         </script>
     </body>
 </html>
