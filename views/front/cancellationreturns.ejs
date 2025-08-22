@@ -3,11 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<meta name="description" content="">
+<meta name="description" content="Sriina Cancellation Policy">
 <meta name="author" content="">
-<meta name="keywords" content="MediaCenter, Template, eCommerce">
+<meta name="keywords" content="MediaCenter, Template, eCommerce, Cancellation Policy">
 <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon.png">
 <meta name="robots" content="all">
+<link rel="canonical" href="https://www.sriina.com/cancellation-policy">
 <title>Sriina: <%= title %></title>
 <link rel="stylesheet" href="assets/css/bootstrap.min.css">
 <link rel="stylesheet" href="assets/css/main.css">
@@ -20,7 +21,7 @@
 <link href="assets/css/lightbox.css" rel="stylesheet">
 <link href="assets/css/custom.css" rel="stylesheet" />
 <link rel="stylesheet" href="assets/css/font-awesome.css">
-<link href='http://fonts.googleapis.com/css?family=Roboto:300,400,500,700' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700' rel='stylesheet' type='text/css'>
 <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,400italic,600,600italic,700,700italic,800' rel='stylesheet' type='text/css'>
 <link href='https://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
 <!-- Google tag (gtag.js) -->
@@ -29,7 +30,6 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
   gtag('config', 'G-YN8Y6YGBF7');
 </script>
 <!-- Google Tag Manager -->
@@ -38,26 +38,26 @@
   j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
   })(window,document,'script','dataLayer','GTM-T2VD4PM4');</script>
-  <!-- End Google Tag Manager -->
+<!-- End Google Tag Manager -->
 </head>
-    <body class="cnt-home">
-      <!-- Google Tag Manager (noscript) -->
+<body class="cnt-home">
+<!-- Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T2VD4PM4"
   height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-  <!-- End Google Tag Manager (noscript) -->
-    <!-- ============================================== HEADER ============================================== -->
-        <header class="header-style-1">
-            <%- include("top_bar") -%>
-            <%- include("search") -%>
-            <%- include("navigation") -%>
-        </header>
+<!-- End Google Tag Manager (noscript) -->
+<!-- ============================================== HEADER ============================================== -->
+<header class="header-style-1">
+    <%- include("top_bar") -%>
+    <%- include("search") -%>
+    <%- include("navigation") -%>
+</header>
 <!-- ============================================== HEADER : END ============================================== -->
 <div class="breadcrumb">
   <div class="container">
     <div class="breadcrumb-inner">
       <ul class="list-inline list-unstyled">
         <li><a href="/">Home</a></li>
-        <li><a href="about-us">About us</a></li>
+        <li><a href="/cancellation-policy">Cancellation Policy</a></li>
       </ul>
     </div><!-- /.breadcrumb-inner -->
   </div><!-- /.container -->
@@ -70,10 +70,9 @@
                     <div class="row wow fadeInUp" style="padding: 18px;line-height: 25px;font-size: 14px;">
                         <p>
                             <% if (getresult) { %>
-                                <%= //getresult.description %>
-                                <h4><strong>Cancellation Policy</strong></h4>
-                                <h5><strong>CANCELLATION BEFORE SHIPMENT:</strong></h5>
-                                <p>Order once placed can only be canceled within 4 hours from the placing the order, you can write to our customer support team on info@sriina.com In such cases, the order will be canceled and the money will be refunded to you within 24-48 business hours after the cancellation request.</p>
+                                <h1><strong>Cancellation Policy</strong></h1>
+                                <h2><strong>Cancellation Before Shipment</strong></h2>
+                                <p>Order once placed can only be canceled within 4 hours from the placing the order, you can write to our customer support team on <a href="mailto:info@sriina.com" rel="noopener noreferrer">info@sriina.com</a>. In such cases, the order will be canceled and the money will be refunded to you within 24-48 business hours after the cancellation request.</p>
                                 <p>Those who return any product, the amount will be credited automatically in your bank account within 3 to 4 days which you can use for any further purchase. If the product you purchase is not of the accurate size or the item is defective, you may also go for an exchange policy.</p>
                                 <p>In this case, the new item will be delivered at your doorstep free of cost but it all depends on the availability of the item in the stock. Those items which are to be returned or exchanged must be unused.</p>
                                 <p>For example, if you wish to return the Book which you bought from Boookart, then it should be in its original box with proper packaging.</p>
@@ -87,9 +86,8 @@
             </div>
             <div class="clearfix"></div>
         </div>
-  </div>
+    </div>
 </div>
-
 <%- include ("../front/book_footer") %>
 <script src="assets/js/jquery-1.11.1.min.js"></script>  
 <script src="assets/js/bootstrap.min.js"></script>
