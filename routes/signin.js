@@ -861,9 +861,9 @@ exports.razorpayPaymentStatus = async (req, res, next) => {
         const orderId = result.insertId;
 
         // Fetch cart products
-        var get_products = `SELECT *, cart_product.quantity as cart_quantity 
-                                FROM cart_product 
-                                LEFT JOIN products ON cart_product.product_id = products.id 
+        var get_products = `SELECT *, cart_product.quantity as cart_quantity
+                                FROM cart_product
+                                LEFT JOIN products ON cart_product.product_id = products.id
                                 WHERE cart_id = ?`;
         db.query(get_products, [cartId], async (err, product) => {
           if (err) {
@@ -1322,7 +1322,7 @@ exports.confimOrder = (req, res, next) => {
                                                              pass: process.env.EMAIL_PASSWORD,
                                                          }
                                                      });
-     
+
                                                      var mainOptions = {
                                                          from: 'no-reply@gmail.com',
                                                          to: userquerys[0].email,
@@ -1580,7 +1580,7 @@ exports.forgotPassword = (req, res, next) => {
     // let sql2 = "SELECT * from books_category where is_deleted=0";
     // let query = db.query(sql2, function (error, getcategory) {
     res.render("front/forgot_password.ejs", {
-      categorylist: getcategory,
+      categorylist: [],
       title: "Forgot Password",
       csrfToken: req.csrfToken(),
       message: req.flash("message"),
