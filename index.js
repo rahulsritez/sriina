@@ -331,12 +331,10 @@ const storage = multer.diskStorage({
 const uploadFile = multer({ storage: storage });
 app.post("/uploadexcelfile", uploadFile.single("uploadexcel"), routes.authGaurd, uploadcsv.uploadExcelFile);
 app.post("/uploads-xlsx", routes.authGaurd, uploadcsv.saveExcelFileData);
-app.get("/:slug/:id", csrfProtection, product.viewProduct);
 app.get("/updateexcel", routes.authGaurd, csrfProtection, updateexcel.uploadExcel);
 app.post("/updateexcelfile", uploadFile.single("updateexcel"), routes.authGaurd, updateexcel.uploadExcelFile);
 app.post("/update-xlsx", routes.authGaurd, updateexcel.saveExcelFileData);
 app.get("/getMarketingTSVfile", electronic.getProductionTSVfile);
-app.get("/:id", pages.getCategories);
 
 // Sitemap routes
 app.get("/sitemap_index.xml", (req, res) => {
@@ -351,8 +349,30 @@ app.get("/sitemap_index.xml", (req, res) => {
 
 app.get("/sitemap.xml", async (req, res) => {
   try {
+    const categories = await product.getCategoriesxml();
+
+    let sitemapIndexXML = `<?xml version="1.0" encoding="UTF-8"?>\n`;
+    sitemapIndexXML += `<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
+
+    // Add the new category sitemap
+    sitemapIndexXML += `  <sitemap>\n`;
+    sitemapIndexXML += `    <loc>https://sriina.com/sitemap/categorypages.xml</loc>\n`;
+    sitemapIndexXML += `    <lastmod>${new Date().toISOString()}</lastmod>\n`;
+    sitemapIndexXML += `  </sitemap>\n`;
+
+    if (categories.length > 0) {
+      categories.forEach((category) => {
+        sitemapIndexXML += `  <sitemap>\n`;
+        sitemapIndexXML += `    <loc>https://sriina.com/sitemap/${category.url_name}.xml</loc>\n`;
+        sitemapIndexXML += `    <lastmod>${new Date().toISOString()}</lastmod>\n`;
+        sitemapIndexXML += `  </sitemap>\n`;
+      });
+    }
+
+    sitemapIndexXML += `</sitemapindex>`;
+
     res.header("Content-Type", "application/xml");
-    res.sendFile(path.join(__dirname, "sitemap.xml"));
+    res.send(sitemapIndexXML);
   } catch (err) {
     res.status(500).send("Error generating sitemap.");
   }
@@ -442,6 +462,9 @@ app.get("/sitemap/:category.xml", async (req, res) => {
   }
 });
 
+// app.get("/:slug/:id", csrfProtection, product.viewProduct);
+
+app.get("/:id", pages.getCategories);
 // Middleware
 app.listen(port, () => {
   console.log(`Server running on port: ${port}`);
