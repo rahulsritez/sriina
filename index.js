@@ -98,7 +98,7 @@ app.use(cookieParser());
 app.use(
   session({
     secret: "sosecret",
-    cookie: { maxAge: 8 * 60 * 60 * 1000, secure: true }, // Secure cookie for HTTPS
+    cookie: { maxAge: 8 * 60 * 60 * 1000, secure: false }, // Secure cookie for HTTPS
     saveUninitialized: true,
     resave: true,
   })
