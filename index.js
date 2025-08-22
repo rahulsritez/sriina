@@ -336,6 +336,7 @@ app.get("/updateexcel", routes.authGaurd, csrfProtection, updateexcel.uploadExce
 app.post("/updateexcelfile", uploadFile.single("updateexcel"), routes.authGaurd, updateexcel.uploadExcelFile);
 app.post("/update-xlsx", routes.authGaurd, updateexcel.saveExcelFileData);
 app.get("/getMarketingTSVfile", electronic.getProductionTSVfile);
+app.get("/:id", pages.getCategories);
 
 // Sitemap routes
 app.get("/sitemap_index.xml", (req, res) => {
