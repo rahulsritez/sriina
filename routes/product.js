@@ -223,7 +223,7 @@ exports.viewProduct = function (req, res, next) {
                   const you_save_money = (
                     original_price - discounted_price
                   ).toFixed(2);
-                  let languageName = result[0]?.language;
+                  let languageName = result[0]?.book_language;
                   const languageCode = iso6391.getCode(languageName);
                   const new_price = discounted_price; // Ensuring a valid price
                   res.render("front/productview", {
@@ -603,11 +603,11 @@ exports.preOrderProduct = (req, res, next) => {
       let message = post.message;
 
       /* if(!username){
-                res.status(200).json({ message: 'Username cannot be empty'}); 
+                res.status(200).json({ message: 'Username cannot be empty'});
                 return;
             }
             if(!userphone){
-                res.status(200).json({ message: 'Mobile cannot be empty'}); 
+                res.status(200).json({ message: 'Mobile cannot be empty'});
                 return;
             }*/
       if (!message) {

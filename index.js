@@ -462,7 +462,7 @@ app.get("/sitemap/:category.xml", async (req, res) => {
   }
 });
 
-// app.get("/:slug/:id", csrfProtection, product.viewProduct);
+app.get("/:slug/:id", csrfProtection, product.viewProduct);
 
 app.get("/:id", pages.getCategories);
 // Middleware
