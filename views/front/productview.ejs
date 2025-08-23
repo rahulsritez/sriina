@@ -12,20 +12,7 @@
     <link rel="canonical" href="http://sriina.com/<%= viewlist.slug %>/<%= viewlist.id %>">
     <meta name="description" content="<%= truncateDescription(viewlist.description, 153) %>">
     <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon.png">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
-    <script src="<%= baseURL %>assets/js/jquery.easing-1.3.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="<%= baseURL %>assets/js/bootstrap.min.js"></script>
-    <script src="<%= baseURL %>assets/js/bootstrap-hover-dropdown.min.js"></script>
-    <script src="<%= baseURL %>assets/js/echo.min.js"></script>
 
-    <script src="<%= baseURL %>assets/js/bootstrap-slider.min.js"></script>
-    <script src="<%= baseURL %>assets/js/jquery.rateit.min.js"></script>
-    <script src="<%= baseURL %>assets/js/lightbox.min.js"></script>
-    <script src="<%= baseURL %>assets/js/bootstrap-select.min.js"></script>
-    <script src="<%= baseURL %>assets/js/wow.min.js"></script>
-    <script src="<%= baseURL %>assets/js/scripts.js"></script>
     <% function truncateDescription(description, length) { if (typeof description==='string' && description.length>
         length) {
         return description.substring(0, description.lastIndexOf(" ", length)) + "...";
@@ -42,7 +29,8 @@
             href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
         <link rel="stylesheet"
             href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
-
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
 
         <!-- Load xZoom Library -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/xzoom/1.0.15/xzoom.min.js"></script>
@@ -380,29 +368,7 @@
 
         <!-- Google tag (gtag.js) -->
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-YN8Y6YGBF7"></script>
-        <script>
-            window.dataLayer = window.dataLayer || [];
-            function gtag() { dataLayer.push(arguments); }
-            gtag('js', new Date());
-            gtag('config', 'G-YN8Y6YGBF7');
 
-            $(document).ready(function () {
-                $(".owl-carousel").owlCarousel({
-                    items: 4,
-                    loop: true,
-                    margin: 10,
-                    nav: true,
-                    dots: true,
-                    autoplay: true,
-                    autoplayTimeout: 3000,
-                    responsive: {
-                        0: { items: 1 },
-                        600: { items: 2 },
-                        1000: { items: 4 }
-                    }
-                });
-            });
-        </script>
 
         <script type="application/ld+json">
         <%- jsonLD %>
@@ -1145,7 +1111,18 @@
 
     <%- include ("../front/book_footer") %>
 
-
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="<%= baseURL %>assets/js/bootstrap.min.js"></script>
+        <script src="<%= baseURL %>assets/js/bootstrap-hover-dropdown.min.js"></script>
+        <script src="<%= baseURL %>assets/js/owl.carousel.min.js"></script>
+        <script src="<%= baseURL %>assets/js/echo.min.js"></script>
+        <script src="<%= baseURL %>assets/js/jquery.easing-1.3.min.js"></script>
+        <script src="<%= baseURL %>assets/js/bootstrap-slider.min.js"></script>
+        <script src="<%= baseURL %>assets/js/jquery.rateit.min.js"></script>
+        <script src="<%= baseURL %>assets/js/lightbox.min.js"></script>
+        <script src="<%= baseURL %>assets/js/bootstrap-select.min.js"></script>
+        <script src="<%= baseURL %>assets/js/wow.min.js"></script>
+        <script src="<%= baseURL %>assets/js/scripts.js"></script>
         <script src="<%= baseURL %>assets/js/readmore.js"></script>
         <script src="<%= baseURL %>assets/js/product_details.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/xzoom/1.0.15/xzoom.min.js"></script>
@@ -1212,5 +1189,28 @@
             })(jQuery);
         </script>
 </body>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-YN8Y6YGBF7');
+
+    $(document).ready(function () {
+        $(".owl-carousel").owlCarousel({
+            items: 4,
+            loop: true,
+            margin: 10,
+            nav: true,
+            dots: true,
+            autoplay: true,
+            autoplayTimeout: 3000,
+            responsive: {
+                0: { items: 1 },
+                600: { items: 2 },
+                1000: { items: 4 }
+            }
+        });
+    });
+</script>
 
 </html>
