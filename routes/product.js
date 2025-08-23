@@ -188,8 +188,8 @@ exports.viewProduct = function (req, res, next) {
                         isbn: book.isbn13
                           ? book.isbn13.trim()
                           : book.isbn
-                          ? book.isbn.trim()
-                          : "",
+                            ? book.isbn.trim()
+                            : "",
                         offers: {
                           "@type": "Offer",
                           priceCurrency: book.currency_code || "INR",
@@ -224,7 +224,9 @@ exports.viewProduct = function (req, res, next) {
                     original_price - discounted_price
                   ).toFixed(2);
                   let languageName = result[0]?.book_language;
-                  const languageCode = iso6391.getCode(languageName);
+                  const languageCode = languageName && typeof languageName === "string"
+                    ? iso6391.getCode(languageName)
+                    : "en";
                   const new_price = discounted_price; // Ensuring a valid price
                   res.render("front/productview", {
                     getCartData: "",
@@ -688,15 +690,15 @@ exports.saveAddtoCart = function (req, res, next) {
           parseFloat(price) - (parseFloat(price) * parseFloat(discount)) / 100;
         res.redirect(
           "/sign-in?product_id=" +
-            product_id +
-            "&quantity=" +
-            req.body.quantity +
-            "&name=" +
-            name +
-            "&image=" +
-            image +
-            "&price=" +
-            price
+          product_id +
+          "&quantity=" +
+          req.body.quantity +
+          "&name=" +
+          name +
+          "&image=" +
+          image +
+          "&price=" +
+          price
         );
       });
     } else {
