@@ -18,25 +18,40 @@
         return description.substring(0, description.lastIndexOf(" ", length)) + "...";
         }
         return description || "No description available";
-        }
-        %>
+        } %>
 
         <meta name="robots" content="index, follow">
         <meta name="googlebot" content="index, follow">
         <meta name="bingbot" content="index, follow">
 
+        <!-- Load jQuery first -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script>
+            // Fallback to local jQuery if CDN fails
+            if (typeof jQuery == 'undefined') {
+                document.write('<script src="<%= baseURL %>assets/js/jquery.min.js"><\/script>');
+            }
+        </script>
+
+        <!-- Load jQuery-dependent libraries -->
         <link rel="stylesheet"
             href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
         <link rel="stylesheet"
             href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
-
-        <!-- Load xZoom Library -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/xzoom/1.0.15/xzoom.min.js"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/xzoom/1.0.15/xzoom.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/xzoom/1.0.15/xzoom.min.css">
 
+        <!-- Fancybox and Magnific Popup for inline script dependencies -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+        <link rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/magnific-popup.min.css">
+        <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/jquery.magnific-popup.min.js"></script>
+
+        <!-- Other stylesheets -->
         <link rel="stylesheet" href="<%= baseURL %>assets/css/bootstrap.min.css">
         <link rel="stylesheet" href="<%= baseURL %>assets/css/main.css">
         <link rel="stylesheet" href="<%= baseURL %>assets/css/blue.css">
@@ -368,8 +383,6 @@
 
         <!-- Google tag (gtag.js) -->
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-YN8Y6YGBF7"></script>
-
-
         <script type="application/ld+json">
         <%- jsonLD %>
     </script>
@@ -445,16 +458,16 @@
                                                                 src="<%= process.env.IMAGE_URL %><%= viewlist.image %>"
                                                                 xoriginal="<%= process.env.IMAGE_URL %><%= viewlist.image %>"
                                                                 srcset="<%= process.env.IMAGE_URL %><%= viewlist.image %> 1x, 
-                                                             <%= process.env.IMAGE_URL %><%= viewlist.image %> 2x, 
-                                                             <%= process.env.IMAGE_URL %><%= viewlist.image %> 3x" />
+                                                    <%= process.env.IMAGE_URL %><%= viewlist.image %> 2x, 
+                                                    <%= process.env.IMAGE_URL %><%= viewlist.image %> 3x" />
                                                             <% } %>
                                                                 <% } else { %>
                                                                     <img class="xzoom-image moveable" id="xzoom-default"
                                                                         src="<%= baseURL %>assets/images/404.jpg"
                                                                         xoriginal="<%= baseURL %>assets/images/404.jpg"
                                                                         srcset="<%= baseURL %>assets/images/404.jpg 1x, 
-                                                         <%= baseURL %>assets/images/404.jpg 2x, 
-                                                         <%= baseURL %>assets/images/404.jpg 3x" />
+                                                <%= baseURL %>assets/images/404.jpg 2x, 
+                                                <%= baseURL %>assets/images/404.jpg 3x" />
                                                                     <% } %>
                                                                         <div class="xzoom-thumbs">
                                                                             <% if (viewlist.image) { %>
@@ -872,7 +885,6 @@
                                                                 </div>
                                                             </div>
                                                             <% } %>
-
                                                                 <% if (viewlist.description) { %>
                                                                     <div id="description"
                                                                         class="tab-pane <%= !viewlist.author_details ? 'in active' : '' %>">
@@ -1116,13 +1128,12 @@
 
     <%- include ("../front/book_footer") %>
 
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <!-- Load jQuery-dependent scripts -->
         <script src="<%= baseURL %>assets/js/bootstrap.min.js"></script>
         <script src="<%= baseURL %>assets/js/bootstrap-hover-dropdown.min.js"></script>
         <script src="<%= baseURL %>assets/js/owl.carousel.min.js"></script>
         <script src="<%= baseURL %>assets/js/echo.min.js"></script>
         <script src="<%= baseURL %>assets/js/jquery.easing-1.3.min.js"></script>
-        <script src="<%= baseURL %>assets/js/bootstrap-slider.min.js"></script>
         <script src="<%= baseURL %>assets/js/jquery.rateit.min.js"></script>
         <script src="<%= baseURL %>assets/js/lightbox.min.js"></script>
         <script src="<%= baseURL %>assets/js/bootstrap-select.min.js"></script>
@@ -1130,10 +1141,10 @@
         <script src="<%= baseURL %>assets/js/scripts.js"></script>
         <script src="<%= baseURL %>assets/js/readmore.js"></script>
         <script src="<%= baseURL %>assets/js/product_details.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/xzoom/1.0.15/xzoom.min.js"></script>
         <script src="https://hammerjs.github.io/dist/hammer.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.3.1/js/foundation.min.js"></script>
 
+        <!-- Inline scripts -->
         <script>
             (function ($) {
                 $(document).ready(function () {
@@ -1193,29 +1204,30 @@
                 });
             })(jQuery);
         </script>
-</body>
-<script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag() { dataLayer.push(arguments); }
-    gtag('js', new Date());
-    gtag('config', 'G-YN8Y6YGBF7');
 
-    $(document).ready(function () {
-        $(".owl-carousel").owlCarousel({
-            items: 4,
-            loop: true,
-            margin: 10,
-            nav: true,
-            dots: true,
-            autoplay: true,
-            autoplayTimeout: 3000,
-            responsive: {
-                0: { items: 1 },
-                600: { items: 2 },
-                1000: { items: 4 }
-            }
-        });
-    });
-</script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() { dataLayer.push(arguments); }
+            gtag('js', new Date());
+            gtag('config', 'G-YN8Y6YGBF7');
+
+            $(document).ready(function () {
+                $(".owl-carousel").owlCarousel({
+                    items: 4,
+                    loop: true,
+                    margin: 10,
+                    nav: true,
+                    dots: true,
+                    autoplay: true,
+                    autoplayTimeout: 3000,
+                    responsive: {
+                        0: { items: 1 },
+                        600: { items: 2 },
+                        1000: { items: 4 }
+                    }
+                });
+            });
+        </script>
+</body>
 
 </html>
