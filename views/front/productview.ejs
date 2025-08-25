@@ -905,15 +905,22 @@
                                                 <p class="text-center">Record Not Found.</p>
                                                 <% } %>
 
+                                                    <!-- Swiper CSS -->
+                                                    <link rel="stylesheet"
+                                                        href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+
                                                     <section class="section featured-product wow fadeInUp">
                                                         <h3 class="section-title-data">Viewed Items</h3>
-                                                        <div
-                                                            class="owl-carousel home-owl-carousel upsell-product custom-carousel owl-theme outer-top-xs">
-                                                            <% if (get_products.length> 0) { %>
-                                                                <% get_products.forEach((list, index)=> { %>
-                                                                    <% var main_price=(list.price) - (list.price / 100)
-                                                                        * list.discount; %>
-                                                                        <div class="carousel-item-wrapper">
+
+                                                        <!-- Swiper container -->
+                                                        <div class="swiper mySwiper">
+                                                            <div class="swiper-wrapper">
+                                                                <% if (get_products.length> 0) { %>
+                                                                    <% get_products.forEach((list, index)=> {
+                                                                        var main_price = (list.price) - (list.price /
+                                                                        100) * list.discount;
+                                                                        %>
+                                                                        <div class="swiper-slide">
                                                                             <div class="product-card">
                                                                                 <div class="product-image-wrapper">
                                                                                     <% if (list.image) { %>
@@ -927,7 +934,6 @@
                                                                                                     <img src="<%= baseURL %><%= list.image %>"
                                                                                                         alt="<%= list.name %>"
                                                                                                         width="150"
-                                                                                                        height="auto"
                                                                                                         style="max-width: 100%; height: auto;">
                                                                                                 </a>
                                                                                                 <% } else { %>
@@ -937,7 +943,6 @@
                                                                                                         <img src="<%= process.env.IMAGE_URL %><%= list.image %>"
                                                                                                             alt="<%= list.name %>"
                                                                                                             width="150"
-                                                                                                            height="auto"
                                                                                                             style="max-width: 100%; height: auto;">
                                                                                                     </a>
                                                                                                     <% } %>
@@ -951,12 +956,12 @@
                                                                                                     <img src="<%= baseURL %>assets/images/404.jpg"
                                                                                                         alt="<%= list.name %>"
                                                                                                         width="150"
-                                                                                                        height="auto"
                                                                                                         style="max-width: 100%; height: auto;">
                                                                                                 </a>
                                                                                             </div>
                                                                                             <% } %>
                                                                                 </div>
+
                                                                                 <div class="product-details">
                                                                                     <h3 class="product-title">
                                                                                         <a target="_blank"
@@ -968,9 +973,6 @@
                                                                                     </h3>
                                                                                     <div class="product-author">by: <%=
                                                                                             list.author %>
-                                                                                    </div>
-                                                                                    <div
-                                                                                        class="product-rating rateit-small">
                                                                                     </div>
                                                                                     <div class="product-pricing">
                                                                                         <span class="current-price">
@@ -1007,8 +1009,31 @@
                                                                                 <span class="no-records">No records
                                                                                     found.</span>
                                                                                 <% } %>
+                                                            </div>
+
                                                         </div>
                                                     </section>
+
+                                                    <!-- Swiper JS -->
+                                                    <script
+                                                        src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+                                                    <script>
+                                                        document.addEventListener("DOMContentLoaded", function () {
+                                                            new Swiper(".mySwiper", {
+                                                                slidesPerView: 4,
+                                                                spaceBetween: 10,
+                                                                loop: true,
+                                                                autoplay: { delay: 3000 },
+
+                                                                breakpoints: {
+                                                                    0: { slidesPerView: 1 },
+                                                                    600: { slidesPerView: 2 },
+                                                                    1000: { slidesPerView: 4 }
+                                                                }
+                                                            });
+                                                        });
+                                                    </script>
+
 
                                                     <!-- Uncomment and use if needed -->
                                                     <!--
@@ -1208,9 +1233,11 @@
 
 
         <script>
-            if (typeof jQuery !== 'undefined') {
-                $(document).ready(function () {
-                    $(".owl-carousel").owlCarousel({
+            document.addEventListener("DOMContentLoaded", function () {
+                const carousel = document.querySelector(".owl-carousel");
+
+                if (carousel && typeof $(carousel).owlCarousel === "function") {
+                    $(carousel).owlCarousel({
                         items: 4,
                         loop: true,
                         margin: 10,
@@ -1224,11 +1251,12 @@
                             1000: { items: 4 }
                         }
                     });
-                });
-            } else {
-                console.error('jQuery is not loaded. Owl Carousel will not initialize.');
-            }
+                } else {
+                    console.error("Owl Carousel is not available without jQuery. Consider using Swiper.js for pure JS.");
+                }
+            });
         </script>
+
 </body>
 
 </html>
