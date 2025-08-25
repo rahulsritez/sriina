@@ -25,11 +25,13 @@
         <meta name="bingbot" content="index, follow">
 
         <!-- Load jQuery first -->
-        <script src="<%= baseURL %>assets/js/jquery-1.11.1.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
         <script>
             // Fallback to local jQuery if CDN fails
+            console.log(jQuery);
+
             if (typeof jQuery == 'undefined') {
-                document.write('<script src="<%= baseURL %>assets/js/jquery-1.11.1.min.js"><\/script>');
+                document.write('<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"><\/script>');
             }
         </script>
 
@@ -40,7 +42,6 @@
             href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
         <script src="<%= baseURL %>assets/js/xzoom.min.js"></script>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/xzoom/1.0.15/xzoom.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/xzoom/1.0.15/xzoom.min.css">
 
         <!-- Fancybox and Magnific Popup for inline script dependencies -->
