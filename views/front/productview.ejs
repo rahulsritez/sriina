@@ -380,6 +380,64 @@
                 background: #e67a00;
                 color: #fff;
             }
+
+            .price-box {
+                padding: 10px;
+                font-family: Arial, sans-serif;
+            }
+
+            .price-row {
+                display: flex;
+                flex-wrap: wrap;
+                align-items: baseline;
+                gap: 8px;
+            }
+
+            .final-price {
+                font-size: 2.6rem;
+                font-weight: bold;
+                color: #e67a00;
+            }
+
+            .mrp-text {
+                font-size: 1.5rem;
+                color: #555;
+            }
+
+            .price-strike {
+                font-size: 1rem;
+                text-decoration: line-through;
+                color: #888;
+            }
+
+            .you-save {
+                color: #388e3c;
+                font-weight: 600;
+                display: inline-block;
+            }
+
+            .tax-text {
+                color: #666;
+                margin-top: 4px;
+            }
+
+            /* 📱 Mobile adjustments */
+            @media (max-width: 576px) {
+                .price-row {
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 4px;
+                }
+
+                .final-price {
+                    font-size: 2.4rem;
+                }
+
+
+                .price-strike {
+                    font-size: 0.9rem;
+                }
+            }
         </style>
 
         <!-- Google tag (gtag.js) -->
@@ -513,12 +571,12 @@
                                                         <div class="rating-reviews m-t-20"></div>
                                                         <div class="stock-container info-container m-t-10">
                                                             <div class="row">
-                                                                <div class="col-sm-2">
+                                                                <div class="col-sm-3 col-xs-4 col-md-2">
                                                                     <div class="stock-box">
                                                                         <span class="label">Availability :</span>
                                                                     </div>
                                                                 </div>
-                                                                <div class="col-sm-9">
+                                                                <div class="col-sm-9 col-xs-8 col-md-10">
                                                                     <div class="stock-box">
                                                                         <% if(viewlist.quantity> 0) { %>
                                                                             <span class="value text-green"
@@ -536,30 +594,39 @@
                                                             <div class="row">
                                                                 <div class="col-sm-12">
                                                                     <div class="price-box">
-                                                                        <span class="price">
-                                                                            <% if (new_price < 0) { %>
-                                                                                ₹&nbsp;0.00
-                                                                                <% } else { %>
-                                                                                    ₹&nbsp;<%=
-                                                                                        new_price.toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"
-                                                                                        ) %>
-                                                                                        <% } %>
-                                                                        </span>
-                                                                        <span class="mrp">M.R.P.:</span>
-                                                                        <span class="price-strike">₹&nbsp;<%=
-                                                                                viewlist.price %></span>
-                                                                        <span class="a-size-base a-color-secondary">You
-                                                                            Save: ₹<%= you_save_money %> &nbsp;(<%=
-                                                                                    viewlist.discount %>% OFF)</span>
+                                                                        <div class="price-row">
+                                                                            <span class="final-price">
+                                                                                <% if (new_price < 0) { %>
+                                                                                    ₹ 0.00
+                                                                                    <% } else { %>
+                                                                                        ₹ <%=
+                                                                                            new_price.toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"
+                                                                                            ) %>
+                                                                                            <% } %>
+                                                                            </span>
+
+                                                                            <span class="mrp-text">M.R.P.:</span>
+                                                                            <span class="price-strike">₹ <%=
+                                                                                    viewlist.price %></span>
+                                                                        </div>
+
+                                                                        <div class="save-row">
+                                                                            <span class="you-save">
+                                                                                You Save: ₹ <%= you_save_money %> (<%=
+                                                                                        viewlist.discount %>% OFF)
+                                                                            </span>
+                                                                        </div>
+
+                                                                        <% if (viewlist.tax_included=='0' ) { %>
+                                                                            <div class="tax-text">(Inclusive of all
+                                                                                taxes)</div>
+                                                                            <% } else { %>
+                                                                                <div class="tax-text">(Taxes not
+                                                                                    included)</div>
+                                                                                <% } %>
                                                                     </div>
-                                                                    <% if(viewlist.tax_included=='0' ) { %>
-                                                                        <div class="normalText">&nbsp;&nbsp;(Inclusive
-                                                                            of all taxes)</div>
-                                                                        <% } else { %>
-                                                                            <div class="normalText">&nbsp;&nbsp;(Taxes
-                                                                                not include)</div>
-                                                                            <% } %>
                                                                 </div>
+
                                                                 <div class="col-sm-12">
                                                                     <h2>Book Details</h2>
                                                                     <div class="book-details-container">
