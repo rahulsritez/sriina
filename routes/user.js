@@ -932,6 +932,7 @@ exports.Addcategory = function (req, res) {
       var oldpath = files.category_image.path;
       var status = fields.cat_status;
       var categoryname = fields.cat_name;
+      var parents_id = fields.parent_id;
       var category_image = files.category_image.name;
       if (category_image) {
         var newpath = "./public/admin/images/" + files.category_image.name;
@@ -952,10 +953,12 @@ exports.Addcategory = function (req, res) {
           });
         });
         var sql1 =
-          "INSERT INTO `books_category`(name,image,status,created_at ,updated_at) VALUES ('" +
+          "INSERT INTO `books_category`(name,image,parents_id,status,created_at ,updated_at) VALUES ('" +
           categoryname +
           "', '" +
           category_image +
+          "', '" +
+          parents_id +
           "', '" +
           status +
           "','" +
@@ -969,9 +972,11 @@ exports.Addcategory = function (req, res) {
         });
       } else {
         var sql1 =
-          "INSERT INTO `books_category`(name,status,created_at,updated_at) VALUES ('" +
+          "INSERT INTO `books_category`(name,parents_id,status,created_at,updated_at) VALUES ('" +
           categoryname +
           "','" +
+          parents_id +
+          "', '" +
           status +
           "','" +
           today +
@@ -1019,7 +1024,7 @@ exports.Updatecategory = function (req, res) {
       var edit_meta_description = fields.edit_meta_description;
       var edit_meta_canonical_tag = fields.edit_meta_canonical_tag;
       var edit_category_text = fields.edit_category_text;
-
+      var edit_parent_id = fields.edit_parent_id;
       if (categoryimage) {
         var newpath = "./public/admin/images/" + files.edit_image.name;
         fs.readFile(oldpath, function (err, data) {
@@ -1042,6 +1047,8 @@ exports.Updatecategory = function (req, res) {
           categoryname +
           "', image='" +
           categoryimage +
+          "', parents_id='" +
+          edit_parent_id +
           "', status='" +
           status +
           "', meta_title ='" +
@@ -1066,6 +1073,8 @@ exports.Updatecategory = function (req, res) {
         var sql1 =
           "UPDATE books_category set name='" +
           categoryname +
+          "', parents_id='" +
+          edit_parent_id +
           "' ,status='" +
           status +
           "', meta_title ='" +
@@ -2562,7 +2571,7 @@ exports.updatePermission = (req, res) => {
         db.query(sql1, function(err, result_category){
             let lastproduct = "SELECT * FROM product ORDER BY id DESC LIMIT 1";
             db.query(lastproduct, function(err, last_product){
-                res.render('testproductlist.ejs', {'testproductlist': results,'category_list':result_category,'last_product':last_product})    
+                res.render('testproductlist.ejs', {'testproductlist': results,'category_list':result_category,'last_product':last_product})
             });
         });
         // if (geterror) throw err;
