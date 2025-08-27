@@ -42,7 +42,7 @@
           <div class="">
             <% if(message.length > 0) {%>
               <div class="alert alert-success alert-dismissible show" role="alert">
-                 <%= message %> 
+                 <%= message %>
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                   <span aria-hidden="true">&times;</span>
                 </button>
@@ -76,8 +76,8 @@
                     <td><img height="100" src="<%= process.env.IMAGE_URL %><%= categorylist[i].image %>" ></td>
                     <td><% if(categorylist[i].status==1){ %>Active<% } else{ %>Inactive<% } %></td>
                     <td>
-                      <a class="edit_category btn btn-info btn-sm" data-id="<%= categorylist[i].id %>" data-name="<%= categorylist[i].name %>" data-image="<%= categorylist[i].image %>" data-status="<%= categorylist[i].status %>" data-meta_title="<%= categorylist[i].meta_title %>" data-meta_description="<%= categorylist[i].meta_description %>" data-meta_canonical_tag="<%= categorylist[i].meta_canonical_tag %>" data-category_text="<%= categorylist[i].category_text %>" data-target="#myModaledit" data-toggle="modal"><i class="fas fa-pencil-alt"></i>Edit</a>
-                      <% if(user.type != 2) { %>                      
+                      <a class="edit_category btn btn-info btn-sm" data-id="<%= categorylist[i].id %>" data-name="<%= categorylist[i].name %>" data-image="<%= categorylist[i].image %>" data-status="<%= categorylist[i].status %>" data-meta_title="<%= categorylist[i].meta_title %>" data-meta_description="<%= categorylist[i].meta_description %>" data-meta_canonical_tag="<%= categorylist[i].meta_canonical_tag %>" data-category_text="<%= categorylist[i].category_text %>" data-parent="<%= categorylist[i].parents_id %>" data-target="#myModaledit" data-toggle="modal"><i class="fas fa-pencil-alt"></i>Edit</a>
+                      <% if(user.type != 2) { %>
                       <a class="delete_category btn btn-danger btn-sm" id="<%= categorylist[i].id %>"><i class="fas fa-trash"></i>Delete</a>
                       <% } %>
                     </td>
@@ -119,6 +119,16 @@
                             <label class="control-label label-margin">Image</label>
                             <input type="file" class="form-control" id="category_image" placeholder="Image" name="category_image" accept="image/png, image/jpeg"/>
                         </div>
+                    </div>
+                    <div class="form-group">
+                        <select class="form-control" name="parent_id" required>
+                            <option value="0">Parent Category</option>
+                            <% for(var i=0; i < categorylist.length; i++){ %>
+                                <% if(categorylist[i].parents_id == 0){ %>
+                                    <option value="<%= categorylist[i].id %>"><%= categorylist[i].name %></option>
+                                <% } %>
+                            <% } %>
+                        </select>
                     </div>
                     <div class="form-group">
                         <select class="form-control" name="cat_status" required>
@@ -178,7 +188,16 @@
                         </div>
 
                         </div>
-
+                        <div class="form-group">
+                            <select class="form-control" name="edit_parent_id" id="edit_parent_id" required>
+                                <option value="0">Parent Category</option>
+                                <% for(var i=0; i < categorylist.length; i++){ %>
+                                    <% if(categorylist[i].parents_id == 0){ %>
+                                        <option value="<%= categorylist[i].id %>"><%= categorylist[i].name %></option>
+                                    <% } %>
+                                <% } %>
+                            </select>
+                        </div>
                         <div class="form-group">
                             <div class="col">
                                 <label class="control-label label-margin">Status</label>
@@ -207,14 +226,14 @@
 </div>
 <%- include ("../../common/js") %>
 <script type="text/javascript">
-$(function() { 
-  "use strict";  
+$(function() {
+  "use strict";
   $("#example1").DataTable({
         "responsive": true,
         "autoWidth": false,
         "pageLength": 25,
   });
-});  
+});
 </script>
 </body>
 </html>

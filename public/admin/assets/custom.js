@@ -49,6 +49,7 @@ $(document).on("click", ".edit_category", function () {
     var meta_description = $(this).data("meta_description");
     var meta_canonical_tag = $(this).data("meta_canonical_tag");
     var category_text = $(this).data("category_text");
+    var parents_id = $(this).data("parent");
 
     $("#myModaledit").modal("show");
     $("#edit_id").val(edit_id);
@@ -59,6 +60,7 @@ $(document).on("click", ".edit_category", function () {
     $("#edit_meta_description").val(meta_description);
     $("#edit_meta_canonical_tag").val(meta_canonical_tag);
     $("#edit_category_text").val(category_text);
+    $("#edit_parent_id").val(parents_id);
 });
 
 /*
