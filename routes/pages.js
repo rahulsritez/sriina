@@ -325,7 +325,7 @@ exports.contactPage = (req, res) => {
                 if(typeof page == 'undefined'){
                     prodsQuery = "SELECT * FROM products where status='1' and cat_id='"+catId+"' order by id desc limit "+perPage+" ";
                 } else {
-                    var offset = parseInt((page - 1)) * parseInt(perPage); 
+                    var offset = parseInt((page - 1)) * parseInt(perPage);
                     prodsQuery = "SELECT * FROM products where status='1' and cat_id='"+catId+"' order by id desc limit "+perPage+" OFFSET "+offset;
                 }
 
@@ -362,150 +362,148 @@ exports.contactPage = (req, res) => {
     }
 }*/
 
-exports.getCategories = function (req, res, next) {
+exports.getCategories = async function (req, res, next) {
   try {
-    var perPage = 10;
-    var page = req.query.page;
-    var offset = (page - 1) * perPage;
-    var qs = req.query;
-    let sql =
-      "SELECT `cat_id`,`url_name`,`category_type_id` FROM `category_url` WHERE `url_name` = '" +
-      req.params.id +
-      "'";
-    var query = db.query(sql, function (error, getCat_id) {
-      if (error)
-        throw new Error("category url not found in categroy_url table");
-      if (getCat_id.length > 0) {
-        let catId = getCat_id[0].cat_id;
-        let url_name = getCat_id[0].url_name;
-        let category_type_id = getCat_id[0].category_type_id;
-        let sql =
-          "SELECT * FROM products where status=1 and cat_id='" +
-          catId +
-          "' and product_type_id='" +
-          category_type_id +
-          "'";
-        // console.log(category_type_id); return;
-        let query = db.query(sql, function (error, result) {
-          if (error) throw new Error("products table Data Problem");
-          var prodsQuery = "";
-          if (category_type_id == 1) {
-            if (typeof page == "undefined") {
-              prodsQuery =
-                "SELECT * FROM `products` where `status`=1 and `cat_id`='" +
-                catId +
-                "' limit " +
-                perPage +
-                " ";
-            } else {
-              var offset = parseInt(page - 1) * parseInt(perPage);
-              prodsQuery =
-                "SELECT * FROM `products` where `status`=1 and `cat_id`='" +
-                catId +
-                "' limit " +
-                perPage +
-                " OFFSET " +
-                offset;
-            }
-          } else if (category_type_id == 2) {
-            if (typeof page == "undefined") {
-              prodsQuery =
-                "SELECT p.`id`,p.`cat_id`,p.`product_type_id`,p.`name`,p.`price`,p.`discount`,p.`delivery_charge`,p.`sku`,p.`description`,p.`image`,p.`slug`,p.`status`,p.`unit`,p.`grocery_category`,p.`grocery_sub_category`, pi.`grocery_image` as `groceryImage`, pv.`unit_price` as `groceryPrice`, pv.`unit_discount` as `groceryDiscount`, pv.`inventory` as `groceryQuantity`, pv.`unit_weight` as groceryWeight FROM `products` p INNER JOIN `products_images` pi ON `pi`.product_id = `p`.id INNER JOIN `product_variables` pv ON `pv`.product_id = `p`.id and p.`cat_id`='" +
-                catId +
-                "' GROUP by p.`name` limit " +
-                perPage +
-                "";
-            } else {
-              var offset = parseInt(page - 1) * parseInt(perPage);
-              prodsQuery =
-                "SELECT p.`id`,p.`cat_id`,p.`product_type_id`,p.`name`,p.`price`,p.`discount`,p.`delivery_charge`,p.`sku`,p.`description`,p.`image`,p.`slug`,p.`status`,p.`unit`,p.`grocery_category`,p.`grocery_sub_category`, pi.`grocery_image` as `groceryImage`, pv.`unit_price` as `groceryPrice`, pv.`unit_discount` as `groceryDiscount`, pv.`inventory` as `groceryQuantity`, pv.`unit_weight` as groceryWeight FROM `products` p INNER JOIN `products_images` pi ON `pi`.product_id = `p`.id INNER JOIN `product_variables` pv ON `pv`.product_id = `p`.id and p.`cat_id`='" +
-                catId +
-                "' GROUP by p.`name` limit " +
-                perPage +
-                " OFFSET " +
-                offset;
-            }
-          } else {
-            prodsQuery = "";
-          }
+    const perPage = 10;
+    const page = parseInt(req.query.page) || 1;
+    const offset = (page - 1) * perPage;
 
-          var query = db.query(prodsQuery, function (error, results, fields) {
-            var qw = result.length;
-            var jsonResult = {
-              products_page_count: results.length,
-              current: page,
-              products: results,
-              pages: Math.ceil(qw / perPage),
-            };
+    // Step 1: Get category info
+    const [getCat_id] = await db.promise().query(
+      `SELECT cu.cat_id, cu.url_name, cu.category_type_id, bc.parents_id
+       FROM category_url AS cu
+       INNER JOIN books_category AS bc ON bc.id = cu.cat_id
+       WHERE cu.url_name = ?`,
+      [req.params.id]
+    );
 
-            var myJsonString = JSON.parse(JSON.stringify(jsonResult));
-            let tblCategory = "";
-            if (category_type_id == 1) {
-              tblCategory = "books_category";
-            } else if (category_type_id == 2) {
-              tblCategory = "grocery_category";
-            }
+    if (getCat_id.length === 0) {
+      return res.redirect("/");
+    }
 
-            let sql2 =
-              "SELECT * from " +
-              tblCategory +
-              " where id='" +
-              catId +
-              "' and status=1";
-            let query = db.query(sql2, function (error, getmeta) {
-              if (error) throw new Error(tblCategory + " Table Problem");
-              var sql_plan =
-                "SELECT MAX(plan_price) as MaxPlanPrice FROM plans";
-              var query = db.query(sql_plan, function (error, maxplan) {
-                if (error) throw new Error("plans Table Problem");
-                var allcat =
-                  "SELECT * from " +
-                  tblCategory +
-                  " where status=1 order by name;";
-                var query = db.query(allcat, function (error, getcategory) {
-                  if (error) throw new Error(tblCategory + " table problem");
-                  if (category_type_id == 1) {
-                    res.render("front/productbycategory", {
-                      getmeta: getmeta[0],
-                      categorylist: getcategory,
-                      productlist: result,
-                      maxplan: maxplan,
-                      get_url_name: url_name,
-                      myJsonString: myJsonString,
-                    });
-                  } else {
-                    let sql_grocery_category =
-                      "SELECT * FROM grocery_category where status=1";
-                    let query_grocery_category = db.query(
-                      sql_grocery_category,
-                      function (error, getcategory) {
-                        if (error)
-                          throw new Error(
-                            "Grocery category products fetch error."
-                          );
-                        res.render("grocery/g_page", {
-                          title: "Grocery Home Page",
-                          categorylist: getcategory,
-                          products: results,
-                          maxplan,
-                          myJsonString,
-                          get_url_name: "",
-                          base64: base64,
-                          getmeta: getmeta[0],
-                        });
-                      }
-                    );
-                  }
-                });
-              });
-            });
-          });
-        });
+    const { cat_id: catId, url_name, category_type_id, parents_id: parent_id } = getCat_id[0];
+
+    // Step 2: Build products SQL (sql1)
+    let sql1 = "";
+    let sqlParams = [];
+
+    let child_categories = [];
+    if (parent_id === 0) {
+      [child_categories] = await db.promise().query(
+        "SELECT id FROM books_category WHERE parents_id = ? AND is_deleted = 0",
+        [catId]
+      );
+    }
+
+    if (parent_id === 0) {
+      if (child_categories.length > 0) {
+        const childIds = child_categories.map(c => c.id).join(",");
+        sql1 = `SELECT * FROM products WHERE status=1 AND cat_id IN (${childIds}) AND product_type_id=?`;
+        sqlParams = [category_type_id];
       } else {
-        res.redirect("/");
+        // fallback if no child categories exist
+        sql1 = `SELECT * FROM products WHERE status=1 AND product_type_id=?`;
+        sqlParams = [category_type_id];
       }
-    });
+    } else {
+      sql1 = `SELECT * FROM products WHERE status=1 AND cat_id=? AND product_type_id=?`;
+      sqlParams = [catId, category_type_id];
+    }
+
+    const [products] = await db.promise().query(sql1, sqlParams);
+
+    // Step 3: Handle pagination queries
+    let prodsQuery = "";
+    let prodsParams = [];
+
+    if (category_type_id === 1) {
+      if (child_categories.length > 0) {
+        const childIds = child_categories.map(c => c.id).join(",");
+        prodsQuery = `SELECT * FROM products WHERE status=1 AND cat_id IN (${childIds}) AND product_type_id=1 LIMIT ${perPage} OFFSET ${offset}`;
+        sqlParams = [];
+      } else {
+        // fallback if no child categories exist
+        prodsQuery = `SELECT * FROM products WHERE status=1 AND product_type_id=? LIMIT ? OFFSET ?`;
+        sqlParams = [category_type_id, perPage, offset];
+      }
+    } else if (category_type_id === 2) {
+      prodsQuery = `
+        SELECT p.id, p.cat_id, p.product_type_id, p.name, p.price, p.discount, p.delivery_charge, p.sku,
+               p.description, p.image, p.slug, p.status, p.unit, p.grocery_category, p.grocery_sub_category,
+               pi.grocery_image AS groceryImage,
+               pv.unit_price AS groceryPrice, pv.unit_discount AS groceryDiscount,
+               pv.inventory AS groceryQuantity, pv.unit_weight AS groceryWeight
+        FROM products p
+        INNER JOIN products_images pi ON pi.product_id = p.id
+        INNER JOIN product_variables pv ON pv.product_id = p.id
+        WHERE p.cat_id=?
+        GROUP BY p.name
+        LIMIT ? OFFSET ?`;
+      prodsParams = [catId, perPage, offset];
+    }
+
+    const [results] = prodsQuery ? await db.promise().query(prodsQuery, prodsParams) : [[]];
+
+    // Step 4: Build JSON response
+    const jsonResult = {
+      products_page_count: results.length,
+      current: page,
+      products: results,
+      pages: Math.ceil(products.length / perPage),
+    };
+
+    const myJsonString = JSON.parse(JSON.stringify(jsonResult));
+
+    // Step 5: Get category meta + other info
+    let tblCategory = "";
+    if (category_type_id === 1) {
+      tblCategory = "books_category";
+    } else if (category_type_id === 2) {
+      tblCategory = "grocery_category";
+    }
+
+    const [getmeta] = await db.promise().query(
+      `SELECT * FROM ${tblCategory} WHERE id=? AND status=1`,
+      [catId]
+    );
+
+    const [maxplan] = await db.promise().query(
+      "SELECT MAX(plan_price) as MaxPlanPrice FROM plans"
+    );
+
+    const [getcategory] = await db.promise().query(
+      `SELECT * FROM ${tblCategory} WHERE status=1 ANd parents_id = 0 AND is_deleted = 0 ORDER BY name`
+    );
+
+    // Step 6: Render view
+    if (category_type_id === 1) {
+      res.render("front/productbycategory", {
+        getmeta: getmeta[0],
+        categorylist: getcategory,
+        productlist: products,
+        maxplan,
+        get_url_name: url_name,
+        myJsonString,
+      });
+    } else {
+      const [groceryCategory] = await db.promise().query(
+        "SELECT * FROM grocery_category WHERE status=1"
+      );
+
+      res.render("grocery/g_page", {
+        title: "Grocery Home Page",
+        categorylist: groceryCategory,
+        products: results,
+        maxplan,
+        myJsonString,
+        get_url_name: "",
+        base64,
+        getmeta: getmeta[0],
+      });
+    }
   } catch (error) {
-    console.log(error);
+    console.error("getCategories error:", error);
+    next(error);
   }
 };
+
