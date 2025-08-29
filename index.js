@@ -78,6 +78,14 @@ app.use(flash());
 
 // Setup route middlewares
 var csrfProtection = csrf({ cookie: true });
+
+app.use((req, res, next) => {
+  if (["POST", "PUT", "PATCH", "DELETE"].includes(req.method)) {
+    return csrfProtection(req, res, next);
+  }
+  next();
+});
+
 var parseForm = bodyParser.urlencoded({ extended: true });
 
 var connection = mysql.createConnection({
@@ -462,7 +470,7 @@ app.get("/sitemap/:category.xml", async (req, res) => {
   }
 });
 
-app.get("/:slug/:id", csrfProtection, product.viewProduct);
+app.get("/:slug/:id", product.viewProduct);
 
 app.get("/:id", pages.getCategories);
 // Middleware
