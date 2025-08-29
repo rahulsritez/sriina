@@ -237,7 +237,7 @@ exports.viewProduct = function (req, res, next) {
                     title: title,
                     categorylist: category,
                     message: req.flash("message"),
-                    csrfToken: "",
+                    csrfToken: req.csrfToken(),
                     cryptr: cryptr,
                     usersdata: "",
                     data: "",
