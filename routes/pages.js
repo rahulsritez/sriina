@@ -419,12 +419,12 @@ exports.getCategories = async function (req, res, next) {
     if (category_type_id === 1) {
       if (child_categories.length > 0) {
         const childIds = child_categories.map(c => c.id).join(",");
-        prodsQuery = `SELECT * FROM products WHERE status=1 AND cat_id IN (${childIds}) AND product_type_id=1 LIMIT ${perPage} OFFSET ${offset}`;
-        sqlParams = [];
+        prodsQuery = `SELECT * FROM products WHERE status=1 AND cat_id IN (${childIds}) AND product_type_id=1 LIMIT ? OFFSET ?`;
+        prodsParams = [perPage, offset];
       } else {
         // fallback if no child categories exist
-        prodsQuery = `SELECT * FROM products WHERE status=1 AND product_type_id=? LIMIT ? OFFSET ?`;
-        sqlParams = [category_type_id, perPage, offset];
+        prodsQuery = `SELECT * FROM products WHERE status=1 AND cat_id = ? AND product_type_id=? LIMIT ? OFFSET ?`;
+        prodsParams = [catId, category_type_id, perPage, offset];
       }
     } else if (category_type_id === 2) {
       prodsQuery = `
@@ -442,6 +442,7 @@ exports.getCategories = async function (req, res, next) {
       prodsParams = [catId, perPage, offset];
     }
 
+    console.log(prodsQuery);
     const [results] = prodsQuery ? await db.promise().query(prodsQuery, prodsParams) : [[]];
 
     // Step 4: Build JSON response
@@ -472,7 +473,7 @@ exports.getCategories = async function (req, res, next) {
     );
 
     const [getcategory] = await db.promise().query(
-      `SELECT * FROM ${tblCategory} WHERE status=1 ANd parents_id = 0 AND is_deleted = 0 ORDER BY name`
+      `SELECT * FROM ${tblCategory} WHERE status=1 ANd parents_id = 0 AND is_deleted = 0 ORDER BY id ASC`
     );
 
     // Step 6: Render view
