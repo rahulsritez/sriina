@@ -199,6 +199,22 @@ $(document).on("click", ".edit_customer", function () {
     $("#edit_status").val(status);
 });
 
+$(document).on("click", ".edit_operator", function () {
+    console.log("Lund Faqir");
+    var edit_id = $(this).data("id");
+    var name = $(this).data("name");
+    var email = $(this).data("email");
+    var mobile = $(this).data("mobile");
+    var status = $(this).data("status");
+
+    $("#myModaledit").modal("show");
+    $("#edit_id").val(edit_id);
+    $("#edit_name").val(name);
+    $("#edit_email").val(email);
+    $("#edit_phone").val(mobile);
+    $("#edit_status").val(status);
+});
+
 $(document).on("click", ".delete_category", function () {
     var id = this.id;
     //alert(id);return false;

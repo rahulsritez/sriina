@@ -8,7 +8,7 @@ exports.landingpage = function (req, res) {
     //var sql1="Select * from books_category where is_deleted=0 order by name";
     //var sql1 ="SELECT * FROM `books_category` where parents_id='0' and `status`='1' order by name limit 10";
     var sql1 =
-        "SELECT `books_category`.id, `books_category`.name, `books_category`.meta_title, `books_category`.meta_description, `books_category`.meta_canonical_tag FROM `books_category` where `books_category`.`parents_id` = 0 AND is_deleted = 0 order by id DESC limit 10;";
+        "SELECT `books_category`.id, `books_category`.name, `books_category`.meta_title, `books_category`.meta_description, `books_category`.meta_canonical_tag FROM `books_category` where `books_category`.`parents_id` = 0 AND is_deleted = 0 order by id ASC limit 15;";
 
     var query = db.query(sql1, function (error, result) {
         var sql2 =

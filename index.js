@@ -185,6 +185,10 @@ app.post("/deletecity", user.Deletecity);
 app.post("/addcustomer", parseForm, csrfProtection, user.Addcustomer);
 app.post("/updatecustomer", routes.authGaurd, user.Updatecustomer);
 app.post("/deletecustomer", routes.authGaurd, user.Deletecustomer);
+
+app.post("/add-operator", routes.authGaurd, user.addOperator);
+app.post("/update-operator", routes.authGaurd, user.updateOperator);
+// app.post("/deletecustomer", routes.authGaurd, user.Deletecustomer);
 app.post("/addcategory", routes.authGaurd, user.Addcategory);
 app.post("/addcatalog", routes.authGaurd, user.Addcatalog);
 app.post("/addcatalogcondition", routes.authGaurd, user.Addcatalogcondition);
@@ -256,6 +260,7 @@ app.get("/sritezprime", csrfProtection, myaccount.sritezPrime);
 app.post("/membership_book_request", parseForm, csrfProtection, routes.authGaurd, myaccount.membershipBookRequest);
 app.get("/vendorpage", csrfProtection, user.vendorPage);
 app.post("/updatevendor", user.updateVendor);
+app.get("/operator-page", csrfProtection, user.operatorPage);
 app.get("/vendor_register", csrfProtection, signin.vendorRegister);
 app.post("/vendorregisterfrm", parseForm, csrfProtection, routes.authGaurd, signin.vendorRegisterFrm);
 app.get("/sign-in", csrfProtection, signin.userSignIn);
