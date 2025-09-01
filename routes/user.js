@@ -921,6 +921,130 @@ exports.Deletecustomer = function (req, res) {
   //res.redirect("/customerpage");
 };
 
+exports.addOperator = (req, res) => {
+  if (req.method == "POST") {
+    var post = req.body;
+    var name = post.user_name;
+    var email = post.user_email;
+    var mobile = post.user_phone;
+    var status = post.user_status;
+    var today = new Date().toISOString().slice(0, 19).replace("T", " ");
+    var pass = post.user_phone;
+    const rounds = 10;
+    var hash = bcrypt.hashSync(pass, rounds);
+
+    if (!name) {
+      res.status(200).json({ message: "Username cannot be empty" });
+      return;
+    }
+    if (!email) {
+      res.status(200).json({ message: "email cannot be empty" });
+      return;
+    }
+    if (!mobile) {
+      res.status(200).json({ message: "mobile cannot be empty" });
+      return;
+    }
+    var sql =
+      "SELECT email,mobile FROM `users` WHERE email='" +
+      email +
+      "' or mobile='" +
+      mobile +
+      "'";
+    var query = db.query(sql, function (error, checkusers) {
+      if (checkusers.length > 0) {
+        req.flash(
+          "message",
+          "User already registered with same email id or mobile"
+        );
+        res.redirect("/operator-page");
+      } else {
+        var sql1 =
+          "INSERT INTO `users`(name, email, mobile, password, type, status,createdby,modifiedby) VALUES ('" +
+          name +
+          "', '" +
+          email +
+          "', '" +
+          mobile +
+          "', '" +
+          hash +
+          "', '2', '0', '" +
+          today +
+          "', '" +
+          today +
+          "')";
+        var query = db.query(sql1, function (error, result) {
+          if (error) throw new Error("User creation problem");
+          res.redirect("/operator-page");
+        });
+      }
+    });
+  }
+};
+
+exports.updateOperator = function (req, res) {
+  if (req.method == "POST") {
+    var post = req.body;
+    var id = post.edit_id;
+    var name = post.edit_name;
+    var email = post.edit_email;
+    var mobile = post.edit_phone;
+    var Status = post.edit_status;
+    var today = new Date().toISOString().slice(0, 19).replace("T", " ");
+
+    if (!name) {
+      res.status(200).json({ message: "Username cannot be empty" });
+      return;
+    }
+    if (!email) {
+      res.status(200).json({ message: "email cannot be empty" });
+      return;
+    }
+    if (!mobile) {
+      res.status(200).json({ message: "mobile cannot be empty" });
+      return;
+    }
+    var sql =
+      "SELECT email,mobile FROM `users` WHERE (email='" +
+      email +
+      "' or mobile='" +
+      mobile +
+      "') AND id != " + id;
+    console.log(sql, "sql");
+
+    var query = db.query(sql, function (error, checkusers) {
+      console.log(checkusers);
+      if (checkusers.length > 1) {
+        req.flash(
+          "message",
+          "User already registered with same email id or mobile"
+        );
+        res.redirect("/operator-page");
+      } else {
+        var sql1 =
+          "UPDATE users set `name`='" +
+          name +
+          "', `email`='" +
+          email +
+          "', `mobile`='" +
+          mobile +
+          "', `status`='" +
+          Status +
+          "', `modifiedby` ='" +
+          today +
+          "' where `id`='" +
+          id +
+          "'";
+        var query = db.query(sql1, function (error, result) {
+          if (error) throw new Error("User Update Problem");
+          req.flash("message", "Customer has been successfully updated.");
+          res.redirect("/operator-page");
+        });
+      }
+    });
+  }
+};
+
 exports.Addcategory = function (req, res) {
   var formidable = require("formidable");
   var fs = require("fs");
@@ -2406,6 +2530,25 @@ exports.vendorPage = (req, res) => {
       csrfToken: req.csrfToken(),
       message: req.flash("message"),
       errors: req.flash("errors"),
+    });
+  });
+};
+
+exports.operatorPage = (req, res) => {
+  var userType = req.session.type;
+
+  if (userType != 1) {
+    res.redirect("/");
+  }
+  var sql1 = "SELECT * FROM `users` WHERE type = 2 order by `id` DESC";
+  let title = "Operator List";
+  var query = db.query(sql1, function (error, result) {
+    if (error) throw new Error("Table data problem");
+    res.render("admin/operator", {
+      operators: result,
+      title: title,
+      csrfToken: req.csrfToken(),
+      message: req.flash("message"),
     });
   });
 };
