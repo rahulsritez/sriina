@@ -113,7 +113,7 @@
                           <div class="col col-sm-4 col-lg-4">
                             <div class="product-image_single">
                               <div class="image">
-                                <a href="<%= baseURL %><%= list.slug %>/<%= list.id %>">
+                                <a href="<%= baseURL %>book/<%= list.slug %>">
                                   <% if(/(http(s?)):\/\//i.test(list.image)) {%>
                                     <img src="<%= list.image %>" alt="<%= list.name %>">
                                   <% } else { %>
@@ -125,7 +125,7 @@
                           </div>
                           <div class="col col-sm-8 col-lg-8">
                             <div class="product-info">
-                              <h3 class="name"><a href="<%= baseURL %><%= list.slug %>/<%= list.id %>">
+                              <h3 class="name"><a href="<%= baseURL %>book/<%= list.slug %>">
                                   <%= list.name %>
                                 </a></h3>
                               <div class="rating rateit-small"></div>
@@ -145,7 +145,7 @@
                                         <input class="form-control quantity" min="1" max="10" name="quantity" value="1" type="hidden">
                                         <input type="hidden" name="product_id" value="<%= list.id %>">
                                         <% if(list.quantity > 0) {%>
-                                          <a class="btn btn-primary" href="<%= baseURL %><%= list.slug %>/<%= list.id %>"> Buy Book </a>
+                                          <a class="btn btn-primary" href="<%= baseURL %>book/<%= list.slug %>"> Buy Book </a>
                                           <% if( maxplan[0].MaxPlanPrice >= list.price ) { %>
                                             <a class="btn btn-primary" href="/membership?productId=<%= list.id %>" title="on rent"> On Rent </a>
                                           <% } %>

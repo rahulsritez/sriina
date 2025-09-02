@@ -207,6 +207,7 @@ app.post("/updatesubcategory", routes.authGaurd, user.Updatesubcategory);
 app.post("/deletesubcategory", routes.authGaurd, user.Deletesubcategory);
 app.post("/categorywisesubcategory", routes.authGaurd, user.Categorywisesubactegory);
 app.post("/addproduct", routes.authGaurd, user.Addproduct);
+app.post("/sync-slug", routes.authGaurd, user.syncSlug);
 app.post("/adminupdateproduct", routes.authGaurd, user.AdminUpdateProduct);
 app.post("/editproduct", routes.authGaurd, user.Editproduct);
 app.post("/updateproduct", routes.authGaurd, user.Updateproduct);
@@ -451,7 +452,7 @@ app.get("/sitemap/:category.xml", async (req, res) => {
 
     products.forEach((product) => {
       sitemapXML += `  <url>\n`;
-      sitemapXML += `    <loc>https://sriina.com/${product?.slug}/${product?.id}</loc>\n`;
+      sitemapXML += `    <loc>https://sriina.com/book/${product?.slug}</loc>\n`;
       sitemapXML += `    <lastmod>2025-08-20</lastmod>\n`;
       sitemapXML += `    <changefreq>weekly</changefreq>\n`;
       sitemapXML += `    <priority>0.7</priority>\n`;
@@ -468,7 +469,7 @@ app.get("/sitemap/:category.xml", async (req, res) => {
   }
 });
 
-app.get("/:slug/:id", csrfProtection, product.viewProduct);
+app.get("/book/:slug", csrfProtection, product.viewProduct);
 
 app.get("/:id", pages.getCategories);
 // Middleware

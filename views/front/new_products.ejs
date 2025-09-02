@@ -8,22 +8,23 @@
                             <div class="product-image">
                                 <% if(list.image) {%>
                                     <% if(/(http(s?)):\/\//i.test(list.image)) {%>
-                                        <div class="img-wrap"> <a href="<%= list.slug %>/<%= list.id %>"><img
+                                        <div class="img-wrap"> <a href="/book/<%= list.slug %>"><img
                                                     src="<%= list.image %>" alt="<%= list.name %>"></a> </div>
                                         <% } else { %>
-                                            <div class="img-wrap"> <a href="<%= list.slug %>/<%= list.id %>"><img
+                                            <div class="img-wrap"> <a href="/book/<%= list.slug %>"><img
                                                         src="<%= process.env.IMAGE_URL%><%= list.image %>"
                                                         alt="<%= list.name %>"></a> </div>
                                             <% } %>
                                                 <% } else {%>
-                                                    <div class="img-wrap"> <a
-                                                            href="<%= list.slug %>/<%= list.id %>"><img
-                                                                src="<%= process.env.IMAGE_URL%>404.jpg"
-                                                                alt="<%= list.name %>"></a> </div>
-                                                    <% } %>
+                                                    <div class="img-wrap">
+                                                        <a href="/book/<%= list.slug %>">
+                                                            <img src="<%= process.env.IMAGE_URL%>404.jpg" alt="<%= list.name %>">
+                                                        </a>
+                                                    </div>
+                                                <% } %>
                             </div>
                             <div class="product-info text-left">
-                                <h3 class="name"><a href="<%= list.slug %>/<%= list.id %>">
+                                <h3 class="name"><a href="/book/<%= list.slug %>">
                                         <%= list.name.substring(0, 60) %>
                                     </a></h3>
                                 <div>By: <%= list.author ? list.author.substring(0, 25) : "" %>
@@ -39,8 +40,7 @@
                                     <div class="on_rent"><a href="membership?productId=<%= list.id %>">On Rent</a></div>
                                     <% } %> -->
                                         <div class="add_cart">
-
-                                            <a href="<%= list.slug %>/<%= list.id %>"><i
+                                            <a href="/book/<%= list.slug %>"><i
                                                     class="fa fa-shopping-cart"></i> Buy Now</a>
 
                                             <!-- <a class="add-cart" herf="<%= list.slug %>/<%= list.id %>"><i class="fa fa-shopping-cart"></i> Add to cart </a> -->

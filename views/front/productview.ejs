@@ -9,7 +9,7 @@
             Book Online at ₹<%= new_price ? new_price.toFixed(2) : "0.00" %>
                 - Free Delivery
     </title>
-    <link rel="canonical" href="http://sriina.com/<%= viewlist.slug %>/<%= viewlist.id %>">
+    <link rel="canonical" href="http://sriina.com/book/<%= viewlist.slug %>">
     <meta name="description" content="<%= truncateDescription(viewlist.description, 153) %>">
     <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon.png">
 
@@ -516,16 +516,16 @@
                                                                 id="xzoom-default"
                                                                 src="<%= process.env.IMAGE_URL %><%= viewlist.image %>"
                                                                 xoriginal="<%= process.env.IMAGE_URL %><%= viewlist.image %>"
-                                                                srcset="<%= process.env.IMAGE_URL %><%= viewlist.image %> 1x, 
-                                                    <%= process.env.IMAGE_URL %><%= viewlist.image %> 2x, 
+                                                                srcset="<%= process.env.IMAGE_URL %><%= viewlist.image %> 1x,
+                                                    <%= process.env.IMAGE_URL %><%= viewlist.image %> 2x,
                                                     <%= process.env.IMAGE_URL %><%= viewlist.image %> 3x" />
                                                             <% } %>
                                                                 <% } else { %>
                                                                     <img class="xzoom-image moveable" id="xzoom-default"
                                                                         src="<%= baseURL %>assets/images/404.jpg"
                                                                         xoriginal="<%= baseURL %>assets/images/404.jpg"
-                                                                        srcset="<%= baseURL %>assets/images/404.jpg 1x, 
-                                                <%= baseURL %>assets/images/404.jpg 2x, 
+                                                                        srcset="<%= baseURL %>assets/images/404.jpg 1x,
+                                                <%= baseURL %>assets/images/404.jpg 2x,
                                                 <%= baseURL %>assets/images/404.jpg 3x" />
                                                                     <% } %>
                                                                         <div class="xzoom-thumbs">
@@ -997,7 +997,7 @@
                                                                                                 { %>
                                                                                                 <a target="_blank"
                                                                                                     rel="noopener noreferrer"
-                                                                                                    href="<%= baseURL %><%= list.slug %>/<%= list.id %>">
+                                                                                                    href="<%= baseURL %>book/<%= list.slug %>">
                                                                                                     <img src="<%= baseURL %><%= list.image %>"
                                                                                                         alt="<%= list.name %>"
                                                                                                         width="150"
@@ -1006,7 +1006,7 @@
                                                                                                 <% } else { %>
                                                                                                     <a target="_blank"
                                                                                                         rel="noopener noreferrer"
-                                                                                                        href="<%= baseURL %><%= list.slug %>/<%= list.id %>">
+                                                                                                        href="<%= baseURL %>book/<%= list.slug %>">
                                                                                                         <img src="<%= process.env.IMAGE_URL %><%= list.image %>"
                                                                                                             alt="<%= list.name %>"
                                                                                                             width="150"
@@ -1019,7 +1019,7 @@
                                                                                                 class="product-thumbnail">
                                                                                                 <a target="_blank"
                                                                                                     rel="noopener noreferrer"
-                                                                                                    href="<%= baseURL %><%= list.slug %>/<%= list.id %>">
+                                                                                                    href="<%= baseURL %>book/<%= list.slug %>">
                                                                                                     <img src="<%= baseURL %>assets/images/404.jpg"
                                                                                                         alt="<%= list.name %>"
                                                                                                         width="150"
@@ -1033,7 +1033,7 @@
                                                                                     <h3 class="product-title">
                                                                                         <a target="_blank"
                                                                                             rel="noopener noreferrer"
-                                                                                            href="<%= baseURL %><%= list.slug %>/<%= list.id %>">
+                                                                                            href="<%= baseURL %>book/<%= list.slug %>">
                                                                                             <%= list.name.substring(0,
                                                                                                 60) %>
                                                                                         </a>
@@ -1061,7 +1061,7 @@
                                                                                     <div class="product-actions">
                                                                                         <a target="_blank"
                                                                                             rel="noopener noreferrer"
-                                                                                            href="<%= baseURL %><%= list.slug %>/<%= list.id %>"
+                                                                                            href="<%= baseURL %>book/<%= list.slug %>"
                                                                                             class="btn btn-primary">
                                                                                             <i
                                                                                                 class="fa fa-shopping-cart"></i>

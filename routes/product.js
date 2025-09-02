@@ -76,16 +76,15 @@ exports.getCategoriesWithProducts = async () => {
 
 exports.viewProduct = function (req, res, next) {
   let title = "Rent/Buy Online Books on Book Store";
-  let Ids = req.params.id;
   let slug = req.params.slug;
 
-  if (Ids != "") {
+  if (slug != "") {
     let sql1 = "SELECT * FROM `books_category` where `is_deleted`=0";
     let query = db.query(sql1, function (error, category) {
       if (error) new Error("Product view page");
       let sql2 =
-        "SELECT p.*, c.name as categoryname from products p left join books_category c on c.id=p.cat_id where p.`status`=1 and p.`product_type_id`=1 and p.id='" +
-        Ids +
+        "SELECT p.*, c.name as categoryname from products p left join books_category c on c.id=p.cat_id where p.`status`=1 and p.`product_type_id`=1 and p.slug='" +
+        slug +
         "'";
       var query = db.query(sql2, function (error, result) {
         if (error) throw new Error("failed to connect category");
@@ -102,8 +101,8 @@ exports.viewProduct = function (req, res, next) {
               var userId = req.session.userId;
               //if(userId == null){
               let sql3 =
-                "SELECT * FROM `products` WHERE `status`=1 and `product_type_id`=1 and id='" +
-                Ids +
+                "SELECT * FROM `products` WHERE `status`=1 and `product_type_id`=1 and slug ='" +
+                slug +
                 "'";
               db.query(sql3, function (error, result) {
                 if (error) throw new Error("failed to connect products tbl");
@@ -128,7 +127,7 @@ exports.viewProduct = function (req, res, next) {
 
                   const book = result[0] || {}; // Assuming result[0] contains book details
                   const bookSlug = slug || "default-slug";
-                  const bookId = Ids || "default-id";
+                  // const bookId = Ids || "default-id";
 
                   const jsonLDData = {
                     "@context": "https://schema.org",
@@ -152,14 +151,14 @@ exports.viewProduct = function (req, res, next) {
                             "@type": "ListItem",
                             position: 3,
                             name: book.name ? book.name.trim() : "Unknown",
-                            item: `https://sriina.com/${bookSlug}/${bookId}`,
+                            item: `https://sriina.com/book/${bookSlug}`,
                           },
                         ],
                       },
                       {
                         "@type": "Book",
                         name: book.name ? book.name.trim() : "Unknown",
-                        url: `https://sriina.com/${bookSlug}/${bookId}`,
+                        url: `https://sriina.com/book/${bookSlug}`,
                         image: book.image
                           ? `https://sriina-products.s3.ap-south-1.amazonaws.com/${book.image}`
                           : "",
