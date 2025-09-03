@@ -235,7 +235,7 @@ exports.productpage = function (req, res) {
               : Math.ceil(total?.[0]?.count / req.query.count);
           db.query(get_type, function (err, get_type_data) {
             res.render("admin/product", {
-              categorylist: result,
+              categorylist: buildCategoryTree(result),
               total: total?.[0].count,
               productlist: result1,
               get_type_data: get_type_data,
@@ -1334,7 +1334,6 @@ exports.Updatecatalog = function (req, res) {
     });
   }
 };
-
 //
 
 exports.Deletecategory = function (req, res) {
@@ -1846,6 +1845,46 @@ exports.Addproduct = function (req, res) {
       });
     });
   } else {
+  }
+};
+
+exports.syncSlug = async (req, res) => {
+  var slugify = require("slugify");
+  var user = req.session.user,
+    userId = req.session.userId,
+    type = req.session.type;
+  if (userId == null) {
+    res.render("admin/admin", {
+      message: "Please login as admin",
+      message_success: "",
+    });
+  }
+  if (req.url == "/sync-slug") {
+    var all_products = await db.promise().query('SELECT id, name, publisher, author FROM products WHERE status = 1');
+    for (const product of all_products[0]) {
+      const { id, name, author, publisher } = product;
+
+      // Build slug string (skip undefined/null)
+      const rawSlug = [name, author, publisher]
+        .filter(Boolean) // remove empty/null values
+        .join("-");
+
+      const slug_url = slugify(rawSlug, {
+        replacement: "-",
+        remove: /[,*+~.(){}';"\/\\#$%<>?!:@]/g,
+        lower: true,
+        strict: false,
+        trim: true,
+      });
+
+      await db.promise().query("UPDATE products SET slug = ? WHERE id = ?", [
+        slug_url,
+        id,
+      ]);
+
+    }
+    req.flash("message", "Product slugs are updated successfully.");
+    res.redirect("/productlist");
   }
 };
 
@@ -2731,3 +2770,23 @@ exports.getGrocerySubCategory = function (req, res) {
     res.send(results);
   });
 };
+
+function buildCategoryTree(categories) {
+  const map = {};
+  const roots = [];
+
+  // Create a map of all categories
+  categories.forEach(cat => {
+    map[cat.id] = { ...cat, children: [] };
+  });
+
+  // Link children to parents
+  categories.forEach(cat => {
+    if (cat.parents_id && map[cat.parents_id]) {
+      map[cat.parents_id].children.push(map[cat.id]);
+    } else {
+      roots.push(map[cat.id]);
+    }
+  });
+  return roots;
+}

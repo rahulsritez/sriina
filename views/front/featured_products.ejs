@@ -9,24 +9,24 @@
 								<% if(list.image) {%>
 									<div class="img-wrap">
 										<% if(/(http(s?)):\/\//i.test(list.image)) {%>
-											<a href="<%= list.slug %>/<%= list.id %>"><img src="<%= list.image %>"
+											<a href="/book/<%= list.slug %>"><img src="<%= list.image %>"
 													alt="<%= list.name %>"></a>
 											<% } else { %>
-												<a href="<%= list.slug %>/<%= list.id %>"><img
+												<a href="/book/<%= list.slug %>"><img
 														src="<%= process.env.IMAGE_URL %><%= list.image %>"
 														alt="<%= list.name %>"></a>
 												<% } %>
 									</div>
 									<% } else {%>
 										<div class="img-wrap">
-											<a href="<%= list.slug %>/<%= list.id %>"><img
+											<a href="/book/<%= list.slug %>"><img
 													src="<%= process.env.IMAGE_URL %>404.jpg" alt=""></a>
 										</div>
 										<% } %>
 							</div>
 							<div class="product-info text-left">
 								<div style="min-height:110px;">
-									<h3 class="name"><a href="<%= list.slug %>/<%= list.id %>">
+									<h3 class="name"><a href="/book/<%= list.slug %>">
 											<%= list.name.substring(0, 60) %>
 										</a></h3>
 									<div>By: <%= list.author.substring(0,28) %>
@@ -46,7 +46,7 @@
 									<% } %> -->
 
 										<div class="add_cart">
-											<a class="add-cart" href="<%= list.slug %>/<%= list.id %>"><i
+											<a class="add-cart" href="/book/<%= list.slug %>"><i
 													class="fa fa-shopping-cart"></i> Buy Now </a>
 
 											<!--<a class="add-cart cart<%= index %>"><i class="fa fa-shopping-cart"></i> Add to cart</a>-->

@@ -121,7 +121,7 @@ exports.categoryXML = (req, res) => {
         item.ele("title").txt(sanitize(product.name));
         item
           .ele("link")
-          .txt(`https://sriina.com/${product.slug}/${product.id}`);
+          .txt(`https://sriina.com/book/${product.slug}`);
         item.ele("description").txt(sanitize(product.description));
         item.ele("g:price").txt(`${salePrice} INR`);
         item

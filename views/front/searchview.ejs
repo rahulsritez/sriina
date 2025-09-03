@@ -75,7 +75,7 @@
 
 .product-category-inner {
   margin-bottom: 20px; /* Added spacing between product boxes */
-  
+
 }
 .product-items {
     background-color: #fff;
@@ -126,13 +126,13 @@
   justify-content: center;
   text-align: center;
   padding: 40px;
-  background: #f8f9fa; 
+  background: #f8f9fa;
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 
   .icon {
     font-size: 60px;
-    color: #dc3545; 
+    color: #dc3545;
     margin-bottom: 10px;
   }
 
@@ -144,13 +144,13 @@
 
   .suggestion {
     font-size: 16px;
-    color: #6c757d; 
+    color: #6c757d;
     margin-top: 5px;
   }
 }
 
 
-    
+
   </style>
   <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-YN8Y6YGBF7"></script>
@@ -223,30 +223,30 @@
                                 <% if (list.image) { %>
                                   <div class="thumbnail">
                                     <% if (/(http(s?)):\/\//i.test(list.image)) { %>
-                                      <a target="_blank" href="<%= list.slug %>/<%= list.id %>">
+                                      <a target="_blank" href="/book/<%= list.slug %>">
                                         <img src="<%= list.image %>" alt="<%= list.name %>">
                                       </a>
                                     <% } else { %>
-                                      <a target="_blank" href="<%= list.slug %>/<%= list.id %>">
+                                      <a target="_blank" href="/book/<%= list.slug %>">
                                         <img src="<%= process.env.IMAGE_URL %><%= list.image %>" alt="<%= list.name %>">
                                       </a>
                                     <% } %>
                                   </div>
                                 <% } else { %>
                                   <div class="thumbnail">
-                                    <a target="_blank" href="<%= list.slug %>/<%= list.id %>">
+                                    <a target="_blank" href="/book/<%= list.slug %>">
                                       <img src="<%= process.env.IMAGE_URL %>404.jpg" alt="<%= list.name %>">
                                     </a>
                                   </div>
                                 <% } %>
                               </div>
                             </div>
-  
+
                             <!-- Product Details -->
                             <div class="col-12 col-sm-8 col-lg-9">
                               <div class="product-details">
                                 <h3 class="product-name">
-                                  <a href="<%= list.slug %>/<%= list.id %>" class="text-dark fw-bold"><%= list.name %></a>
+                                  <a href="/book/<%= list.slug %>" class="text-dark fw-bold"><%= list.name %></a>
                                 </h3>
                                 <div class="product-pricing">
                                   <span class="current-price text-success fw-bold fs-5">₹<%= parseFloat(((list.price) - (list.price / 100) * list.discount)).toFixed(2) %></span>
@@ -255,12 +255,12 @@
                                 <div class="product-description m-t-10 addReadMore showlesscontent text-truncate">
                                   <%- list.description %>
                                 </div>
-  
+
                                 <!-- Action Buttons -->
                                 <!-- <div class="product-actions mt-3">
                                   <div class="d-flex gap-2">
-                                    <button class="btn btn-primary d-flex " data-toggle="dropdown" type="button" > 
-                                      <i class="fa fa-shopping-cart me-2"></i> 
+                                    <button class="btn btn-primary d-flex " data-toggle="dropdown" type="button" >
+                                      <i class="fa fa-shopping-cart me-2"></i>
                                     </button>
                                     <a class="btn btn-primary view-product-btn" href="<%= list.slug %>/<%= list.id %>">Buy Book</a>
                                     </div>
@@ -273,7 +273,7 @@
                                       <button class="btn btn-primary icon" data-toggle="dropdown" type="button">
                                         <i class="fa fa-shopping-cart"></i>
                                       </button>
-                                      <a class="btn btn-primary view-product-btn" href="<%= list.slug %>/<%= list.id %>">Buy Book</a>
+                                      <a class="btn btn-primary view-product-btn" href="/book/<%= list.slug %>">Buy Book</a>
                                     </li>
                                   </ul>
                                 </div>
@@ -290,8 +290,8 @@
                         <div class="suggestion">Try searching with a different title, author, or ISBN.</div>
                       </div>
                     </div>
-                    
-                    
+
+
                   <% } %>
                 </div>
               </div>
@@ -301,8 +301,8 @@
       </div>
     </div>
   </div>
-  
-  
+
+
   <%- include ("../front/book_footer") %>
     <script src="../assets/js/jquery-1.11.1.min.js"></script>
     <script src="../assets/js/bootstrap.min.js"></script>
