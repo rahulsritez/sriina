@@ -79,22 +79,22 @@
                                             <div class="product">
                                                 <div class="product-image_single">
                                                     <% if(list.image) {%>
-                                                        <div class="image"> 
+                                                        <div class="image">
                                                             <% if(/(http(s?)):\/\//i.test(list.image)) {%>
-                                                                <a href="<%= list.slug %>/<%= list.id %>"><img src="<%= list.image %>" alt=""></a> 
+                                                                <a href="/book/<%= list.slug %>"><img src="<%= list.image %>" alt=""></a>
                                                             <% } else { %>
-                                                                <a href="<%= list.slug %>/<%= list.id %>"><img src="<%= process.env.IMAGE_URL %><%= list.image %>" alt=""></a> 
+                                                                <a href="/book/<%= list.slug %>"><img src="<%= process.env.IMAGE_URL %><%= list.image %>" alt=""></a>
                                                             <% } %>
                                                         </div>
                                                     <% } else { %>
-                                                        <div class="image"> 
-                                                            <a href="<%= list.slug %>/<%= list.id %>"><img src="<%= process.env.IMAGE_URL %>404.jpg" alt=""></a> 
+                                                        <div class="image">
+                                                            <a href="/book/<%= list.slug %>"><img src="<%= process.env.IMAGE_URL %>404.jpg" alt=""></a>
                                                         </div>
                                                     <% } %>
                                                 </div>
                                                 <div class="product-info text-left">
                                                     <div style="min-height:110px;">
-                                                        <h3 class="name"><a href="<%= list.slug %>/<%= list.id %>"><%= list.name.substring(0, 60) %></a></h3>
+                                                        <h3 class="name"><a href="/book/<%= list.slug %>"><%= list.name.substring(0, 60) %></a></h3>
                                                         <div class="rating rateit-small"></div>
                                                         <div class="description"></div>
                                                         <div class="product-price">
@@ -104,10 +104,10 @@
                                                         </div>
                                                     </div>
                                                     <div class="add_cart">
-                                                        <a class="add-cart" href="<%= list.slug %>/<%= list.id %>"><i class="fa fa-shopping-cart"></i> Buy Book </a>
+                                                        <a class="add-cart" href="/book/<%= list.slug %>"><i class="fa fa-shopping-cart"></i> Buy Book </a>
                                                     </div>
                                                     <div class="clearfix"></div>
-                                                </div> 
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
