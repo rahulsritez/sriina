@@ -479,6 +479,7 @@ exports.getCategories = async function (req, res, next) {
     // Step 6: Render view
     if (category_type_id === 1) {
       res.render("front/productbycategory", {
+        csrfToken: req.csrfToken(),
         getmeta: getmeta[0],
         categorylist: getcategory,
         productlist: products,
