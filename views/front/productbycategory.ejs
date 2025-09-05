@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <meta name="title" content="<%= getmeta.meta_title %>">
@@ -41,6 +42,15 @@
     .addReadMoreWrapTxt.showmorecontent .SecSec, .addReadMoreWrapTxt.showmorecontent .readLess { display: block; }
     #categorys { max-height: 500px !important; margin-bottom: 20px; overflow-y: scroll; }
   </style>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-YN8Y6YGBF7"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-YN8Y6YGBF7');
+  </script>
 </head>
 <body>
   <header class="header-style-1">
@@ -141,14 +151,13 @@
                                 <div class="action">
                                   <ul class="list-unstyled">
                                     <li class="add-cart-button btn-group">
-                                      <form action="/addtocart" method="post">
+                                      <form action="/saveaddtocart" method="post">
+                                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                         <input class="form-control quantity" min="1" max="10" name="quantity" value="1" type="hidden">
                                         <input type="hidden" name="product_id" value="<%= list.id %>">
                                         <% if(list.quantity > 0) {%>
                                           <a class="btn btn-primary" href="<%= baseURL %>book/<%= list.slug %>"> Buy Book </a>
-                                          <% if( maxplan[0].MaxPlanPrice >= list.price ) { %>
-                                            <a class="btn btn-primary" href="/membership?productId=<%= list.id %>" title="on rent"> On Rent </a>
-                                          <% } %>
+                                          <button class="btn btn-primary" type="submit">Add to cart</button>
                                         <% } else {%>
                                           <div class="row">
                                             <div class="col-sm-6"><span class="comingsoon">Coming Soon</span></div>

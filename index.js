@@ -471,7 +471,7 @@ app.get("/sitemap/:category.xml", async (req, res) => {
 
 app.get("/book/:slug", csrfProtection, product.viewProduct);
 
-app.get("/:id", pages.getCategories);
+app.get("/:id", csrfProtection, pages.getCategories);
 // Middleware
 app.listen(port, () => {
   console.log(`Server running on port: ${port}`);
