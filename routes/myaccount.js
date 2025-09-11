@@ -164,12 +164,15 @@ exports.saveAdminPwdOTP = (req, res) => {
   }
 };
 
-exports.UserAccount = (req, res, next) => {
+exports.UserAccount = async (req, res, next) => {
   let title = "My Account";
   var userId = req.session.userId;
   if (userId == null) {
     res.redirect("/sign-in");
   } else {
+    let qry = "SELECT name, email, mobile FROM users WHERE id = " + userId + " LIMIT 0,1";
+    let userDetails = await db.promise().query(qry);
+
     let sql =
       "SELECT bk_order.created_at as created_at, bk_order.paid_amount as paid_amount, bk_order.reference, shipping_information.fullname as fullname FROM bk_order JOIN shipping_information ON shipping_information.user_id = bk_order.customer_id and shipping_information.user_id ='" +
       userId +
@@ -178,7 +181,8 @@ exports.UserAccount = (req, res, next) => {
       "' and bk_order.paid_amount is not null ORDER BY `bk_order`.`order_id` DESC";
     var query = db.query(sql, function (error, getorder) {
       if (error) throw error;
-      res.render("users/myaccount", {
+      res.render("users/my-orders", {
+        user: userDetails[0][0],
         getorder: getorder,
         message: req.flash("message"),
         errors: req.flash("errors"),
@@ -512,5 +516,71 @@ exports.UserProfile = (req, res) => {
       if (error) throw new Error("User Data Problem");
       res.render("users/profile", { data });
     });
+  }
+};
+
+exports.UserProfile2 = async (req, res) => {
+  let title = "My Profile";
+  var userId = req.session.userId;
+  if (userId == null) {
+    res.redirect("/sign-in");
+  } else {
+    let shipping_details = await db.promise().query( "SELECT si.*, s.name as ShippingState FROM shipping_information as si LEFT JOIN state as s ON si.state = s.id WHERE user_id = " + userId + " ORDER BY si.id DESC");
+    let sql = "SELECT * FROM `users` WHERE  id='" + userId + "'";
+    let query = db.query(sql, function (error, getdata) {
+      let data = JSON.parse(JSON.stringify(getdata[0]));
+      if (error) throw new Error("User Data Problem");
+      res.render("users/profile-new", {
+        data,
+        shipping_details: shipping_details[0],
+        csrf: req.csrfToken(),
+        message: req.flash("message"),
+      });
+    });
+  }
+};
+
+exports.changePassword = (req, res) => {
+  let title = "My Profile";
+  var userId = req.session.userId;
+  if (userId == null) {
+    res.redirect("/sign-in");
+  } else {
+    let sql = "SELECT * FROM `users` WHERE  id='" + userId + "'";
+    let query = db.query(sql, function (error, getdata) {
+      let data = JSON.parse(JSON.stringify(getdata[0]));
+      if (error) throw new Error("User Data Problem");
+      res.render("users/change-password", {
+        data,
+        csrf: req.csrfToken(),
+        message: req.flash("message"),
+      });
+    });
+  }
+};
+
+exports.updatePassword = async (req, res, next) => {
+  var userId = req.session.userId;
+  if (userId == null) {
+    res.redirect("/sign-in");
+  } else {
+    let post = req.body;
+    let curr_pass = xss(post.curr_password);
+    let new_pass = xss(post.n_password);
+    let sql = "SELECT id, password FROM users WHERE id = " + userId + " LIMIT 0,1";
+    let userData = await db.promise().query(sql);
+    const match = await bcrypt.compare(curr_pass, userData[0][0].password);
+
+    if(match) {
+      const rounds = 10;
+      var hash = bcrypt.hashSync(new_pass, rounds);
+      let sql = "UPDATE `users` SET `password`='" + hash + "' WHERE id = " + userId;
+      var is_update = await db.promise().query(sql);
+      req.flash("message", "Password updated.");
+      res.redirect("/change-password");
+    } else {
+      req.flash("message", "Invalid current password.");
+      res.redirect("/change-password");
+    }
   }
 };

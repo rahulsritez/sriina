@@ -2025,6 +2025,32 @@ exports.vendorRegister = (req, res, next) => {
   });
 };
 
+exports.secondaryEmail = (req, res, next) => {
+  if (req.method == "POST") {
+    var user = req.session.user,
+      userId = req.session.userId;
+    if (userId == null) {
+      res.redirect("/sign-in");
+    } else {
+      var post = req.body;
+      var secondary_email = xss(post.secondary_email);
+
+      let sql = "UPDATE `users` SET `secondary_email`='" + secondary_email + "' WHERE id = " + userId;
+      var query = db.query(sql, function (error, result) {
+        if (error) {
+          throw error;
+        } else {
+          req.flash(
+            "message",
+            "Your Secondary Email has been succefully added."
+          );
+          res.redirect("/profile");
+        }
+      });
+    }
+  }
+};
+
 exports.vendorRegisterFrm = (req, res, next) => {
   if (req.method == "POST") {
     var today = new Date().toISOString().slice(0, 19).replace("T", " ");
