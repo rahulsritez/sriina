@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+	<meta name="description" content="">
+	<meta name="author" content="">
+    <meta name="keywords" content="MediaCenter, Template, eCommerce">
+    <meta name="robots" content="INDEX,FOLLOW"/>
+    <title>Sriina | My Profile</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/7.2.96/css/materialdesignicons.min.css" integrity="sha512-LX0YV/MWBEn2dwXCYgQHrpa9HJkwB+S+bnBpifSOTO1No27TqNMKYoAn6ff2FBh03THAzAiiCwQ+aPX+/Qt/Ow==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="<%= baseURL %>assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="<%= baseURL %>assets/css/main.css">
+    <link rel="stylesheet" href="<%= baseURL %>assets/css/blue.css">
+    <link rel="stylesheet" href="<%= baseURL %>assets/css/owl.carousel.css">
+	<link rel="stylesheet" href="<%= baseURL %>assets/css/owl.transitions.css">
+	<link rel="stylesheet" href="<%= baseURL %>assets/css/animate.min.css">
+	<link rel="stylesheet" href="<%= baseURL %>assets/css/rateit.css">
+	<link rel="stylesheet" href="<%= baseURL %>assets/css/bootstrap-select.min.css">
+    <link href="<%= baseURL %>assets/css/custom.css" rel="stylesheet" />
+    <link rel="stylesheet" href="<%= baseURL %>assets/css/font-awesome.css">
+	<link href='http://fonts.googleapis.com/css?family=Roboto:300,400,500,700' rel='stylesheet' type='text/css'>
+	<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,400italic,600,600italic,700,700italic,800' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
+    <style type="text/css">
+    	.order_css{
+    		border: 1px #ddd solid;
+		    margin-bottom: 10px;
+		    padding: 10px;
+		}
+        .shipping-details {
+            display: grid;
+            column-gap: 10px;
+            grid-template-columns: auto auto auto auto;
+            padding: 15px;
+        }
+        .bordered {
+            border: 1px #ddd solid;
+            border-radius: 5px;
+            padding: 15px;
+        }
+        body{
+            margin-top:20px;
+            background:#f7f8fa
+        }
+        .avatar-xxl {
+            height: 7rem;
+            width: 7rem;
+        }
+        .card {
+            margin-bottom: 20px;
+            -webkit-box-shadow: 0 2px 3px #eaedf2;
+            box-shadow: 0 2px 3px #eaedf2;
+        }
+        .pb-0 {
+            padding-bottom: 0!important;
+        }
+
+        .font-size-16 {
+            font-size: 16px!important;
+        }
+        .avatar-title {
+            -webkit-box-align: center;
+            -ms-flex-align: center;
+            align-items: center;
+            background-color: #038edc;
+            color: #fff;
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            font-weight: 500;
+            height: 100%;
+            -webkit-box-pack: center;
+            -ms-flex-pack: center;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .bg-soft-primary {
+            background-color: rgba(3,142,220,.15)!important;
+        }
+        .rounded-circle {
+            border-radius: 50%!important;
+        }
+
+        .nav-tabs-custom .nav-item .nav-link.active {
+            color: #038edc;
+        }
+        .nav-tabs-custom .nav-item .nav-link.active {
+            color: #038edc;
+        }
+
+        .avatar-group {
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -ms-flex-wrap: wrap;
+            flex-wrap: wrap;
+            padding-left: 12px;
+        }
+
+        .border-end {
+            border-right: 1px solid #eff0f2 !important;
+        }
+
+        .avatar-group .avatar-group-item {
+            margin-left: -14px;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            -webkit-transition: all .2s;
+            transition: all .2s;
+        }
+
+        .avatar-sm {
+            height: 2rem;
+            width: 2rem;
+        }
+
+        .nav-tabs-custom .nav-item {
+            position: relative;
+            color: #343a40;
+        }
+
+        .nav-tabs-custom .nav-item .nav-link.active:after {
+            -webkit-transform: scale(1);
+            transform: scale(1);
+        }
+
+        .nav-tabs-custom .nav-item .nav-link::after {
+            content: "";
+            background: #038edc;
+            height: 2px;
+            position: absolute;
+            width: 100%;
+            left: 0;
+            bottom: -2px;
+            -webkit-transition: all 250ms ease 0s;
+            transition: all 250ms ease 0s;
+            -webkit-transform: scale(0);
+            transform: scale(0);
+        }
+    </style>
+</head>
+<body class="cnt-home">
+    <header class="header-style-1">
+        <%- include('../front/top_bar') -%> <%- include('../front/search') -%> <%- include('../front/navigation') -%>
+    </header>
+
+    <div class="breadcrumb">
+        <div class="container">
+            <div class="breadcrumb-inner">
+                <ul class="list-inline list-unstyled">
+                    <li><a href="/">Home</a></li>
+                    <li class="active">My Profile</li>
+                </ul>
+            </div>
+            <!-- /.breadcrumb-inner -->
+        </div>
+        <!-- /.container -->
+    </div>
+    <!-- /.breadcrumb -->
+
+    <div class="body-content">
+        <div class="container">
+            <div class="row checkout-box faq-page">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-body pb-0">
+                            <div class="row align-items-center">
+                                <div class="col-md-3">
+                                    <div class="text-center border-end">
+                                        <img src="https://bootdey.com/img/Content/avatar/avatar1.png" class="img-fluid avatar-xxl rounded-circle" alt="">
+                                        <h4 class="text-primary font-size-20 mt-3 mb-2"><%= data.name %></h4>
+                                    </div>
+                                </div><!-- end col -->
+                                <div class="col-md-9">
+                                    <div class="ms-3">
+                                        <div class="row my-4" style="margin-top: 20px;">
+                                            <div class="col-md-12">
+                                                <div>
+                                                    <p class="text-muted mb-2 fw-medium"><i class="mdi mdi-email-outline me-2"></i><%= data.email %></p>
+                                                    <p class="text-muted fw-medium mb-0"><i class="mdi mdi-phone-in-talk-outline me-2"></i><%= data.mobile %>
+                                                    </p>
+                                                </div>
+                                            </div><!-- end col -->
+                                        </div><!-- end row -->
+                                        <ul class="nav nav-tabs nav-tabs-custom border-bottom-0 mt-3 nav-justfied" role="tablist">
+                                            <li class="nav-item" role="presentation">
+                                                <a class="nav-link px-4" href="/myaccount">
+                                                    <span class="d-block d-sm-none"><i class="fas fa-home"></i></span>
+                                                    <span class="d-none d-sm-block">My Orders</span>
+                                                </a>
+                                            </li><!-- end li -->
+                                            <li class="nav-item active" role="presentation">
+                                                <a class="nav-link px-4" data-toggle="tab" href="#tasks-tab" role="tab" aria-selected="false" tabindex="-1">
+                                                    <span class="d-block d-sm-none"><i class="mdi mdi-menu-open"></i></span>
+                                                    <span class="d-none d-sm-block">Shipping Details</span>
+                                                </a>
+                                            </li><!-- end li -->
+                                            <li class="nav-item" role="presentation">
+                                                <a class="nav-link px-4" href="/change-password">
+                                                    <span class="d-block d-sm-none"><i class="mdi mdi-account-group-outline"></i></span>
+                                                    <span class="d-none d-sm-block">Change Password</span>
+                                                </a>
+                                            </li><!-- end li -->
+                                        </ul><!-- end ul -->
+                                    </div>
+                                </div><!-- end col -->
+                            </div><!-- end row -->
+                        </div><!-- end card body -->
+                    </div><!-- end card -->
+                    <div class="card">
+                        <div class="tab-content p-4">
+                            <div class="tab-pane active" id="tasks-tab" role="tabpanel">
+                                <h4 class="card-title mb-4">Shipping Details</h4>
+                                <% if(message.length > 0) {%>
+                                    <div class="alert alert-success alert-dismissible show" role="alert">
+                                        <%= message %>
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                <% } %>
+
+                                <div class="row">
+                                    <div class="shipping-details">
+                                        <% for(var i=0; i < shipping_details.length; i++) { %>
+                                            <div class="bordered">
+                                                <span><%= shipping_details[i].full_name %></span><br>
+                                                <span><%= shipping_details[i].house_address %> <%= shipping_details[i].colony_area %>,</span><br>
+                                                <span><%= shipping_details[i].city_town %>, <%= shipping_details[i].ShippingState %> : <%= shipping_details[i].pincode %></span><br>
+                                                <span><%= shipping_details[i].shippingCountyName %></span><br>
+                                                <span>Phone number : <%= shipping_details[i].mobile %></span><br>
+                                                <span>
+                                                    <button class="btn btn-danger" onclick="deleteShipping(<%= shipping_details[i].id %>)" ><i class="fa fa-trash" aria-hidden="true"></i></button>
+                                                </span>
+                                            </div>
+                                        <% } %>
+                                    </div>
+                                </div><!-- end col -->
+                                <div class="row text-right" style="margin-top: 10px; margin-bottom: 10px;">
+                                    <div class="col-md-12">
+                                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editShippingModal">Add Shipping Information</button>
+                                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editSecondaryEmail">Add Secondary Email</button>
+                                    </div>
+                                </div>
+                            </div><!-- end row -->
+                        </div><!-- end tab pane -->
+                    </div>
+                </div><!-- end card -->
+            </div><!-- end col -->
+        </div>
+    </div>
+    </div>
+    <div class="modal" id="editShippingModal" tabindex="-1" role="dialog" aria-modal="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content animated bounceInRight">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Product </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                    </button>
+                </div><!--end modal-header-->
+                <form method="post" action="/shipping_information" onsubmit="return validateShipping()">
+                    <input type="hidden" name="_csrf" value="<%= csrf %>">
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <label>Full Name</label>
+                                <input type="text" name="fullname" id="s_fullname" class="form-control" placeholder="Please enter your name">
+                                <span id="s_fullname_err"></span>
+                            </div>
+                            <div class="col-sm-6">
+                                <label>Mobile number</label>
+                                <input type="text" name="mobile" id="s_mobile" class="form-control" maxlength="10" placeholder="10-digit mobile number without prefixes">
+                                <span id="s_mobile_err"></span>
+                                <div class="a-section a-spacing-none a-spacing-top-micro"><span class="a-size-mini"><small>May be used to assist delivery</small></span></div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <label>PIN code</label>
+                                <input type="number" name="pincode" id="s_pincode" class="form-control" maxlength="6" placeholder="6 digits [0-9] PIN code">
+                                <span id="s_pincode_err"></span>
+                            </div>
+                            <div class="col-sm-6">
+                                <label>Flat, House no., Building, Company, Apartment</label>
+                                <input type="text" name="house_address" class="form-control" id="s_house_address" maxlength="60" placeholder="Flat, House no., Building, Company, Apartment">
+                                <span id="s_house_address_err"></span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <label>Area, Colony, Street, Sector, Village</label>
+                                <input type="text" maxlength="60" name="colony_area" class="form-control" id="s_colony_area" placeholder="Area, Colony, Street, Sector, Village">
+                                <span id="s_colony_area_err"></span>
+                            </div>
+                            <div class="col-sm-6">
+                                <label>Landmark</label>
+                                <input type="text" name="landmark" id="s_landmark" class="form-control" maxlength="60" placeholder="E.g. Near AIIMS Flyover, Behind Regal Cinema, etc.">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <label>Town/City</label>
+                                <input type="text" maxlength="50" name="city_town" class="form-control" id="s_city_town" placeholder="Area, Colony, Street, Sector, Village">
+                                <span id="s_city_town_err"></span>
+                            </div>
+                            <div class="col-sm-6">
+                                <label>State / Province / Region</label>
+                                <select class="form-control" name="state" id="s_state">
+                                    <option value="">-Please select state-</option>
+                                    <option value="16">ANDAMAN AND NICOBAR ISLANDS</option>
+                                    <option value="17">ANDHRA PRADESH</option>
+                                    <option value="18">ARUNACHAL PRADESH</option>
+                                    <option value="19">ASSAM</option>
+                                    <option value="20">BIHAR</option>
+                                    <option value="21">CHANDIGARH</option>
+                                    <option value="22">CHHATTISGARH</option>
+                                    <option value="23">DADRA AND NAGAR HAVELI AND DAMAN AND DIU</option>
+                                    <option value="24">DELHI</option>
+                                    <option value="25">GOA</option>
+                                    <option value="26">GUJARAT</option>
+                                    <option value="27">HARYANA</option>
+                                    <option value="28">HIMACHAL PRADESH</option>
+                                    <option value="29">JAMMU AND KASHMIR</option>
+                                    <option value="30">JHARKHAND</option>
+                                    <option value="31">KARNATAKA</option>
+                                    <option value="32">KERALA</option>
+                                    <option value="33">LADAKH</option>
+                                    <option value="34">LAKSHADWEEP</option>
+                                    <option value="35">MADHYA PRADESH</option>
+                                    <option value="36">MAHARASHTRA</option>
+                                    <option value="37">MANIPUR</option>
+                                    <option value="38">MEGHALAYA</option>
+                                    <option value="39">MIZORAM</option>
+                                    <option value="40">NAGALAND</option>
+                                    <option value="41">ODISHA</option>
+                                    <option value="42">PUDUCHERRY</option>
+                                    <option value="43">PUNJAB</option>
+                                    <option value="44">RAJASTHAN</option>
+                                    <option value="45">SIKKIM</option>
+                                    <option value="46">TAMIL NADU</option>
+                                    <option value="47">TELANGANA</option>
+                                    <option value="48">TRIPURA</option>
+                                    <option value="49">UTTAR PRADESH</option>
+                                    <option value="50">UTTARAKHAND</option>
+                                    <option value="51">WEST BENGAL</option>
+                                </select>
+                                <span id="s_state_err"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="editSecondaryEmail" tabindex="-1" role="dialog" aria-modal="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content animated bounceInRight">
+                <div class="modal-header">
+                    <h5 class="modal-title">Secondary Email </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                    </button>
+                </div><!--end modal-header-->
+                <form method="post" action="/secondary_email" onsubmit="return validateEmail()">
+                    <input type="hidden" name="_csrf" value="<%= csrf %>">
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <label>Secondary Email</label>
+                                <input type="text" name="secondary_email" id="secondary_email" class="form-control" placeholder="Please enter your email">
+                                <span id="s_email_err"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+<%- include('../front/book_footer') -%>
+	<script src="<%= baseURL %>assets/js/jquery-1.11.1.min.js"></script>
+	<script src="<%= baseURL %>assets/js/bootstrap.min.js"></script>
+	<script src="<%= baseURL %>assets/js/bootstrap-hover-dropdown.min.js"></script>
+	<script src="<%= baseURL %>assets/js/owl.carousel.min.js"></script>
+	<script src="<%= baseURL %>assets/js/echo.min.js"></script>
+	<script src="<%= baseURL %>assets/js/jquery.easing-1.3.min.js"></script>
+	<script src="<%= baseURL %>assets/js/bootstrap-slider.min.js"></script>
+    <script src="<%= baseURL %>assets/js/jquery.rateit.min.js"></script>
+    <script type="text/javascript" src="<%= baseURL %>assets/js/lightbox.min.js"></script>
+    <script src="<%= baseURL %>assets/js/bootstrap-select.min.js"></script>
+    <script src="<%= baseURL %>assets/js/wow.min.js"></script>
+	<script src="<%= baseURL %>assets/js/scripts.js"></script>
+
+    <script type="text/javascript">
+        function validateEmail() {
+            var flag = false;
+            var email = $("#secondary_email").val().trim();
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if( email !== "" && !emailRegex.test(email) ) {
+                $("#s_email_err").html('<span class="text-danger">Provide valid address.</span>');
+                flag = true;
+            }
+            if(flag){
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        function validateShipping() {
+            var flag = false;
+            var fullname = $("#s_fullname").val();
+            var mobile = $("#s_mobile").val();
+            var pincode = $("#s_pincode").val();
+            var house_address = $("#s_house_address").val();
+            var colony_area = $("#s_colony_area").val();
+            var city_town = $("#s_city_town").val();
+            var state = $("#s_state").val();
+
+            if(fullname ==="" || fullname.search(/\w/)< 0){
+                $("#s_fullname_err").html('<span class="text-danger">Name cannot be empty.</span>');
+                flag = true;
+            } else {
+                $("#s_fullname_err").html('');
+            }
+
+            if(mobile ===""){
+                $("#s_mobile_err").html('<span class="text-danger">Mobile cannot be empty.</span>');
+                flag = true;
+            } else if(mobile.length!=10){
+                $("#s_mobile_err").html('<span class="text-danger">Please enter valid mobile no.</span>');
+                flag = true;
+            } else {
+                $("#s_mobile_err").html('');
+            }
+
+            if(pincode ==="" || pincode.search(/\w/)< 0){
+                $("#s_pincode_err").html('<span class="text-danger">Pin code cannot be empty.</span>');
+                flag = true;
+            } else if(pincode.length!=6){
+                $("#s_pincode_err").html('<span class="text-danger">Please enter valid pincode.</span>');
+                flag = true;
+            } else {
+                $("#s_pincode_err").html('');
+            }
+
+            if(house_address ==="" || house_address.search(/\w/)< 0){
+                $("#s_house_address_err").html('<span class="text-danger">House Address cannot be empty.</span>');
+                flag = true;
+            } else {
+                $("#s_house_address_err").html('');
+            }
+
+            if(colony_area ==="" || colony_area.search(/\w/)< 0){
+                $("#s_colony_area_err").html('<span class="text-danger">Colony Area cannot be empty.</span>');
+                flag = true;
+            } else {
+                $("#s_colony_area_err").html('');
+            }
+
+            if(city_town ==="" || city_town.search(/\w/)< 0){
+                $("#s_city_town_err").html('<span class="text-danger">Town/City cannot be empty.</span>');
+                flag = true;
+            } else {
+                $("#s_city_town_err").html('');
+            }
+
+            if(state ==="" || state.search(/\w/)< 0){
+                $("#s_state_err").html('<span class="text-danger">Please select state.</span>');
+                flag = true;
+            } else {
+                $("#s_state_err").html('');
+            }
+
+            if(flag){
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        function deleteShipping(Id) {
+            if(Id) {
+                var r = confirm("Are you sure you want to delete address.");
+                if(r == true){
+                    var dataString = 'shippingId='+Id;
+                    $.ajax({
+                        type: 'get',
+                        url: '/delete_shipping_address',
+                        data: dataString,
+                        dataType: 'json',
+                        success: function(result){
+                            if(result.status==1){
+                                window.location.reload();
+                            }
+                        }
+                    });
+                }
+            }
+        }
+    </script>
+</body>
+</html>

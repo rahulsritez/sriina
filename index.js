@@ -256,7 +256,12 @@ app.get("/updatecart", routes.authGaurd, product.updateCart);
 app.post("/saveaddtocart", parseForm, csrfProtection, product.saveAddtoCart);
 app.get("/checkpincode", product.checkPinNumber);
 app.get("/myaccount", routes.authGaurd, myaccount.UserAccount);
-app.get("/profile", routes.authGaurd, myaccount.UserProfile);
+app.get("/profile", routes.authGaurd, csrfProtection, myaccount.UserProfile2);
+app.get("/change-password", routes.authGaurd, csrfProtection, myaccount.changePassword);
+app.post("/update-password", parseForm, csrfProtection, routes.authGaurd, myaccount.updatePassword);
+
+// Old feature
+// app.get("/profile", routes.authGaurd, myaccount.UserProfile);
 app.get("/sritezprime", csrfProtection, myaccount.sritezPrime);
 app.post("/membership_book_request", parseForm, csrfProtection, routes.authGaurd, myaccount.membershipBookRequest);
 app.get("/vendorpage", csrfProtection, user.vendorPage);
@@ -277,6 +282,8 @@ app.get("/checkout", csrfProtection, routes.authGaurd, signin.shoppingCheckOut);
 app.get("/getcaptcha", signin.getCaptchaajax);
 app.post("/billing_information", parseForm, csrfProtection, routes.authGaurd, signin.billingInformation);
 app.post("/shipping_information", parseForm, csrfProtection, routes.authGaurd, signin.shippingInformation);
+app.post("/secondary_email", parseForm, csrfProtection, routes.authGaurd, signin.secondaryEmail);
+
 app.get("/delete_shipping_address", signin.deleteShippingAddress);
 app.get("/delete_billing_address", signin.deleteBillingAddress);
 app.post("/create-checkout-session", signin.stripePayment);
