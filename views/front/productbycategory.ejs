@@ -51,6 +51,44 @@
 
     gtag('config', 'G-YN8Y6YGBF7');
   </script>
+   <!-- JSON-LD Schema -->
+  <script type="application/ld+json">
+<%- JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": getmeta.meta_title,
+  "description": getmeta.category_text,
+  "url": `${baseURL}${getmeta.meta_canonical_tag}`,
+  "breadcrumb": {
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": baseURL
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": getmeta.meta_title,
+        "item": `${baseURL}${getmeta.meta_canonical_tag}`
+      }
+    ]
+  },
+  "mainEntity": {
+    "@type": "ItemList",
+    "itemListOrder": "https://schema.org/ItemListOrderAscending",
+    "numberOfItems": myJsonString.products.length,
+    "itemListElement": myJsonString.products.map((p, i) => ({
+      "@type": "ListItem",
+      "position": i + 1,
+      "url": `${baseURL}book/${p.slug}`
+    }))
+  }
+}, null, 2) %>
+</script>
+
 </head>
 <body>
   <header class="header-style-1">
