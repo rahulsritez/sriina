@@ -118,14 +118,14 @@
                                                     <% if(list.image) {%>
                                                         <div class="image">
                                                             <% if(/(http(s?)):\/\//i.test(list.image)) {%>
-                                                                <a href="/book/<%= list.slug %>"><img src="<%= list.image %>" alt=""></a>
+                                                                <a href="/book/<%= list.slug %>"><img src="<%= list.image %>" loading="lazy"  alt="<%= list.name.substring(0, 60) %>"></a>
                                                             <% } else { %>
-                                                                <a href="/book/<%= list.slug %>"><img src="<%= process.env.IMAGE_URL %><%= list.image %>" alt=""></a>
+                                                                <a href="/book/<%= list.slug %>"><img loading="lazy"  src="<%= process.env.IMAGE_URL %><%= list.image %>" alt="Image"></a>
                                                             <% } %>
                                                         </div>
                                                     <% } else { %>
                                                         <div class="image">
-                                                            <a href="/book/<%= list.slug %>"><img src="<%= process.env.IMAGE_URL %>404.jpg" alt=""></a>
+                                                            <a href="/book/<%= list.slug %>"><img loading="lazy"  src="<%= process.env.IMAGE_URL %>404.jpg" alt="Image"></a>
                                                         </div>
                                                     <% } %>
                                                 </div>

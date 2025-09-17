@@ -122,7 +122,7 @@
           <div id="category" class="category-carousel hidden-xs">
             <div class="item">
               <div class="image">
-                <img src="<%= baseURL %>assets/images/banners/cat-banner-1.jpg" alt="" class="cat_images img-responsive">
+                <img src="<%= baseURL %>assets/images/banners/cat-banner-1.jpg"  loading="lazy"  alt="" class="cat_images img-responsive">
               </div>
               <div class="container-fluid">
                 <div class="caption vertical-top text-left">
@@ -163,9 +163,9 @@
                               <div class="image">
                                 <a href="<%= baseURL %>book/<%= list.slug %>">
                                   <% if(/(http(s?)):\/\//i.test(list.image)) {%>
-                                    <img src="<%= list.image %>" alt="<%= list.name %>">
+                                    <img src="<%= list.image %>"  loading="lazy"  alt="<%= list.name %>">
                                   <% } else { %>
-                                    <img src="<%= process.env.IMAGE_URL %><%= list.image %>" alt="<%= list.name %>">
+                                    <img src="<%= process.env.IMAGE_URL %><%= list.image %>"  loading="lazy"  alt="<%= list.name %>">
                                   <% } %>
                                 </a>
                               </div>
