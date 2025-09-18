@@ -17,21 +17,25 @@
                   <p><a href="/about-us" title="About us">About us</a></p>
                 </div>
               </li>
-              <!-- <li class="media">
+              <% if(1==2) { %>
+              <li class="media">
                 <div class="pull-left"> <span class="icon fa-stack fa-lg"> <i class="fa fa-mobile fa-stack-1x fa-inverse"></i> </span> </div>
                 <div class="media-body">
                   <p>+91 ( 92666 78778 )</p>
                 </div>
-              </li> -->
+              </li>
+              <% } %>
               <li class="media">
                 <div class="pull-left"> <span class="icon fa-stack fa-lg"> <i
                       class="fa fa-envelope fa-stack-1x fa-inverse"></i> </span> </div>
                 <div class="media-body"> <span><a href="mailto:info@sriina.com">info@sriina.com</a></span> </div>
               </li>
-              <!--<li class="media">
+              <% if(1==2) { %>
+              <li class="media">
                 <div class="pull-left"> <span class="icon fa-stack fa-lg"> <i class="fa fa-sitemap fa-stack-1x fa-inverse"></i> </span> </div>
                 <div class="media-body"> <span><a href="/sitemap.xml" target="_blank" >Sitemap</a></span> </div>
-              </li>-->
+              </li>
+              <% } %>
             </ul>
           </div>
           <!-- /.module-body -->
@@ -56,17 +60,19 @@
           <!-- /.module-body -->
         </div>
         <!-- /.col -->
+        
+          <% if(1==2) { %>
+         <!-- useless void anchor tag is not good for seo -->
         <div class="col-xs-12 col-sm-6 col-md-3">
           <div class="module-heading">
             <h4 class="module-title">Why Choose Us</h4>
           </div>
           <!-- /.module-heading -->
-
           <div class="module-body">
             <ul class='list-unstyled'>
               <li class="first"><a href="javascript:void(0);" title="Shopping Guide">Shopping Guide</a></li>
               <li><a href="javascript:void(0);" title="Investor Relations">Investor Relations</a></li>
-              <!-- <li class=" last"><a href="/vendor_register" title="Sell Online on Sriina">Sell Online on Sriina</a></li> -->
+               <% if(1==2) { %><!-- <li class=" last"><a href="/vendor_register" title="Sell Online on Sriina">Sell Online on Sriina</a></li> --><% } %>
             </ul>
           </div>
           <!-- /.module-body -->
@@ -78,11 +84,14 @@
           <div class="module-body">
             <ul class='list-unstyled'>
               <li> <a href="javascript:void(0);">Sriina Internet</a></li>
-              <!-- <li> <a href="javascript:void(0);">Sriina Internet Private Limited</a></li>
-                <li> <a href="javascript:void(0);">CIN : U74999DL2021PTC391791</a></li> -->
+              <% if(1==2) { %>
+              <li> <a href="javascript:void(0);">Sriina Internet Private Limited</a></li>
+                <li> <a href="javascript:void(0);">CIN : U74999DL2021PTC391791</a></li> 
+                <% } %>
             </ul>
           </div>
         </div>
+        <% } %>
         <!-- /.col -->
       </div>
     </div>
@@ -95,14 +104,18 @@
               href="https://www.facebook.com/Sriinacom-103206778810777" title="Facebook"></a></li>
           <li class="tw pull-left"><a target="_blank" rel="nofollow noopener" href="https://twitter.com/sriinaretail"
               title="Twitter"></a></li>
-          <!-- <li class="googleplus pull-left"><a target="_blank" rel="nofollow" href="#" title="GooglePlus"></a></li> -->
+           <% if(1==2) { %>
+              <li class="googleplus pull-left"><a target="_blank" rel="nofollow" href="#" title="GooglePlus"></a></li>
+               <% } %>
           <li class="instagram pull-left"><a target="_blank" rel="nofollow noopener"
               href="https://www.instagram.com/sriinaretail/" title="Instagram"></a></li>
           <li class="linkedin pull-left"><a target="_blank" rel="nofollow noopener"
               href="https://www.linkedin.com/company/sriinaretail/" title="Linkedin"></a></li>
-          <!--<li class="rss pull-left"><a target="_blank" rel="nofollow" href="#" title="RSS"></a></li> -->
-          <!-- <li class="pintrest pull-left"><a target="_blank" rel="nofollow" href="https://in.pinterest.com/pin/648940627537533030" title="Pinterest"></a></li>
-          <li class="youtube pull-left"><a target="_blank" rel="nofollow" href="https://www.youtube.com/channel/UClVDQ_jw7cbYBCajbXdyV7w" title="Youtube"></a></li> -->
+          <% if(1==2) { %>
+          <li class="rss pull-left"><a target="_blank" rel="nofollow" href="#" title="RSS"></a></li>
+          <li class="pintrest pull-left"><a target="_blank" rel="nofollow" href="https://in.pinterest.com/pin/648940627537533030" title="Pinterest"></a></li>
+          <li class="youtube pull-left"><a target="_blank" rel="nofollow" href="https://www.youtube.com/channel/UClVDQ_jw7cbYBCajbXdyV7w" title="Youtube"></a></li>
+          <% } %>
         </ul>
       </div>
       <div class="col-xs-12 col-sm-6 no-padding">
