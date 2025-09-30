@@ -716,7 +716,7 @@ exports.shippingInformation = (req, res, next) => {
               "message",
               "Your Shipping Information has been succefully added."
             );
-            res.redirect("checkout");
+            res.redirect("profile");
           }
         }
       });

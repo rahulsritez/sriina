@@ -2043,7 +2043,7 @@ exports.AdminUpdateProduct = (req, res, next) => {
       var edit_quantity = fields.edit_quantity;
       var edit_ISBN = fields.edit_ISBN;
       var edit_ISBN13 = fields.edit_ISBN13;
-      var edit_language = fields.edit_language ? fields.edit_language : 1;
+      var edit_language = fields.edit_language ? 1 : 1;
       var edit_category = fields.edit_category ? fields.edit_category : 0;
       var edit_no_of_pages = fields.edit_no_of_pages;
       var edit_book_binding = fields.edit_book_binding;
