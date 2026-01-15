@@ -170,26 +170,73 @@ exports.UserAccount = async (req, res, next) => {
   if (userId == null) {
     res.redirect("/sign-in");
   } else {
-    let qry = "SELECT name, email, mobile FROM users WHERE id = " + userId + " LIMIT 0,1";
-    let userDetails = await db.promise().query(qry);
+    try {
+      // Get user details
+      let qry = "SELECT name, email, mobile FROM users WHERE id = " + userId + " LIMIT 0,1";
+      let userDetails = await db.promise().query(qry);
 
-    let sql =
-      "SELECT bk_order.created_at as created_at, bk_order.paid_amount as paid_amount, bk_order.reference, shipping_information.fullname as fullname FROM bk_order JOIN shipping_information ON shipping_information.user_id = bk_order.customer_id and shipping_information.user_id ='" +
-      userId +
-      "' and bk_order.customer_id='" +
-      userId +
-      "' and bk_order.paid_amount is not null ORDER BY `bk_order`.`order_id` DESC";
-    var query = db.query(sql, function (error, getorder) {
-      if (error) throw error;
+      // Get user's orders
+      let sql = `
+        SELECT 
+          o.order_id, 
+          o.order_status, 
+          o.created_at AS created_at, 
+          o.paid_amount AS paid_amount, 
+          o.reference, 
+          si.fullname AS fullname 
+        FROM bk_order o 
+        JOIN (
+          SELECT s1.* 
+          FROM shipping_information s1 
+          INNER JOIN (
+            SELECT user_id, MAX(created_at) AS max_created_at 
+            FROM shipping_information 
+            GROUP BY user_id
+          ) s2 ON s1.user_id = s2.user_id AND s1.created_at = s2.max_created_at
+        ) si ON si.user_id = o.customer_id 
+        WHERE o.customer_id = ? 
+          AND o.paid_amount IS NOT NULL 
+        ORDER BY o.order_id DESC
+      `;
+
+      // Get order status counts
+      const statusCountsQuery = `
+        SELECT 
+          order_status,
+          COUNT(*) as count
+        FROM bk_order 
+        WHERE customer_id = ? 
+          AND paid_amount IS NOT NULL
+        GROUP BY order_status
+      `;
+
+      // Execute both queries in parallel
+      const [orders, [statusCounts]] = await Promise.all([
+        db.promise().query(sql, [userId]),
+        db.promise().query(statusCountsQuery, [userId])
+      ]);
+      
+      // Convert array of {order_status, count} to object {status: count}
+      const statusCountsObj = {};
+      statusCounts.forEach(item => {
+        statusCountsObj[item.order_status] = item.count;
+      });
+
+      // Render the view with all data
       res.render("users/my-orders", {
         user: userDetails[0][0],
-        getorder: getorder,
+        getorder: orders[0],
+        totalRecord: orders[0].length,
+        statusCounts: statusCountsObj,
         message: req.flash("message"),
         errors: req.flash("errors"),
         moment: moment,
         getCartData: "",
       });
-    });
+    } catch (error) {
+      console.error('Error in UserAccount:', error);
+      next(error);
+    }
   }
 };
 

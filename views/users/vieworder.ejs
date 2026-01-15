@@ -1,121 +1,698 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-	<meta charset="utf-8">
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-	<meta name="description" content="">
-	<meta name="author" content="">
-	<meta name="keywords" content="MediaCenter, Template, eCommerce">
-	<meta name="robots" content="INDEX,FOLLOW" />
-	<title>Sriina | Order Details </title>
-	<link rel="stylesheet" href="../../assets/css/bootstrap.min.css">
-	<link rel="stylesheet" href="../../assets/css/main.css">
-	<link rel="stylesheet" href="../../assets/css/blue.css">
-	<link rel="stylesheet" href="../../assets/css/owl.carousel.css">
-	<link rel="stylesheet" href="../../assets/css/owl.transitions.css">
-	<link rel="stylesheet" href="../../assets/css/animate.min.css">
-	<link rel="stylesheet" href="../../assets/css/rateit.css">
-	<link rel="stylesheet" href="../../assets/css/bootstrap-select.min.css">
-	<link href="../../assets/css/custom.css" rel="stylesheet" />
-	<link rel="stylesheet" href="../../assets/css/font-awesome.css">
-	<link href='http://fonts.googleapis.com/css?family=Roboto:300,400,500,700' rel='stylesheet' type='text/css'>
-	<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,400italic,600,600italic,700,700italic,800'
-		rel='stylesheet' type='text/css'>
-	<link href='https://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta name="keywords" content="eCommerce, Dashboard, Orders, Profile">
+    <meta name="robots" content="INDEX,FOLLOW"/>
+    <title>Sriina | My Account</title>
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="<%= baseURL %>assets/images/favicon.ico">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="<%= baseURL %>assets/css/bootstrap.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="<%= baseURL %>assets/css/main.css">
+    <link rel="stylesheet" href="<%= baseURL %>assets/css/blue.css">
+    <link href="<%= baseURL %>assets/css/custom.css" rel="stylesheet" />
+    <!-- Dashboard CSS -->
+    <style>
+        :root {
+            --primary-color: #3f51b5;
+            --secondary-color: #f5f5f5;
+            --text-color: #333;
+            --light-gray: #f8f9fa;
+            --border-color: #e0e0e0;
+            --success: #1cc88a;
+            --warning: #f6c23e;
+            --info: #36b9cc;
+            --primary: #4e73df;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f7fa;
+            color: var(--text-color);
+        }
+        
+        .dashboard-wrapper {
+            padding: 2rem 0 4rem;
+        }
+        
+        /* Ensure consistent card heights */
+        .summary-card {
+            height: 100%;
+        }
+        
+        .sidebar {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.05);
+            padding: 0;
+            overflow: hidden;
+        }
+        
+        .user-panel {
+            padding: 20px;
+            text-align: center;
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px solid rgba(255,255,255,0.2);
+            margin: 0 auto 10px;
+            display: block;
+            object-fit: cover;
+        }
+        
+        .user-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 10px 0 5px;
+        }
+        
+        .user-email {
+            font-size: 13px;
+            opacity: 0.8;
+        }
+        
+        .dashboard-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .dashboard-menu li {
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        
+        .dashboard-menu li:last-child {
+            border-bottom: none;
+        }
+        
+        .dashboard-menu li a {
+            display: block;
+            padding: 15px 20px;
+            color: #555;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .dashboard-menu li a i {
+            width: 25px;
+            margin-right: 10px;
+            text-align: center;
+        }
+        
+        .dashboard-menu li a:hover,
+        .dashboard-menu li.active a {
+            background: rgba(63, 81, 181, 0.1);
+            color: var(--primary-color);
+            padding-left: 25px;
+        }
+        
+        .dashboard-menu li.active a {
+            border-left: 3px solid var(--primary-color);
+            font-weight: 500;
+        }
+        
+        .dashboard-content {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.05);
+            padding: 25px;
+        }
+        
+        .page-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .card {
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+            margin-bottom: 25px;
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0.35rem 1.5rem 0 rgba(58, 59, 69, 0.15);
+        }
+        
+        .summary-card {
+            border-radius: 12px;
+            border: none;
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+        
+        .summary-card .card-body {
+            padding: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .summary-card .card-body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            z-index: -1;
+        }
+        
+        .summary-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.1) !important;
+        }
+        
+        /* Individual card styles */
+        .summary-card:nth-child(1) .card-body {
+            background: linear-gradient(135deg, #f0f7ff 0%, #e1f0ff 100%);
+        }
+        
+        .summary-card:nth-child(1) .card-body::before {
+            background: #4e73df;
+        }
+        
+        .summary-card:nth-child(2) .card-body {
+            background: linear-gradient(135deg, #fff8e6 0%, #fff2cc 100%);
+        }
+        
+        .summary-card:nth-child(2) .card-body::before {
+            background: #f6c23e;
+        }
+        
+        .summary-card:nth-child(3) .card-body {
+            background: linear-gradient(135deg, #e6f7f0 0%, #ccf0e1 100%);
+        }
+        
+        .summary-card:nth-child(3) .card-body::before {
+            background: #1cc88a;
+        }
+        
+        .summary-card .icon-circle {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .summary-card .icon-circle::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            top: 0;
+            left: 0;
+        }
+        
+        .summary-card .icon-circle i {
+            position: relative;
+            z-index: 1;
+            font-size: 1.5rem;
+        }
+        
+        .summary-card h6 {
+            font-size: 12px;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+            color: #5a5c69;
+        }
+        
+        .summary-card h3 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+        }
+        
+        .summary-card p {
+            margin-bottom: 0;
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+        
+        .icon-circle {
+            height: 3rem;
+            width: 3rem;
+            border-radius: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+        
+        .bg-primary {
+            background-color: var(--primary) !important;
+        }
+        
+        .bg-success {
+            background-color: var(--success) !important;
+        }
+        
+        .bg-warning {
+            background-color: var(--warning) !important;
+        }
+        
+        .text-success {
+            color: #ffffff;
+        }
+        
+        .text-warning {
+            color: #ffffff;
+        }
+        
+        .text-primary {
+            color: var(--primary) !important;
+        }
+        
+        .card-header {
+            background: #fff;
+            border-bottom: 1px solid var(--border-color);
+            font-weight: 600;
+            padding: 15px 20px;
+            border-radius: 8px 8px 0 0 !important;
+            display: flex;
+        }
+        
+        .order-card {
+            border-left: 3px solid var(--primary-color);
+        }
+        
+        .order-status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-completed {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-processing {
+            background: #cce5ff;
+            color: #004085;
+        }
+        
+        .status-cancelled {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .order-details {
+            padding: 15px 0;
+        }
+        
+        .order-product {
+            display: flex;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .order-product:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+        
+        .order-product-img {
+            width: 80px;
+            height: 80px;
+            border-radius: 4px;
+            object-fit: cover;
+            margin-right: 15px;
+        }
+        
+        .order-product-info {
+            flex: 1;
+        }
+        
+        .order-product-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .order-product-price {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        
+        .order-summary {
+            background: var(--light-gray);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+        
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .summary-row:last-child {
+            margin-bottom: 0;
+            padding-top: 10px;
+            border-top: 1px solid var(--border-color);
+            font-weight: 600;
+            font-size: 16px;
+        }
+        
+        .btn-view {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 4px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-view:hover {
+            background: #303f9f;
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        /* Status Cards Styles */
+        .status-card {
+            background: #fff;
+            border-radius: 10px;
+            padding: 20px 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            border-left: 4px solid transparent;
+        }
+        
+        .status-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .status-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 20px;
+            color: white;
+        }
+        
+        .status-details h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 0 0 5px 0;
+            color: #2c3e50;
+        }
+        
+        .status-details p {
+            margin: 0;
+            font-size: 0.85rem;
+            color: #7f8c8d;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Status Colors */
+        .status-total { border-left-color: #3f51b5; }
+        .status-total .status-icon { background-color: #3f51b5; }
+        
+        .status-booked { border-left-color: #3498db; }
+        .status-booked .status-icon { background-color: #3498db; }
+        
+        .status-pending { border-left-color: #f39c12; }
+        .status-pending .status-icon { background-color: #f39c12; }
+        
+        .status-delivered { border-left-color: #2ecc71; }
+        .status-delivered .status-icon { background-color: #2ecc71; }
+        
+        .status-shipped { border-left-color: #9b59b6; }
+        .status-shipped .status-icon { background-color: #9b59b6; }
+        
+        .status-return { border-left-color: #e74c3c; }
+        .status-return .status-icon { background-color: #e74c3c; }
+        
+        .status-delay { border-left-color: #e67e22; }
+        .status-delay .status-icon { background-color: #e67e22; }
+        
+        .status-cancelled { border-left-color: #95a5a6; }
+        .status-cancelled .status-icon { background-color: #95a5a6; }
+        
+        .status-admin-cancelled { border-left-color: #7f8c8d; }
+        .status-admin-cancelled .status-icon { background-color: #7f8c8d; }
+
+        .bg-danger {
+            background-color: #dc3545 !important;
+        }
+        .bg-info {
+            background-color: #3498db !important;
+        }
+        .bg-success {
+            background-color: #2ecc71 !important;
+        }
+        .bg-warning {
+            background-color: #f39c12 !important;
+        }
+        .bg-secondary {
+            background-color: #95a5a6 !important;
+        }
+        
+        /* Responsive Adjustments */
+        @media (max-width: 991px) {
+            .sidebar {
+                margin-bottom: 30px;
+            }
+            
+            .status-card {
+                padding: 15px 10px;
+            }
+            
+            .status-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 18px;
+                margin-right: 10px;
+            }
+            
+            .status-details h3 {
+                font-size: 1.3rem;
+            }
+            
+            .status-details p {
+                font-size: 0.75rem;
+            }
+        }
+        
+        @media (max-width: 767px) {
+            .dashboard-content {
+                padding: 15px;
+            }
+            
+            .page-title {
+                font-size: 20px;
+            }
+        }
+    </style>
 </head>
-
 <body class="cnt-home">
-	<header class="header-style-1">
-		<%- include('../front/top_bar') -%> <%- include('../front/search') -%> <%- include('../front/navigation') -%>
-	</header>
+    <!-- Header -->
+    <header class="header-style-1">
+        <%- include('../front/top_bar') -%> 
+        <%- include('../front/search') -%> 
+        <%- include('../front/navigation') -%>
+    </header>
 
-	<div class="breadcrumb">
-		<div class="container">
-			<div class="breadcrumb-inner">
-				<ul class="list-inline list-unstyled">
-					<li><a href="/">Home</a></li>
-					<li class='active'>Order Details</li>
-				</ul>
-			</div><!-- /.breadcrumb-inner -->
-		</div><!-- /.container -->
-	</div><!-- /.breadcrumb -->
+    <div class="breadcrumb">
+        <div class="container">
+            <div class="breadcrumb-inner">
+                <ul class="list-inline list-unstyled">
+                    <li><a href="/">Home</a></li>
+                    <li class="active">My Profile</li>
+                </ul>
+            </div>
+            <!-- /.breadcrumb-inner -->
+        </div>
+        <!-- /.container -->
+    </div>
+    <!-- /.breadcrumb -->
 
-	<div class="body-content">
-		<div class="container">
-			<div class="checkout-box faq-page">
-				<div class="row">
-					<div class="col-md-12">
-						<h2 class="heading-title">Welcome <%= user.name %>
-						</h2>
-					</div>
-					<div class="col-md-12">
+    <!-- Main Content -->
+    <div class="body-content">
+        <div class="container dashboard-wrapper">
+            <div class="row">
+                <!-- Sidebar -->
+                <div class="col-lg-3 col-md-4">
+                    <div class="sidebar">
+                        <div class="user-panel">
+                            <img src="<%= baseURL %>assets/images/default-avatar.png" alt="User" class="user-avatar">
+                            <h4 class="user-name"><%= user.name || 'User' %></h4>
+                            <div class="user-email"><%= user.email %></div>
+                        </div>
+                        <ul class="dashboard-menu">
+                            <li class="active">
+                                <a href="/myaccount">
+                                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/profile">
+                                    <i class="fas fa-user"></i> Billing Details
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/change-password">
+                                    <i class="fas fa-lock"></i> Change Password
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/userlogout">
+                                    <i class="fas fa-sign-out-alt"></i> Logout
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Main Content Area -->
+                <div class="col-lg-9 col-md-8">
+                    <div class="dashboard-content">
+                        <h2 class="page-title">Welcome <%= user.name %></h2>
+                        
+                        <div class="card">
+                            <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+                                <!-- <h5 class="mb-0">Recent Details | </h5> -->
+                                <a href="/myaccount" class="btn btn-link text-primary text-decoration-none p-0"><i class="fas fa-arrow-left ms-1"></i> Back</a>
+                            </div>
+                            <div class="card-body p-0">
+                                <% if (get_orders && get_orders.length > 0) { %>
+                                    <div class="table-responsive">
+                                        <table class="table table-hover mb-0">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th style="width: 80px;">Image</th>
+                                                    <th>Product</th>
+                                                    <th class="text-end">Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <% get_orders.forEach((list, index) => { %>
+                                                    <tr class="align-middle">
+                                                        <!-- Product Image -->
+                                                        <td class="py-3">
+                                                            <div class="product-img-container" style="width: 60px; height: 60px; overflow: hidden; border-radius: 4px;">
+                                                                <% if(/(http(s?)):\/\//i.test(list.image)) {%>
+																	<img src="<%= list.image %>" width="100%">
+																	<% } else { %>
+																		<img src="<%= process.env.IMAGE_URL %><%= list.image %>"
+																			width="100%">
+																		<% } %>
+                                                            </div>
+                                                        </td>
+                                                        
+                                                        <!-- Product Details -->
+                                                        <td class="py-3">
+                                                            <div class="d-flex flex-column">
+                                                                <h6 class="mb-1 font-weight-bold"><%= list.name %></h6>
+                                                            </div>
+                                                        </td>
+                                                        
+                                                        <!-- Actions -->
+                                                        <td class="py-3 text-end">
+                                                            <div class="d-flex gap-2 justify-content-end">
+                                                                <a href="/book/<%= list.slug %>" 
+                                                                   class="btn btn-primary">
+                                                                    <i class="fas fa-shopping-cart me-1"></i> Buy Again
+                                                                </a>
+																<% if(cancel_request==1) { %>
+																	<a href="javascript:void(0);" class="btn btn-sm btn-outline-primary"> Cancellation </a>
+																<% } else {%>
+																	<a href="/user/cancelitem?requestId=<%= orderId %>&useCase=cancel"
+																			class="btn btn-sm btn-outline-primary"> Cancel Items </a>
+																<% } %>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                <% }) %>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                <% } else { %>
+                                    <div class="text-center py-5">
+                                        <div class="mb-4">
+                                            <i class="fas fa-shopping-bag fa-4x text-muted"></i>
+                                        </div>
+                                        <h5 class="text-muted mb-3">No Orders Found</h5>
+                                        <p class="text-muted mb-4">You haven't placed any orders yet.</p>
+                                        <a href="/shop" class="btn btn-primary">
+                                            <i class="fas fa-shopping-cart me-2"></i>Start Shopping
+                                        </a>
+                                    </div>
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+				</div>
+			</div>
+		</div>
+	</div>
 
-						<% if (get_orders.length> 0) { %>
-							<% get_orders.forEach((list, index)=> { %>
-								<div class="col-md-8">
-									<div class="row" style="padding: 10px;">
-										<!-- <div class="col-md-12"><h4><strong> Estimate Delivery: time within 7 days </strong></h4></div> -->
-										<div class="col-md-3 float-left">
-											<% if(/(http(s?)):\/\//i.test(list.image)) {%>
-												<img src="<%= list.image %>" width="100%">
-												<% } else { %>
-													<img src="<%= process.env.IMAGE_URL %><%= list.image %>"
-														width="100%">
-													<% } %>
-										</div>
-										<div class="col-md-9 float-right">
-											<p>
-												<%= list.name %>
-											</p>
-											<p>₹<% if(paid_amount){%>
-													<%= parseFloat(paid_amount).toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"
-														) %>
-														<% } %>
-											</p>
+    <%- include('../front/book_footer') -%>
 
-											<p><a target="_blank" class="btn btn-primary"
-													href="/book/<%= list.slug %>"> Buy it again
-												</a></p>
-										</div>
-									</div>
-								</div>
-
-								<div class="col-md-4" style="padding: 10px;">
-									<p><a href="" class="btn btn-primary"> Track Package </a></p>
-									<% if(cancel_request==1) { %>
-										<p><a href="javascript:void(0);" class="btn btn-primary"> Cancellation </a></p>
-										<% } else {%>
-											<p>
-												<a href="/user/cancelitem?requestId=<%= orderId %>&useCase=cancel"
-													class="btn btn-primary"> Cancel Items </a>
-											</p>
-											<% } %>
-								</div>
-
-								<% }) %>
-									<% } else { %>
-										<div style="text-align:center">no product found</div>
-										<% } %>
-					</div>
-				</div><!-- /.row -->
-			</div><!-- /.checkout-box -->
-		</div><!-- /.container -->
-	</div><!-- /.body-content -->
-	<%- include('../front/book_footer') -%>
-		<script src="../assets/js/jquery-1.11.1.min.js"></script>
-		<script src="../assets/js/bootstrap.min.js"></script>
-		<script src="../assets/js/bootstrap-hover-dropdown.min.js"></script>
-		<script src="../assets/js/owl.carousel.min.js"></script>
-		<script src="../assets/js/echo.min.js"></script>
-		<script src="../assets/js/jquery.easing-1.3.min.js"></script>
-		<script src="../assets/js/bootstrap-slider.min.js"></script>
-		<script src="../assets/js/jquery.rateit.min.js"></script>
-		<script type="text/javascript" src="../assets/js/lightbox.min.js"></script>
-		<script src="../assets/js/bootstrap-select.min.js"></script>
-		<script src="../assets/js/wow.min.js"></script>
-		<script src="../assets/js/scripts.js"></script>
+    <!-- JavaScripts -->
+    <script src="<%= baseURL %>assets/js/jquery-1.11.1.min.js"></script>
+    <script src="<%= baseURL %>assets/js/bootstrap.min.js"></script>
+    <script src="<%= baseURL %>assets/js/bootstrap-hover-dropdown.min.js"></script>
+    <script src="<%= baseURL %>assets/js/owl.carousel.min.js"></script>
+    <script src="<%= baseURL %>assets/js/echo.min.js"></script>
+    <script src="<%= baseURL %>assets/js/jquery.easing-1.3.min.js"></script>
+    <script src="<%= baseURL %>assets/js/bootstrap-slider.min.js"></script>
+    <script src="<%= baseURL %>assets/js/jquery.rateit.min.js"></script>
+    <script src="<%= baseURL %>assets/js/bootstrap-select.min.js"></script>
+    <script src="<%= baseURL %>assets/js/wow.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+	<script src="<%= baseURL %>assets/js/scripts.js"></script>
 </body>
-
 </html>
