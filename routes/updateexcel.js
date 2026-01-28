@@ -162,11 +162,13 @@ exports.saveExcelFileData = async (req, res, next) => {
         skippedRecords = 0;
 
       const promises = newBooksArr.map(async (row) => {
+        // console.log("Processing row:", row);
         let data = {};
 
         // Map fields dynamically
         for (const [key, value] of Object.entries(mapped_fields)) {
-          let valueData = row[value];
+          let excelFields = value.split(',');
+          let valueData = row[excelFields[0]];
           if (key === "ISBN" || key === "ISBN13") {
             valueData = valueData
               ? valueData.toString().replace(/\D/g, "")
@@ -181,6 +183,15 @@ exports.saveExcelFileData = async (req, res, next) => {
           remove: /[,*+~.(){}'"\/\\#$%<>?!:@]/g,
         });
 
+        if (!data.name) data.name = row["Itemname"] || "Default Name";
+        if (!data.author) data.author = row["Author"] || null;
+        if (!data.quantity) data.quantity = row["Qty"] || 0;
+        if (!data.price) data.price = row["Price"] || 0;
+
+        if (data.isbn && !data.isbn13) {
+          data.isbn13 = data.isbn;
+        }
+
         data.user_id = userId;
         data.product_type_id = 1;
         data.created_at = new Date()
@@ -191,6 +202,7 @@ exports.saveExcelFileData = async (req, res, next) => {
         data.currency_code = "INR";
 
         if (!data.isbn13) {
+          // console.log("Skipping row due to missing isbn13:", data);
           failedRecords++;
           return;
         }
@@ -201,7 +213,7 @@ exports.saveExcelFileData = async (req, res, next) => {
           .query(sqlCheck, [data.isbn13]);
 
         if (existingProduct.length) {
-          // console.log("Updating Product:", data.isbn13, "Quantity:", data.quantity, "Price:", data.price, "Name:", data.name);
+          // console.log("Updating Product:", data);
           // If product exists, update its details
           let sqlUpdate =
             "UPDATE products SET quantity = ?, price = ?, name = ?, updated_at = NOW() WHERE isbn13 = ?";
@@ -216,12 +228,46 @@ exports.saveExcelFileData = async (req, res, next) => {
 
           if (result.affectedRows) {
             updatedRecords++;
+            // console.log("Updated product:", data.isbn13);
           } else {
             failedRecords++;
+            // console.log("Update failed for:", data.isbn13);
           }
         } else {
-          // If product does NOT exist, skip it (don't insert)
-          skippedRecords++;
+          // If product does NOT exist, insert it
+          // console.log("Inserting new product:", data);
+          let sqlInsert = `INSERT INTO products (isbn, isbn13, name, author, publisher, book_edition, book_language, book_binding, currency_code, price, weight, delivery_charge, quantity, discount, publishing_year, description, no_of_pages, image, cat_id, cluster_subject, author_details, slug, user_id, product_type_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+          let values = [
+            data.isbn || null,
+            data.isbn13,
+            data.name || null,
+            data.author || null,
+            data.publisher || null,
+            data.book_edition || null,
+            data.book_language || null,
+            data.book_binding || null,
+            data.currency_code,
+            data.price || 0,
+            data.weight || 0,
+            data.delivery_charge || 0,
+            data.quantity || 0,
+            data.discount || 0,
+            data.publishing_year || null,
+            data.description || null,
+            data.no_of_pages || 0,
+            data.image || null,
+            data.cat_id || null,
+            data.cluster_subject || null,
+            data.author_details || null,
+            data.slug,
+            data.user_id,
+            data.product_type_id,
+            data.created_at,
+            data.updated_at
+          ];
+          await db.promise().query(sqlInsert, values);
+          updatedRecords++; 
+          // console.log("Inserted product:", data.isbn13);
         }
       });
 

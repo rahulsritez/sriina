@@ -159,14 +159,15 @@ $(function() {
                 $('#header').val(JSON.stringify(headers));
 
                 $.each(headers, function (i, item) {
-                    var html = '<tr id="'+ capitalizeFirstLetter(item) +'">';
-                    html += '<td id="tdf_'+ capitalizeFirstLetter(item) +'" data-val="'+ capitalizeFirstLetter(item) +'">'+ capitalizeFirstLetter(item) +'</td>';
-                    html += '<td>'+ `<select class="form-control fields" required id="db_${capitalizeFirstLetter(item)}" name="fields[${capitalizeFirstLetter(item)}]">`;
+                    var uniqueId = capitalizeFirstLetter(item) + '_' + i;
+                    var html = '<tr id="'+ uniqueId +'">';
+                    html += '<td id="tdf_'+ uniqueId +'" data-val="'+ capitalizeFirstLetter(item) +'">'+ capitalizeFirstLetter(item) +'</td>';
+                    html += '<td>'+ `<select class="form-control fields" required id="db_${uniqueId}" name="fields[${uniqueId}]">`;
                     $.each(db_fields, function (i, db_field) {
                         html += `<option value="${db_field}">${db_field}</option>`;
                     });
                     html += `</select>` +'</td>';
-                    html += '<td><button type="button" class="btn delete-field" data-id="'+ capitalizeFirstLetter(item) +'"><i class="fa fa-trash"></i></button></td>';
+                    html += '<td><button type="button" class="btn delete-field" data-id="'+ uniqueId +'"><i class="fa fa-trash"></i></button></td>';
                     html += '</tr>';
                     $("table tbody").append(html);
                 });
@@ -269,23 +270,24 @@ console.log(capitalizeFirstLetter("my name"));  // "My_name"
       return el.value;
     });
 
-    if (find_duplicate_in_array(dbFields).length > 0) {
-      var duplicateDbFields = find_duplicate_in_array(dbFields);
+    // Removed duplicate check to allow multiple mappings
+    // if (find_duplicate_in_array(dbFields).length > 0) {
+    //   var duplicateDbFields = find_duplicate_in_array(dbFields);
 
-      var attributesStr = $('#header').val();
-      var attributesArr = attributesStr.split(",");
-      attributesArr.forEach(function(item, index) {
-        var attrIndex = duplicateDbFields.indexOf(item.trim().toLowerCase());
-        if (attrIndex > -1) {
-            duplicateDbFields.splice(attrIndex, 1);
-        }
-      });
+    //   var attributesStr = $('#header').val();
+    //   var attributesArr = attributesStr.split(",");
+    //   attributesArr.forEach(function(item, index) {
+    //     var attrIndex = duplicateDbFields.indexOf(item.trim().toLowerCase());
+    //     if (attrIndex > -1) {
+    //         duplicateDbFields.splice(attrIndex, 1);
+    //     }
+    //   });
 
-      if (duplicateDbFields.length > 0) {
-        proceed = 0;
-        alert('Found duplicate mapping for fields: ' + duplicateDbFields.toString());
-      }
-    }
+    //   if (duplicateDbFields.length > 0) {
+    //     proceed = 0;
+    //     alert('Found duplicate mapping for fields: ' + duplicateDbFields.toString());
+    //   }
+    // }
 
     if (proceed) {
       var fields = {};

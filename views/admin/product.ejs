@@ -169,7 +169,8 @@
                                     <% productlist.forEach((list, index)=> { %>
                                       <tr>
                                         <td>
-                                          <%= ((+query.count )*(+query.page-1))+index+1 %>
+                                          <%= index + 1 %>
+                                          <!-- <%= ((+query.count )*(+query.page-1))+index+1 %> -->
                                         </td>
                                         <td>
                                           <img src="<%= process.env.IMAGE_URL %><%= list.image %>"

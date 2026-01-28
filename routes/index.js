@@ -37,6 +37,8 @@ exports.landingpage = function (req, res) {
                                     "SELECT p.id,p.name,p.description,p.price,p.discount,p.image,p.isbn,p.status,p.author,p.book_edition,p.slug,p.product_type,c.name as categoryname from `products` p left join `books_category` c on c.id=p.cat_id where p.product_type=7 and p.`status`=1 and p.`product_type_id`=1 ORDER BY p.updated_at desc";
                                 var query = db.query(special_offer, function (error, special_product) {
                                     if (error) throw new Error("special_product not found");
+                                    let userAgent = req.headers['user-agent'] || '';
+                                    let isMobile = /Mobile|Android|iPhone|iPad|Tablet/i.test(userAgent);
                                     res.render("front/landing_page", {
                                         categorylist: result,
                                         title: title,
@@ -49,6 +51,7 @@ exports.landingpage = function (req, res) {
                                         encrypt: encrypt,
                                         addtocart: addtocart,
                                         maxplan: maxplan,
+                                        isMobile: isMobile,
                                     });
                                 });
                             });
