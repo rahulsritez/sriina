@@ -163,7 +163,7 @@ img[src="assets/images/blank.gif"] {
   -ms-transition: all linear 0.2s;
   -o-transition: all linear 0.2s;
   transition: all linear 0.2s;
-  background: #e67a00;
+  background: #00dae4;
   color: #fff;
   border: none;
   font-size: 13px;
@@ -463,7 +463,7 @@ img[src="assets/images/blank.gif"] {
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
   border-radius: 3px;
-  background: #e67a00;
+  background: #00dae4;
 }
 .custom-carousel .owl-controls .owl-prev:before {
   color: #fff;
@@ -488,7 +488,7 @@ img[src="assets/images/blank.gif"] {
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
   border-radius: 3px;
-  background: #e67a00;
+  background: #00dae4;
 }
 .custom-carousel .owl-controls .owl-next:before {
   content: "\f105";
@@ -1295,12 +1295,12 @@ header{background:#111922}
 .main-header .top-search-holder .search-area .search-button {
   border-radius: 0px 3px 3px 0px;
   display: inline-block;
-  float: right;
+  /* float: right; */
   margin: 0px;
   padding: 3px 12px 11px;
   text-align: center;
-   background-color: #e67a00;
-border: 1px solid #e67a00;
+  background-color: #00dae4 !important;
+  border: 1px solid #00dae4 !important;
 }
 .main-header .top-search-holder .search-area .search-button:after {
   color: #fff;
@@ -1325,8 +1325,8 @@ border: 1px solid #e67a00;
 
 .top-cart-row .dropdown-cart .lnk-cart {
   padding: 0px;
-      background: #e67a00;
-border: 1px solid #e67a00;
+      background: #00dae4;
+border: 1px solid #00dae4;
   border-radius: 3px;
   display: inline-block;
   color: #fff;
@@ -1426,7 +1426,7 @@ color: #fff;
 
 .special-menu {float:right}
 .special-menu a {color:#fff!important; border:none!important; padding-right:0px!important} 
-.special-menu a:hover{ background:none!important; color:#e67a00 !important}
+.special-menu a:hover{ background:none!important; color:#00dae4 !important}
 
 .header-style-1 .header-nav .navbar-default .navbar-collapse .navbar-nav > li > a {
   background: none repeat scroll 0 0 rgba(0, 0, 0, 0);
@@ -1681,7 +1681,7 @@ color: #fff;
   font-family: 'Open Sans', sans-serif;
   padding: 12px 17px;
   text-transform: uppercase;
-  background-color: #e67a00;
+  background-color: #00dae4;
     border: 1px solid #e9c532;
   font-weight:700;
   letter-spacing: 0.5px;
@@ -2788,7 +2788,7 @@ age-container #owl-main .owl-next {
 .product .cart .action ul li.add-cart-button .btn.btn-primary.icon {
   border-bottom-right-radius: 0;
   border-top-right-radius: 0;
-  background: #e67a00 ;
+  background: #00dae4 ;
 }
 .product .cart .action ul li.lnk {
   margin: 10px 0px;
@@ -2804,7 +2804,7 @@ age-container #owl-main .owl-next {
   padding: 8px 10px;
 }
 .product .cart .action ul li.lnk.wishlist {
-  background:#e67a00;
+  background:#00dae4;
   margin:0px;
   border-radius:5px
   
@@ -2864,7 +2864,7 @@ age-container #owl-main .owl-next {
 .cart .action .add-cart-button .btn.btn-primary.icon {
   border-bottom-right-radius: 0;
   border-top-right-radius: 0;
-  background: #e67a00 ;
+  background: #00dae4 ;
   color:#fff
 }
 
@@ -2977,7 +2977,7 @@ age-container #owl-main .owl-next {
 }
 .cnt-strip .strip h2 {
   font-size: 36px;
-  color: #e67a00;
+  color: #00dae4;
   margin: 0;
   text-transform: uppercase;
   font-family:'Montserrat', sans-serif;
@@ -3352,7 +3352,7 @@ age-container #owl-main .owl-next {
   font-size: 16px;
   text-transform: uppercase;
   font-family: 'Open Sans', sans-serif;
-  color: #e67a00;
+  color: #00dae4;
 }
 .footer .footer-bottom .module-body ul li {
 
@@ -3361,7 +3361,7 @@ age-container #owl-main .owl-next {
 .toggle-footer {color:#F2F2F2}
 .toggle-footer a {margin-left:0px!important}
 .toggle-footer a:before {display:none}
-.toggle-footer i{background:#e67a00; border-radius:2px}
+.toggle-footer i{background:#00dae4; border-radius:2px}
 
 .footer .footer-bottom .module-body ul li:last-child{border:none}
 
@@ -3597,7 +3597,7 @@ age-container #owl-main .owl-next {
   line-height: 50px;
   text-transform: uppercase;
   font-family: 'Open Sans', sans-serif;
-  color: #e67a00;
+  color: #00dae4;
 }
 .category-carousel .item .caption .excerpt {
   font-size:36px;
@@ -5369,7 +5369,7 @@ age-container #owl-main .owl-next {
 }
 .shopping-cart .shopping-cart-table table tbody tr .romove-item a:hover,
 .shopping-cart .shopping-cart-table table tbody tr .romove-item a:focus {
-  color: #ff000 !important;
+  color: #fff000 !important;
 }
 .shopping-cart .shopping-cart-table table tbody tr .cart-image .entry-thumbnail {
   display: block;
@@ -5554,7 +5554,7 @@ age-container #owl-main .owl-next {
   z-index: 1;
 }
 
-.checkout-btn { background:#e67a00; color:#333; padding: 10px 18px;}
+.checkout-btn { background:#00dae4; color:#333; padding: 10px 18px;}
 
 
 .product-comparison .page-title {
@@ -5635,7 +5635,7 @@ age-container #owl-main .owl-next {
   line-height: 10px;
   border: medium none;
   color: #333;
-  background:#e67a00
+  background:#00dae4
 }
 .body-content .x-page .x-text form input {
   border: 1px solid #e0e0e0;
@@ -5769,7 +5769,7 @@ age-container #owl-main .owl-next {
     font-weight: bold!important;
     font-size: 22px!important;
     border-bottom: 1px #e5e5e5 solid!important;
-} 
+
 }
 .body-content .my-wishlist-page .my-wishlist table > thead > tr > th {
   text-align: center;
