@@ -356,7 +356,7 @@ exports.shoppingCheckOut = function (req, res, next) {
                         throw (err);
                     } else {
                         /*var get_count_total = "SELECT `products`.id as productId,`products`.price,`products`.quantity,`products`.status,`products`.discount,`products`.delivery_charge,`cart_product`.cart_id,`cart_product`.product_id,`cart_product`.quantity, sum(cart_product.quantity) as cartquantity,`cart_product`.on_rental, `cart`.cart_id as CartId,`cart`.user_id,`cart`.status FROM `products` LEFT JOIN `cart_product` ON `products`.id = `cart_product`.product_id LEFT JOIN `cart` ON `cart_product`.cart_id = `cart`.cart_id where `cart`.user_id = '"+userId+"' and `cart`.status='0' group by product_id ";*/
-                        var get_count_total = "SELECT `products`.id as productId,`products`.price,`products`.quantity,`products`.status,`products`.discount,`products`.delivery_charge,`cart_product`.cart_id,`cart_product`.product_id,`cart_product`.quantity, sum(cart_product.quantity) as cartquantity,`cart_product`.on_rental, `cart`.cart_id as CartId,`cart`.user_id,`cart`.status,`product_variables`.unit_price as groceyProductPrice, `product_variables`.unit_discount as unitDiscount FROM `products` LEFT JOIN `cart_product` ON `products`.id = `cart_product`.product_id LEFT JOIN `cart` ON `cart_product`.cart_id = `cart`.cart_id  LEFT JOIN `product_variables` ON `products`.id = `product_variables`.product_id where `cart`.user_id = '" + userId + "' and `cart`.status='0' group by product_id ";
+                        var get_count_total = "SELECT `products`.id as productId, `products`.price, `products`.quantity, `products`.status, `products`.discount, `products`.delivery_charge, cp.cart_id, cp.product_id, cp.quantity, cp.cartquantity, cp.on_rental, `cart`.cart_id as CartId, `cart`.user_id, `cart`.status, `product_variables`.unit_price as groceyProductPrice, `product_variables`.unit_discount as unitDiscount FROM (SELECT `cart_product`.cart_id, `cart_product`.product_id, SUM(`cart_product`.quantity) as quantity, SUM(`cart_product`.quantity) as cartquantity, MAX(`cart_product`.on_rental) as on_rental FROM `cart_product` LEFT JOIN `cart` ON `cart_product`.cart_id = `cart`.cart_id WHERE `cart`.user_id = '" + userId + "' and `cart`.status='0' GROUP BY `cart_product`.cart_id, `cart_product`.product_id) cp LEFT JOIN `products` ON `products`.id = cp.product_id LEFT JOIN `cart` ON cp.cart_id = `cart`.cart_id LEFT JOIN `product_variables` ON `products`.id = `product_variables`.product_id AND `product_variables`.id = (SELECT MIN(pv.id) FROM `product_variables` pv WHERE pv.product_id = `products`.id)";
                         //console.log(get_count_total); return;
                         var query = db.query(get_count_total, function (error, totalAmount) {
                             if (error) {
@@ -884,7 +884,22 @@ exports.orderPaymentStatus = (req, res, next) => {
             if (!orderSMS) req.flash('errors', 'Your register mobile number wrong! So, not able to send order conformation SMS');
             if (orderSMS) req.flash('message', 'Order conformation SMS send successfully');
             req.flash('message', 'Your Order has been successfully placed.');
-            res.redirect('/addtocart');
+            var SQL_Query = "SELECT s.*, ss.name as StateName FROM `shipping_information` s LEFT JOIN `state` ss ON ss.id = s.state WHERE s.user_id = '" + orderData[0].customer_id + "'";
+            db.query(SQL_Query, function (error, shipping_address) {
+                if (error) throw error;
+                var get_products = "SELECT products.name, products.price, products.discount, cp.cart_id, cp.product_id, cp.on_rental, cp.cartquantity, `cart`.cart_id as CartId, `cart`.user_id, `cart`.status FROM (SELECT cart_product.cart_id, cart_product.product_id, MAX(cart_product.on_rental) as on_rental, SUM(cart_product.quantity) as cartquantity FROM cart_product LEFT JOIN cart ON cart_product.cart_id = cart.cart_id WHERE cart.status='1' AND cart.user_id='" + orderData[0].customer_id + "' and cart.`cart_id`='" + orderData[0].cart_id + "' GROUP BY cart_product.cart_id, cart_product.product_id) cp LEFT JOIN products ON products.id = cp.product_id LEFT JOIN cart ON cp.cart_id = cart.cart_id";
+                db.query(get_products, function (error, getrows) {
+                    if (error) throw error;
+                    res.render('payment/success', {
+                        txnid: orderData[0].reference,
+                        transctionId: orderData[0].payment_gateway_id,
+                        status: payment_gateway_status,
+                        amount: orderData[0].paid_amount,
+                        delivery_address: shipping_address[0],
+                        getrows: getrows
+                    });
+                });
+            });
         })
     })
 
@@ -958,7 +973,7 @@ exports.confimOrder = (req, res, next) => {
                                     /* Order confirmation mail */
                                     let user_query = "SELECT `name`,`email` FROM `users` WHERE id='" + userId + "'";
                                     let get_query = db.query(user_query, function (error, userquerys) {
-                                        let get_products = "SELECT products.name,products.price,products.discount,cart_product.cart_id,cart_product.product_id,cart_product.on_rental,sum(cart_product.quantity) as cartquantity, `cart`.cart_id as CartId,`cart`.user_id,`cart`.status FROM products LEFT JOIN cart_product ON products.id = cart_product.product_id LEFT JOIN cart ON cart_product.cart_id = cart.cart_id where cart.status='1' AND cart.user_id='" + userId + "' and cart.`cart_id`='" + cartId + "' group by product_id";
+                                        let get_products = "SELECT products.name, products.price, products.discount, cp.cart_id, cp.product_id, cp.on_rental, cp.cartquantity, `cart`.cart_id as CartId, `cart`.user_id, `cart`.status FROM (SELECT cart_product.cart_id, cart_product.product_id, MAX(cart_product.on_rental) as on_rental, SUM(cart_product.quantity) as cartquantity FROM cart_product LEFT JOIN cart ON cart_product.cart_id = cart.cart_id WHERE cart.status='1' AND cart.user_id='" + userId + "' and cart.`cart_id`='" + cartId + "' GROUP BY cart_product.cart_id, cart_product.product_id) cp LEFT JOIN products ON products.id = cp.product_id LEFT JOIN cart ON cp.cart_id = cart.cart_id";
                                         let get_data = db.query(get_products, function (error, get_orders) {
                                             if (error) throw error;
                                             //console.log('email content data -->', get_orders);
@@ -1025,7 +1040,18 @@ exports.confimOrder = (req, res, next) => {
                                             if (!orderSMS) req.flash('errors', 'Your register mobile number wrong! So, not able to send order conformation SMS');
                                             if (orderSMS) req.flash('message', 'Order conformation SMS send successfully');
                                             req.flash('message', 'Your order has been successfully placed.');
-                                            res.redirect('/myaccount');
+                                            var SQL_Query = "SELECT s.*, ss.name as StateName FROM `shipping_information` s LEFT JOIN `state` ss ON ss.id = s.state WHERE s.user_id = '" + userId + "'";
+                                            db.query(SQL_Query, function (error, shipping_address) {
+                                                if (error) throw error;
+                                                res.render('payment/success', {
+                                                    txnid: txtid,
+                                                    transctionId: '',
+                                                    status: 'success',
+                                                    amount: paid_amount,
+                                                    delivery_address: shipping_address[0],
+                                                    getrows: get_orders
+                                                });
+                                            });
                                         });
                                     });
                                 });
