@@ -129,7 +129,7 @@ exports.PaymentSuccess = function(req, res, next){
 							var query = db.query(SQL_Query, function(error, shipping_address){
 								if(error) throw error;
 
-								let get_products = "SELECT products.name,products.price,products.discount,cart_product.cart_id,cart_product.product_id,cart_product.on_rental,SUM(cart_product.quantity) as cartquantity, `cart`.cart_id as CartId,`cart`.user_id,`cart`.status FROM products LEFT JOIN cart_product ON products.id = cart_product.product_id LEFT JOIN cart ON cart_product.cart_id = cart.cart_id where cart.status='1' AND cart.user_id='"+get_user_id+"' and cart.`cart_id`= '"+get_cart_id+"' group by product_id";
+								let get_products = "SELECT products.name, products.price, products.discount, cp.cart_id, cp.product_id, cp.on_rental, cp.cartquantity, `cart`.cart_id as CartId, `cart`.user_id, `cart`.status FROM (SELECT cart_product.cart_id, cart_product.product_id, MAX(cart_product.on_rental) as on_rental, SUM(cart_product.quantity) as cartquantity FROM cart_product LEFT JOIN cart ON cart_product.cart_id = cart.cart_id WHERE cart.status='1' AND cart.user_id='"+get_user_id+"' and cart.`cart_id`= '"+get_cart_id+"' GROUP BY cart_product.cart_id, cart_product.product_id) cp LEFT JOIN products ON products.id = cp.product_id LEFT JOIN cart ON cp.cart_id = cart.cart_id";
 								//console.log(get_products); return;
 									var query = db.query(get_products, function(error, getrows){
 										if(error) throw error;
