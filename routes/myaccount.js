@@ -177,11 +177,11 @@ exports.userViewOrder = (req, res, next) => {
 
                 // let get_products = "SELECT products.id as productId,products.name,products.slug,products.image,products.price,products.discount,cart_product.cart_id,cart_product.product_id,cart_product.on_rental,sum(cart_product.quantity) as cartquantity, `cart`.cart_id as CartId,`cart`.user_id,`cart`.status FROM products LEFT JOIN cart_product ON products.id = cart_product.product_id LEFT JOIN cart ON cart_product.cart_id = cart.cart_id where cart.status='1' AND cart.user_id='"+userId+"' and cart. `cart_id`='"+cart_id+"' group by product_id";
                 let get_products =
-                    "SELECT products.id as productId, `products`.product_type_id as productType, products.name, products.slug, products.image, products.price, products.discount, cp.cart_id, cp.product_id, cp.on_rental, cp.cartquantity, `cart`.cart_id as CartId, `cart`.user_id, `cart`.status, `products_images`.grocery_image as groceyImg FROM (SELECT cart_product.cart_id, cart_product.product_id, MAX(cart_product.on_rental) as on_rental, SUM(cart_product.quantity) as cartquantity FROM cart_product LEFT JOIN cart ON cart_product.cart_id = cart.cart_id WHERE cart.status=1 AND cart.user_id='" +
+                    "SELECT products.id as productId,`products`.product_type_id as productType, products.name,products.slug,products.image,products.price,products.discount,cart_product.cart_id,cart_product.product_id,cart_product.on_rental,sum(cart_product.quantity) as cartquantity, `cart`.cart_id as CartId,`cart`.user_id,`cart`.status,`products_images`.grocery_image as groceyImg FROM products LEFT JOIN cart_product ON products.id = cart_product.product_id LEFT JOIN cart ON cart_product.cart_id = cart.cart_id LEFT JOIN `products_images` ON `products`.id = `products_images`.product_id where cart.status=1 AND cart.user_id='" +
                     userId +
                     "' and cart. `cart_id`='" +
                     cart_id +
-                    "' GROUP BY cart_product.cart_id, cart_product.product_id) cp LEFT JOIN products ON products.id = cp.product_id LEFT JOIN cart ON cp.cart_id = cart.cart_id LEFT JOIN `products_images` ON `products`.id = `products_images`.product_id AND `products_images`.id = (SELECT MIN(pi.id) FROM `products_images` pi WHERE pi.product_id = `products`.id)";
+                    "' group by product_id";
 
                 //console.log(get_products); return;
                 var QUERY = db.query(get_products, function (error, get_orders) {

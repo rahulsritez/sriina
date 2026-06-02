@@ -69,11 +69,11 @@ exports.orderViewPage = (req, res, next) => {
     }
 
     let get_products =
-      "SELECT products.isbn13, products.name, products.delivery_charge, products.price, products.discount, cp.cart_id, cp.product_id, cp.on_rental, cp.cartquantity, `cart`.cart_id as CartId, `cart`.user_id, `cart`.status FROM (SELECT cart_product.cart_id, cart_product.product_id, MAX(cart_product.on_rental) as on_rental, SUM(cart_product.quantity) as cartquantity FROM cart_product LEFT JOIN cart ON cart_product.cart_id = cart.cart_id WHERE cart.user_id='" +
+      "SELECT products.isbn13,products.name,products.delivery_charge,products.price,products.discount,cart_product.cart_id,cart_product.product_id,cart_product.on_rental,sum(cart_product.quantity) as cartquantity, `cart`.cart_id as CartId,`cart`.user_id,`cart`.status FROM products LEFT JOIN cart_product ON products.id = cart_product.product_id LEFT JOIN cart ON cart_product.cart_id = cart.cart_id where cart.user_id='" +
       userId +
       "' and cart.`cart_id`='" +
       cart_id +
-      "' GROUP BY cart_product.cart_id, cart_product.product_id) cp LEFT JOIN products ON products.id = cp.product_id LEFT JOIN cart ON cp.cart_id = cart.cart_id";
+      "' group by product_id";
     // let get_products = `
     //   SELECT
     //       products.isbn13,
