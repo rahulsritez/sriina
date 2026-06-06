@@ -22,6 +22,15 @@
 	<link href='http://fonts.googleapis.com/css?family=Roboto:300,400,500,700' rel='stylesheet' type='text/css'>
 	<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,400italic,600,600italic,700,700italic,800' rel='stylesheet' type='text/css'>
     <link href='https://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-YN8Y6YGBF7"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-YN8Y6YGBF7')
+        
+    </script>
     <style type="text/css">
         body,
         table,
@@ -85,6 +94,39 @@
     </style>
 </head>
     <body class="cnt-home">
+        <% if (typeof txnid !== 'undefined' && typeof amount !== 'undefined' && typeof getrows !== 'undefined' && getrows && getrows.length > 0) { %>
+        <script>
+            (function () {
+                var transactionId = <%- JSON.stringify(txnid) %>;
+                var storageKey = 'ga4_purchase_' + transactionId;
+
+                if (window.gtag && !sessionStorage.getItem(storageKey)) {
+                    var purchaseItems = <%- JSON.stringify(getrows.map(function (item) {
+                        var price = Number(item.price) || 0;
+                        var discount = Number(item.discount) || 0;
+                        var quantity = Number(item.cartquantity) || 1;
+                        var discountedPrice = price - ((price / 100) * discount);
+
+                        return {
+                            item_id: String(item.product_id || ''),
+                            item_name: item.name || '',
+                            price: Number(discountedPrice.toFixed(2)),
+                            quantity: quantity
+                        };
+                    })) %>;
+
+                    gtag('event', 'purchase', {
+                        transaction_id: transactionId,
+                        value: Number(<%- JSON.stringify(amount) %>) || 0,
+                        currency: 'INR',
+                        items: purchaseItems
+                    });
+
+                    sessionStorage.setItem(storageKey, '1');
+                }
+            })();
+        </script>
+        <% } %>
         <header class="header-style-1">
             <%- include("../front/top_bar") -%>
             <%- include("../front/search") -%>
