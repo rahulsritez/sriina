@@ -1369,6 +1369,102 @@ exports.confimOrder = (req, res, next) => {
   }
 };
 
+/*
+ * Order review / confirmation step (shown BEFORE the COD order is placed).
+ * The checkout COD form now posts here first. We rebuild the order summary
+ * (items, totals, shipping address) and render a confirmation page whose
+ * final "Place Order" button posts the same encrypted fields to /confim_order.
+ */
+exports.orderReview = (req, res, next) => {
+  var userId = req.session.userId;
+  if (userId == null) {
+    return res.redirect("/sign-in");
+  }
+  if (req.method != "POST") {
+    return res.redirect("/checkout");
+  }
+
+  var post = req.body;
+  // These stay encrypted: they are echoed straight back into the final
+  // /confim_order form so the actual placement logic is left untouched.
+  var encTxnid = post.txnid;
+  var encCartId = post.cartId;
+  var encPaidAmount = post.paid_amount;
+  var paymentMethod = xss(post.payment_method || "2");
+  var shippingId = xss(post.shipping_address || "");
+  var csrfToken = post._csrf || "";
+
+  var txnid, cartId, paidAmount;
+  try {
+    txnid = cryptr.decrypt(encTxnid);
+    cartId = cryptr.decrypt(encCartId);
+    paidAmount = cryptr.decrypt(encPaidAmount);
+  } catch (e) {
+    req.flash("errors", "Invalid checkout session. Please try again.");
+    return res.redirect("/checkout");
+  }
+
+  if (cartId == "") {
+    req.flash("errors", "Cart Id cannot be empty.");
+    return res.redirect("/checkout");
+  }
+
+  // Cart is still open (status = 0) at the review stage.
+  var get_products =
+    "SELECT ANY_VALUE(`products`.name) as name, ANY_VALUE(`products`.price) as price, ANY_VALUE(`products`.discount) as discount, ANY_VALUE(`products`.product_type_id) as productType, ANY_VALUE(`products`.image) as image, ANY_VALUE(`products`.slug) as slug, ANY_VALUE(`products`.delivery_charge) as delivery_charge, `cart_product`.product_id as product_id, SUM(`cart_product`.quantity) as cartquantity, ANY_VALUE(`products_images`.grocery_image) as groceyImg, ANY_VALUE(`product_variables`.unit_price) as groceyProductPrice, ANY_VALUE(`product_variables`.unit_discount) as unitDiscount FROM `products` LEFT JOIN `cart_product` ON `products`.id = `cart_product`.product_id LEFT JOIN `cart` ON `cart_product`.cart_id = `cart`.cart_id LEFT JOIN `products_images` ON `products`.id = `products_images`.product_id LEFT JOIN `product_variables` ON `products`.id = `product_variables`.product_id WHERE `cart`.status='0' AND `cart`.user_id='" +
+    userId +
+    "' AND `cart`.cart_id='" +
+    cartId +
+    "' GROUP BY `cart_product`.product_id";
+
+  db.query(get_products, function (error, items) {
+    if (error) throw error;
+    if (!items || items.length === 0) {
+      req.flash("errors", "Your cart is empty.");
+      return res.redirect("/addtocart");
+    }
+
+    var delivery_charge = 0;
+    items.forEach(function (it) {
+      delivery_charge += parseFloat(
+        it.delivery_charge == null ? 0 : it.delivery_charge
+      );
+    });
+
+    var renderReview = function (address) {
+      res.render("shoppingcart/order-review", {
+        items: items,
+        delivery_address: address,
+        subtotal: parseFloat(paidAmount),
+        delivery_charge: delivery_charge,
+        payment_method: paymentMethod,
+        txnid: txnid,
+        // Encrypted pass-through fields for the final placement form.
+        encTxnid: encTxnid,
+        encCartId: encCartId,
+        encPaidAmount: encPaidAmount,
+        shippingId: shippingId,
+        csrfToken: csrfToken,
+      });
+    };
+
+    if (shippingId) {
+      var addrSql =
+        "SELECT `shipping_information`.*, `state`.name as StateName, `country`.name as CountryName FROM `shipping_information` LEFT JOIN `state` ON `shipping_information`.state = `state`.id LEFT JOIN `country` ON `state`.countryid = `country`.id WHERE `shipping_information`.id='" +
+        shippingId +
+        "' AND `shipping_information`.user_id='" +
+        userId +
+        "'";
+      db.query(addrSql, function (err2, addrRows) {
+        if (err2) throw err2;
+        renderReview(addrRows && addrRows.length ? addrRows[0] : null);
+      });
+    } else {
+      renderReview(null);
+    }
+  });
+};
+
 exports.PrimeConfimOrder = (req, res, next) => {
   var today = new Date().toISOString().slice(0, 19).replace("T", " ");
   if (req.method == "POST") {

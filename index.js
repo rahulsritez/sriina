@@ -91,6 +91,20 @@ var connection = mysql.createConnection({
 connection.connect(function (err) {
   if (err) throw err;
   console.log("Connection Established Successfully!");
+  // The application's cart/checkout/account queries were written against
+  // MySQL's pre-5.7 GROUP BY behaviour (they SELECT non-aggregated columns
+  // alongside aggregates while grouping by product_id). Newer MySQL enables
+  // ONLY_FULL_GROUP_BY by default, which rejects those queries. Drop just that
+  // flag for this connection so the whole flow keeps working, while leaving the
+  // other strict modes (e.g. STRICT_TRANS_TABLES) intact.
+  connection.query(
+    "SET SESSION sql_mode = (SELECT REPLACE(@@sql_mode, 'ONLY_FULL_GROUP_BY', ''))",
+    function (modeErr) {
+      if (modeErr) {
+        console.error("Failed to adjust sql_mode:", modeErr.message);
+      }
+    }
+  );
 });
 global.db = connection;
 global.baseURL = "https://sriina.com/";
@@ -289,6 +303,7 @@ app.get("/delete_billing_address", signin.deleteBillingAddress);
 app.post("/create-checkout-session", signin.stripePayment);
 app.post("/razorpay-checkout", routes.authGaurd, signin.razorpayPaymentStatus);
 app.get("/payment_status", signin.orderPaymentStatus);
+app.post("/order-review", routes.authGaurd, signin.orderReview);
 app.post("/confim_order", signin.confimOrder);
 app.post("/prime_confim_order", parseForm, csrfProtection, signin.PrimeConfimOrder);
 app.post("/razorpay-membership-checkout", routes.authGaurd, signin.razorpayMembershipPayment);

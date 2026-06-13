@@ -184,7 +184,7 @@
                                             </div>
                                         </div>
                                         <div class="panel-body">
-                                            <form class="form-inline" method="POST" action="/confim_order" onsubmit="return validateConfirmOrder()">
+                                            <form class="form-inline" method="POST" action="/order-review" onsubmit="return validateConfirmOrder()">
                                             <input type="hidden" name="_csrf" value="<%= csrfToken %>">    
                                             <div class="row">
                                                 <!-- <div class="col-sm-12" style="padding: 15px;
@@ -206,6 +206,7 @@
                                                 <input type="hidden" name="txnid" value="<%= cryptr.encrypt(txnid) %>">
                                                 <input type="hidden" name="cartId" value="<%= cryptr.encrypt(CartId) %>">
                                                 <input type="hidden" name="paid_amount" value="<%= cryptr.encrypt(subtotal) %>">
+                                                <input type="hidden" name="shipping_address" id="cod_shipping_address" value="">
                                                   <!-- <div class="form-group">
                                                     <input class="form-control" id="captchaImage" type="hidden" name="captchaImage" value="<%= typeof captchaImage != 'undefined' ? captchaImage : '' %>">
                                                   </div>
@@ -216,7 +217,7 @@
                                                   <!-- <div class="form-group space">
                                                     <input class="form-control" id="captchaText" type="text" name="captchaText" value="<%= typeof captchaText != 'undefined' ? captchaText : '' %>" placeholder="Enter the captcha" maxlength="4" minlength="4">
                                                   </div> -->
-                                                  <button type="submit" class="btn btn-primary">Confirm Order Pay ₹<%= subtotal %></button>
+                                                  <button type="submit" class="btn btn-primary">Review Order ₹<%= subtotal %></button>
                                                   <div id="captcha_error"></div>
                                                 <% if(errorStatus.length >0) {%>
                                                     <div>Captcha does not match </div>
@@ -547,6 +548,8 @@
                     $("#collapseThree").addClass('in');
                     return false;
                 }
+                // Carry the chosen shipping address into the review step.
+                $("#cod_shipping_address").val(shipping_selected.val());
                 return true;
             }
 
