@@ -1167,9 +1167,9 @@ exports.orderPaymentStatus = (req, res, next) => {
 
         var renderConfirmation = function (address) {
           res.render("shoppingcart/order-confirmation", {
-            reference: orderReference,
+            reference: orderData[0].reference,
             items: confirmItems,
-            subtotal: parseFloat(orderPaidAmount),
+            subtotal: parseFloat(orderData[0].paid_amount),
             delivery_charge: deliveryCharge,
             payment_method: 1,
             delivery_address: address,
@@ -1179,7 +1179,7 @@ exports.orderPaymentStatus = (req, res, next) => {
         // Best-effort: show the customer's most recent shipping address.
         var addrSql =
           "SELECT `shipping_information`.*, `state`.name as StateName, `country`.name as CountryName FROM `shipping_information` LEFT JOIN `state` ON `shipping_information`.state = `state`.id LEFT JOIN `country` ON `state`.countryid = `country`.id WHERE `shipping_information`.user_id='" +
-          orderCustomerId +
+          orderData[0].customer_id +
           "' ORDER BY `shipping_information`.id DESC LIMIT 1";
         db.query(addrSql, function (addrErr, addrRows) {
           if (addrErr) throw addrErr;
@@ -1344,7 +1344,8 @@ exports.confimOrder = (req, res, next) => {
                                     debug: true,
                                     auth: {
                                       user: "ordersriina@gmail.com",
-                                      pass: "tzhgntwdqnltwxjn",
+                                      pass: "ovfipxuxdofyyvbd",
+                                      // pass: "tzhgntwdqnltwxjn",
                                     },
                                   });
 
@@ -2140,8 +2141,8 @@ exports.userContactUsSave = (req, res, next) => {
       req.flash(
         "message",
         "We appreciate you contacting us [ " +
-          name +
-          " ] One of our colleagues will get back in touch with you soon!"
+        name +
+        " ] One of our colleagues will get back in touch with you soon!"
       );
       res.redirect("contact-us");
     });
