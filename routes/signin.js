@@ -1053,20 +1053,27 @@ exports.orderPaymentStatus = (req, res, next) => {
   const orderId = req.query.orderId;
   const status = req.query.success;
   const cartId = req.query.cartId;
+  const isSuccess = status === "true" || status === true;
 
-  if (status) {
+  if (isSuccess) {
     var update_cart =
       "UPDATE `cart` SET status='1' WHERE cart_id = '" + cartId + "'";
     var query = db.query(update_cart, function (error, results) {
       if (error) throw error;
     });
   }
-  const payment_gateway_status = status ? "success" : "failure";
+  const payment_gateway_status = isSuccess ? "success" : "failure";
 
   var sqlQuery = "select * from bk_order WHERE `order_id` ='" + orderId + "'";
   let orderSMS = false;
   db.query(sqlQuery, async function (error, orderData) {
     if (error) throw error;
+
+    // Capture order details up-front: the twilio catch block below
+    // reassigns `orderData = false` on SMS failure.
+    var orderReference = orderData[0].reference;
+    var orderPaidAmount = orderData[0].paid_amount;
+    var orderCustomerId = orderData[0].customer_id;
 
     //const url = `${URL}/user/vieworder/${orderData[0].reference}`
     //const bodyContent = "Hello "+req.session.user.name+" \n Your order id : "+orderData[0].order_id+" \n View order: "+url+" \n Thanks for order!"
@@ -1132,15 +1139,55 @@ exports.orderPaymentStatus = (req, res, next) => {
       "'";
     var query = db.query(sql, function (error, updatecart) {
       if (error) throw error;
-      if (!orderSMS)
+
+      // Payment failed / cancelled: send the user back to the cart.
+      if (!isSuccess) {
         req.flash(
           "errors",
-          "Your register mobile number wrong! So, not able to send order conformation SMS"
+          "Your payment was not completed. Please try again."
         );
-      if (orderSMS)
-        req.flash("message", "Order conformation SMS send successfully");
-      req.flash("message", "Your Order has been successfully placed.");
-      res.redirect("/addtocart");
+        return res.redirect("/addtocart");
+      }
+
+      // Payment succeeded: render the order confirmation page.
+      var get_products =
+        "SELECT ANY_VALUE(`products`.name) as name, ANY_VALUE(`products`.price) as price, ANY_VALUE(`products`.discount) as discount, ANY_VALUE(`products`.product_type_id) as productType, ANY_VALUE(`products`.image) as image, ANY_VALUE(`products`.slug) as slug, ANY_VALUE(`products`.delivery_charge) as delivery_charge, `cart_product`.product_id as product_id, SUM(`cart_product`.quantity) as cartquantity, ANY_VALUE(`products_images`.grocery_image) as groceyImg, ANY_VALUE(`product_variables`.unit_price) as groceyProductPrice, ANY_VALUE(`product_variables`.unit_discount) as unitDiscount FROM `products` LEFT JOIN `cart_product` ON `products`.id = `cart_product`.product_id LEFT JOIN `cart` ON `cart_product`.cart_id = `cart`.cart_id LEFT JOIN `products_images` ON `products`.id = `products_images`.product_id LEFT JOIN `product_variables` ON `products`.id = `product_variables`.product_id WHERE `cart`.cart_id='" +
+        cartId +
+        "' GROUP BY `cart_product`.product_id";
+
+      db.query(get_products, function (itemErr, items) {
+        if (itemErr) throw itemErr;
+        var confirmItems = items || [];
+        var deliveryCharge = 0;
+        confirmItems.forEach(function (it) {
+          deliveryCharge += parseFloat(
+            it.delivery_charge == null ? 0 : it.delivery_charge
+          );
+        });
+
+        var renderConfirmation = function (address) {
+          res.render("shoppingcart/order-confirmation", {
+            reference: orderData[0].reference,
+            items: confirmItems,
+            subtotal: parseFloat(orderData[0].paid_amount),
+            delivery_charge: deliveryCharge,
+            payment_method: 1,
+            delivery_address: address,
+          });
+        };
+
+        // Best-effort: show the customer's most recent shipping address.
+        var addrSql =
+          "SELECT `shipping_information`.*, `state`.name as StateName, `country`.name as CountryName FROM `shipping_information` LEFT JOIN `state` ON `shipping_information`.state = `state`.id LEFT JOIN `country` ON `state`.countryid = `country`.id WHERE `shipping_information`.user_id='" +
+          orderData[0].customer_id +
+          "' ORDER BY `shipping_information`.id DESC LIMIT 1";
+        db.query(addrSql, function (addrErr, addrRows) {
+          if (addrErr) throw addrErr;
+          renderConfirmation(
+            addrRows && addrRows.length ? addrRows[0] : null
+          );
+        });
+      });
     });
   });
 };
@@ -1159,6 +1206,7 @@ exports.confimOrder = (req, res, next) => {
       var paid_amount = cryptr.decrypt(post.paid_amount);
       var payment_method = xss(post.payment_method);
       var cartId = cryptr.decrypt(post.cartId);
+      var shippingId = xss(post.shipping_address || "");
       //console.log(post); return;
       // if (req.body.captchaText != captchaText) {
       //     req.flash('errors','Captcha verification does not match.');
@@ -1215,6 +1263,10 @@ exports.confimOrder = (req, res, next) => {
                 db.query(sqlQuery, async function (error, orderData) {
                   if (error) throw error;
 
+                  // Capture the reference up-front: the twilio catch block
+                  // below reassigns `orderData = false` on SMS failure.
+                  var orderReference = orderData[0].reference;
+
                   /* Order confirmation SMS */
                   const url = `${req.protocol}://${req.headers.host}/user/vieworder/${orderData[0].reference}`;
                   const bodyContent =
@@ -1252,11 +1304,11 @@ exports.confimOrder = (req, res, next) => {
                     user_query,
                     function (error, userquerys) {
                       let get_products =
-                        "SELECT products.name,products.price,products.discount,cart_product.cart_id,cart_product.product_id,cart_product.on_rental,sum(cart_product.quantity) as cartquantity, `cart`.cart_id as CartId,`cart`.user_id,`cart`.status FROM products LEFT JOIN cart_product ON products.id = cart_product.product_id LEFT JOIN cart ON cart_product.cart_id = cart.cart_id where cart.status='1' AND cart.user_id='" +
+                        "SELECT ANY_VALUE(`products`.name) as name, ANY_VALUE(`products`.price) as price, ANY_VALUE(`products`.discount) as discount, ANY_VALUE(`products`.product_type_id) as productType, ANY_VALUE(`products`.image) as image, ANY_VALUE(`products`.slug) as slug, ANY_VALUE(`products`.delivery_charge) as delivery_charge, `cart_product`.product_id as product_id, SUM(`cart_product`.quantity) as cartquantity, ANY_VALUE(`products_images`.grocery_image) as groceyImg, ANY_VALUE(`product_variables`.unit_price) as groceyProductPrice, ANY_VALUE(`product_variables`.unit_discount) as unitDiscount FROM `products` LEFT JOIN `cart_product` ON `products`.id = `cart_product`.product_id LEFT JOIN `cart` ON `cart_product`.cart_id = `cart`.cart_id LEFT JOIN `products_images` ON `products`.id = `products_images`.product_id LEFT JOIN `product_variables` ON `products`.id = `product_variables`.product_id WHERE `cart`.status='1' AND `cart`.user_id='" +
                         userId +
-                        "' and cart.`cart_id`='" +
+                        "' AND `cart`.cart_id='" +
                         cartId +
-                        "' group by product_id";
+                        "' GROUP BY `cart_product`.product_id";
                       let get_data = db.query(
                         get_products,
                         function (error, get_orders) {
@@ -1292,7 +1344,8 @@ exports.confimOrder = (req, res, next) => {
                                     debug: true,
                                     auth: {
                                       user: "ordersriina@gmail.com",
-                                      pass: "tzhgntwdqnltwxjn",
+                                      pass: "ovfipxuxdofyyvbd",
+                                      // pass: "tzhgntwdqnltwxjn",
                                     },
                                   });
 
@@ -1340,21 +1393,44 @@ exports.confimOrder = (req, res, next) => {
                             }
                           );
 
-                          if (!orderSMS)
-                            req.flash(
-                              "errors",
-                              "Your register mobile number wrong! So, not able to send order conformation SMS"
-                            );
-                          if (orderSMS)
-                            req.flash(
-                              "message",
-                              "Order conformation SMS send successfully"
-                            );
-                          req.flash(
-                            "message",
-                            "Your order has been successfully placed."
+                          // Build data for the order confirmation page.
+                          var confirmItems = JSON.parse(
+                            JSON.stringify(get_orders)
                           );
-                          res.redirect("/myaccount");
+                          var deliveryCharge = 0;
+                          confirmItems.forEach(function (it) {
+                            deliveryCharge += parseFloat(
+                              it.delivery_charge == null ? 0 : it.delivery_charge
+                            );
+                          });
+
+                          var renderConfirmation = function (address) {
+                            res.render("shoppingcart/order-confirmation", {
+                              reference: orderReference,
+                              items: confirmItems,
+                              subtotal: parseFloat(paid_amount),
+                              delivery_charge: deliveryCharge,
+                              payment_method: payment_method,
+                              delivery_address: address,
+                            });
+                          };
+
+                          if (shippingId) {
+                            var addrSql =
+                              "SELECT `shipping_information`.*, `state`.name as StateName, `country`.name as CountryName FROM `shipping_information` LEFT JOIN `state` ON `shipping_information`.state = `state`.id LEFT JOIN `country` ON `state`.countryid = `country`.id WHERE `shipping_information`.id='" +
+                              shippingId +
+                              "' AND `shipping_information`.user_id='" +
+                              userId +
+                              "'";
+                            db.query(addrSql, function (addrErr, addrRows) {
+                              if (addrErr) throw addrErr;
+                              renderConfirmation(
+                                addrRows && addrRows.length ? addrRows[0] : null
+                              );
+                            });
+                          } else {
+                            renderConfirmation(null);
+                          }
                         }
                       );
                     }
@@ -1367,6 +1443,102 @@ exports.confimOrder = (req, res, next) => {
       }
     }
   }
+};
+
+/*
+ * Order review / confirmation step (shown BEFORE the COD order is placed).
+ * The checkout COD form now posts here first. We rebuild the order summary
+ * (items, totals, shipping address) and render a confirmation page whose
+ * final "Place Order" button posts the same encrypted fields to /confim_order.
+ */
+exports.orderReview = (req, res, next) => {
+  var userId = req.session.userId;
+  if (userId == null) {
+    return res.redirect("/sign-in");
+  }
+  if (req.method != "POST") {
+    return res.redirect("/checkout");
+  }
+
+  var post = req.body;
+  // These stay encrypted: they are echoed straight back into the final
+  // /confim_order form so the actual placement logic is left untouched.
+  var encTxnid = post.txnid;
+  var encCartId = post.cartId;
+  var encPaidAmount = post.paid_amount;
+  var paymentMethod = xss(post.payment_method || "2");
+  var shippingId = xss(post.shipping_address || "");
+  var csrfToken = post._csrf || "";
+
+  var txnid, cartId, paidAmount;
+  try {
+    txnid = cryptr.decrypt(encTxnid);
+    cartId = cryptr.decrypt(encCartId);
+    paidAmount = cryptr.decrypt(encPaidAmount);
+  } catch (e) {
+    req.flash("errors", "Invalid checkout session. Please try again.");
+    return res.redirect("/checkout");
+  }
+
+  if (cartId == "") {
+    req.flash("errors", "Cart Id cannot be empty.");
+    return res.redirect("/checkout");
+  }
+
+  // Cart is still open (status = 0) at the review stage.
+  var get_products =
+    "SELECT ANY_VALUE(`products`.name) as name, ANY_VALUE(`products`.price) as price, ANY_VALUE(`products`.discount) as discount, ANY_VALUE(`products`.product_type_id) as productType, ANY_VALUE(`products`.image) as image, ANY_VALUE(`products`.slug) as slug, ANY_VALUE(`products`.delivery_charge) as delivery_charge, `cart_product`.product_id as product_id, SUM(`cart_product`.quantity) as cartquantity, ANY_VALUE(`products_images`.grocery_image) as groceyImg, ANY_VALUE(`product_variables`.unit_price) as groceyProductPrice, ANY_VALUE(`product_variables`.unit_discount) as unitDiscount FROM `products` LEFT JOIN `cart_product` ON `products`.id = `cart_product`.product_id LEFT JOIN `cart` ON `cart_product`.cart_id = `cart`.cart_id LEFT JOIN `products_images` ON `products`.id = `products_images`.product_id LEFT JOIN `product_variables` ON `products`.id = `product_variables`.product_id WHERE `cart`.status='0' AND `cart`.user_id='" +
+    userId +
+    "' AND `cart`.cart_id='" +
+    cartId +
+    "' GROUP BY `cart_product`.product_id";
+
+  db.query(get_products, function (error, items) {
+    if (error) throw error;
+    if (!items || items.length === 0) {
+      req.flash("errors", "Your cart is empty.");
+      return res.redirect("/addtocart");
+    }
+
+    var delivery_charge = 0;
+    items.forEach(function (it) {
+      delivery_charge += parseFloat(
+        it.delivery_charge == null ? 0 : it.delivery_charge
+      );
+    });
+
+    var renderReview = function (address) {
+      res.render("shoppingcart/order-review", {
+        items: items,
+        delivery_address: address,
+        subtotal: parseFloat(paidAmount),
+        delivery_charge: delivery_charge,
+        payment_method: paymentMethod,
+        txnid: txnid,
+        // Encrypted pass-through fields for the final placement form.
+        encTxnid: encTxnid,
+        encCartId: encCartId,
+        encPaidAmount: encPaidAmount,
+        shippingId: shippingId,
+        csrfToken: csrfToken,
+      });
+    };
+
+    if (shippingId) {
+      var addrSql =
+        "SELECT `shipping_information`.*, `state`.name as StateName, `country`.name as CountryName FROM `shipping_information` LEFT JOIN `state` ON `shipping_information`.state = `state`.id LEFT JOIN `country` ON `state`.countryid = `country`.id WHERE `shipping_information`.id='" +
+        shippingId +
+        "' AND `shipping_information`.user_id='" +
+        userId +
+        "'";
+      db.query(addrSql, function (err2, addrRows) {
+        if (err2) throw err2;
+        renderReview(addrRows && addrRows.length ? addrRows[0] : null);
+      });
+    } else {
+      renderReview(null);
+    }
+  });
 };
 
 exports.PrimeConfimOrder = (req, res, next) => {
@@ -1969,8 +2141,8 @@ exports.userContactUsSave = (req, res, next) => {
       req.flash(
         "message",
         "We appreciate you contacting us [ " +
-          name +
-          " ] One of our colleagues will get back in touch with you soon!"
+        name +
+        " ] One of our colleagues will get back in touch with you soon!"
       );
       res.redirect("contact-us");
     });
