@@ -53,7 +53,6 @@
               <div class="card-body">
                 <form method="POST" enctype="multipart/form-data" action="/updateexcelfile">
                     <input type="file" name="updateexcel" id="updateexcel" accept=".xlsx, .xls, .csv">
-                    <!-- <input type="submit" name="UPLOAD EXCEL"> -->
                     <input type="button" name="UPDATE EXCEL" value="UPDATE EXCEL" class="map-books">
                 </form>
               </div>
@@ -112,17 +111,11 @@
 </div>
 <%- include ("../../common/js") %>
 <script type="text/javascript">
-$(function() { 
-  "use strict";  
-  $("#order_tbl").DataTable({
-        "responsive": true,
-        "autoWidth": false,
-  });
+$(function() {
+  "use strict";
 
   $('.map-books').on("click", function(e){
     e.preventDefault(); // Prevent default form submission
-    
-    console.log('map books call');
 
     var data = new FormData(this.form);
     let formData = new FormData();
@@ -205,89 +198,36 @@ $(function() {
 });
 
 
-  // function capitalizeFirstLetter(string){
-  //   string = string.replaceAll(" ", "_").trim().toLowerCase();
-  //   return string.charAt(0).toUpperCase() + string.slice(1);
-  // }
-
   function capitalizeFirstLetter(string) {
-    if (!string) return ""; // Return an empty string if null or undefined
-
-    string = string.replace(/ /g, "_").trim().toLowerCase(); // Replace spaces with "_"
+    if (!string) return "";
+    string = string.replace(/ /g, "_").trim().toLowerCase();
     return string.charAt(0).toUpperCase() + string.slice(1);
-}
-
-// Example test cases
-console.log(capitalizeFirstLetter(null));       // ""
-console.log(capitalizeFirstLetter(undefined));  // ""
-console.log(capitalizeFirstLetter(" hello"));   // "Hello"
-console.log(capitalizeFirstLetter("my name"));  // "My_name"
+  }
 
   $(document).on('click', '.delete-field', function() {
     var rowCount = $('table#map-table tbody tr').length;
     var trId = $(this).attr('data-id');
-    if (rowCount >= 3) {
+    if (rowCount > 3) {
       $(this).closest('tr').children('td').addClass('deleteHighlight').animate({
           padding: 0
       }).wrapInner('<div />').children().slideUp(function() {
           $('table#map-table tr#' + trId).remove();
       });
     } else {
-      alert('Minimum 4 fields are required');
+      alert('Minimum 3 fields are required');
     }
   });
-
-  function find_duplicate_in_array(fieldsArray) {
-    var object = {};
-    var result = [];
-    fieldsArray.forEach(item => {
-      if (!object[item])
-        object[item] = 0;
-      object[item] += 1;
-    })
-    for (var prop in object) {
-      if (object[prop] >= 2) {
-        result.push(prop);
-      }
-    }
-    return result;
-  }
 
   $('.map-form').on("submit", function(){
     var proceed = 1;
 
     var rowCount = $('table#map-table tbody tr').length;
-    // if (rowCount > 12) {
-    //   proceed = 0;
-    //   alert('Maximun 12 fields are required');
-    // } 
-    if(rowCount <= 3){
+    if (rowCount < 3) {
       proceed = 0;
       alert('Minimum 3 fields are required');
     }
 
-    var dbFields = $.map($('#map-table tbody .fields'), function(el) {
-      return el.value;
-    });
-
-    // Removed duplicate check to allow multiple mappings
-    // if (find_duplicate_in_array(dbFields).length > 0) {
-    //   var duplicateDbFields = find_duplicate_in_array(dbFields);
-
-    //   var attributesStr = $('#header').val();
-    //   var attributesArr = attributesStr.split(",");
-    //   attributesArr.forEach(function(item, index) {
-    //     var attrIndex = duplicateDbFields.indexOf(item.trim().toLowerCase());
-    //     if (attrIndex > -1) {
-    //         duplicateDbFields.splice(attrIndex, 1);
-    //     }
-    //   });
-
-    //   if (duplicateDbFields.length > 0) {
-    //     proceed = 0;
-    //     alert('Found duplicate mapping for fields: ' + duplicateDbFields.toString());
-    //   }
-    // }
+    // duplicate DB-field mappings are allowed (e.g. mapping two columns into one field)
 
     if (proceed) {
       var fields = {};

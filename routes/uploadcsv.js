@@ -1,3 +1,11 @@
+const NUMERIC_PRODUCT_FIELDS = new Set([
+  "price",
+  "discount",
+  "delivery_charge",
+  "quantity",
+  "cat_id",
+]);
+
 exports.findMissingImage = (req, res) => {
   const axios = require("axios");
   const { page, limit } = req.query;
@@ -200,13 +208,11 @@ exports.saveExcelFileData = (req, res, next) => {
   var slugify = require("slugify");
 
   form.parse(req, function (err, fields, files) {
-    console.log("fields.mapped_fields -->", fields.mapped_fields);
     const xlsx_file_name = fields.xlsx_file_name;
     const mapped_fields = JSON.parse(fields.mapped_fields);
     const header = fields.header;
 
     const exFile = __basedir + "/exceldata/" + xlsx_file_name;
-    console.log("req.file --->", exFile);
 
     readXlsxFile(exFile).then(async (rows) => {
       const headers = rows[0];
@@ -238,10 +244,14 @@ exports.saveExcelFileData = (req, res, next) => {
         var is_valid_record = true;
         const data = {};
         for (const [key, value] of Object.entries(mapped_fields)) {
-          var valueData = row[value];
+          var valueData = row[capitalizeFirstLetter(value)];
           if (key == "isbn13" || key == "isbn") {
             valueData = valueData.toString().replace(/\D/g, "");
             // valueData = valueData.replace(/\D/g,'');
+          }
+          if (NUMERIC_PRODUCT_FIELDS.has(key)) {
+            var match = valueData != null ? String(valueData).match(/-?\d+(\.\d+)?/) : null;
+            valueData = match ? Number(match[0]) : 0;
           }
           data[key] = valueData;
         }

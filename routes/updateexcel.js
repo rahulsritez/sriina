@@ -1,3 +1,35 @@
+const NUMERIC_PRODUCT_FIELDS = new Set([
+  "price",
+  "discount",
+  "delivery_charge",
+  "quantity",
+  "cat_id",
+]);
+
+const PRODUCT_EXCEL_FIELDS = [
+  "isbn",
+  "isbn13",
+  "name",
+  "author",
+  "publisher",
+  "book_edition",
+  "book_language",
+  "book_binding",
+  "currency_code",
+  "price",
+  "weight",
+  "delivery_charge",
+  "quantity",
+  "discount",
+  "publishing_year",
+  "description",
+  "no_of_pages",
+  "image",
+  "cat_id",
+  "cluster_subject",
+  "author_details",
+];
+
 exports.uploadExcel = (req, res) => {
   if (req.method == "GET") {
     userId = req.session.userId;
@@ -28,7 +60,6 @@ exports.uploadExcelFile = async (req, res) => {
       const __basedir = path.resolve();
       const readXlsxFile = require("read-excel-file/node");
       const exFile = __basedir + "/exceldata/" + req.file.filename;
-      console.log("req.file --->", exFile);
       const rows = await readXlsxFile(exFile);
       if (!rows || rows.length < 2) {
         return res
@@ -39,73 +70,13 @@ exports.uploadExcelFile = async (req, res) => {
       const headers = rows[0]; // Extract headers
       rows.shift(); // Remove header row
 
-      const db_fields_books = [
-        "isbn",
-        "isbn13",
-        "name",
-        "author",
-        "publisher",
-        "book_edition",
-        "book_language",
-        "book_binding",
-        "currency_code",
-        "price",
-        "weight",
-        "delivery_charge",
-        "quantity",
-        "discount",
-        "publishing_year",
-        "description",
-        "no_of_pages",
-        "image",
-        "cat_id",
-        "cluster_subject",
-        "author_details",
-      ];
+      const db_fields_books = PRODUCT_EXCEL_FIELDS;
       res.send({
         status: true,
         headers,
         db_fields_books,
         file_name: req.file.filename,
         message: "xlsx file get successfully",
-      });
-      return;
-
-      // Database update logic
-      let updatedCount = 0;
-      let skippedCount = 0;
-
-      for (const row of rows) {
-        const [isbn, isbn13, name, , , , , , , price, , , quantity] = row; // Extract needed values
-
-        if (!isbn13 || !price || !quantity || !name) continue; // Skip invalid rows
-
-        // Check if ISBN exists in database
-        const checkQuery = "SELECT * FROM products WHERE isbn13 = ?";
-        const [existingProduct] = await db
-          .promise()
-          .query(checkQuery, [isbn13]);
-
-        if (existingProduct.length > 0) {
-          // Update product details if match found
-          const updateQuery = `
-              UPDATE products 
-              SET price = ?, quantity = ?, name = ?, updated_at = NOW() 
-              WHERE isbn13 = ?`;
-          await db
-            .promise()
-            .query(updateQuery, [price, quantity, name, isbn13]);
-          updatedCount++;
-        } else {
-          skippedCount++;
-        }
-      }
-
-      res.json({
-        status: true,
-        message: "Excel file processed successfully",
-        updatedRecords: updatedCount,
-        skippedRecords: skippedCount,
       });
     } catch (error) {
       console.error("Error processing Excel file:", error);
@@ -162,17 +133,21 @@ exports.saveExcelFileData = async (req, res, next) => {
         skippedRecords = 0;
 
       const promises = newBooksArr.map(async (row) => {
-        // console.log("Processing row:", row);
         let data = {};
 
         // Map fields dynamically
         for (const [key, value] of Object.entries(mapped_fields)) {
           let excelFields = value.split(',');
-          let valueData = row[excelFields[0]];
+          let valueData = row[capitalizeFirstLetter(excelFields[0])];
           if (key === "ISBN" || key === "ISBN13") {
             valueData = valueData
               ? valueData.toString().replace(/\D/g, "")
               : null;
+          }
+          if (NUMERIC_PRODUCT_FIELDS.has(key)) {
+            // pull the leading number out of values like "100+"
+            let match = valueData != null ? String(valueData).match(/-?\d+(\.\d+)?/) : null;
+            valueData = match ? Number(match[0]) : 0;
           }
           data[key] = valueData;
         }
@@ -202,7 +177,6 @@ exports.saveExcelFileData = async (req, res, next) => {
         data.currency_code = "INR";
 
         if (!data.isbn13) {
-          // console.log("Skipping row due to missing isbn13:", data);
           failedRecords++;
           return;
         }
@@ -213,29 +187,28 @@ exports.saveExcelFileData = async (req, res, next) => {
           .query(sqlCheck, [data.isbn13]);
 
         if (existingProduct.length) {
-          // console.log("Updating Product:", data);
-          // If product exists, update its details
-          let sqlUpdate =
-            "UPDATE products SET quantity = ?, price = ?, name = ?, updated_at = NOW() WHERE isbn13 = ?";
+          // only touch the columns that were actually mapped for this upload
+          const updatableFields = Object.keys(mapped_fields).filter(
+            (field) => PRODUCT_EXCEL_FIELDS.includes(field) && field !== "isbn13"
+          );
+          const setClause = updatableFields
+            .map((field) => `${field} = ?`)
+            .concat("updated_at = NOW()")
+            .join(", ");
+          const updateValues = updatableFields.map((field) =>
+            data[field] === undefined ? null : data[field]
+          );
+          let sqlUpdate = `UPDATE products SET ${setClause} WHERE isbn13 = ?`;
           let [result] = await db
             .promise()
-            .query(sqlUpdate, [
-              data.quantity,
-              data.price,
-              data.name,
-              data.isbn13,
-            ]);
+            .query(sqlUpdate, [...updateValues, data.isbn13]);
 
           if (result.affectedRows) {
             updatedRecords++;
-            // console.log("Updated product:", data.isbn13);
           } else {
             failedRecords++;
-            // console.log("Update failed for:", data.isbn13);
           }
         } else {
-          // If product does NOT exist, insert it
-          // console.log("Inserting new product:", data);
           let sqlInsert = `INSERT INTO products (isbn, isbn13, name, author, publisher, book_edition, book_language, book_binding, currency_code, price, weight, delivery_charge, quantity, discount, publishing_year, description, no_of_pages, image, cat_id, cluster_subject, author_details, slug, user_id, product_type_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
           let values = [
             data.isbn || null,
@@ -266,8 +239,7 @@ exports.saveExcelFileData = async (req, res, next) => {
             data.updated_at
           ];
           await db.promise().query(sqlInsert, values);
-          updatedRecords++; 
-          // console.log("Inserted product:", data.isbn13);
+          updatedRecords++;
         }
       });
 
