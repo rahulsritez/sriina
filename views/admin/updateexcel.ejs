@@ -181,7 +181,7 @@ $(function() {
                 }, 3000);
 
             } else {
-                $('#error_message').html('<div class="alert alert-danger">' + response.error +'</div>');
+                alert(response.error);
             }
         },
         error: function(response) {
