@@ -495,6 +495,12 @@ app.get("/book/:slug", csrfProtection, product.viewProduct);
 
 app.get("/:id", csrfProtection, pages.getCategories);
 // Middleware
-app.listen(port, () => {
+const server = app.listen(port, () => {
   console.log(`Server running on port: ${port}`);
 });
+
+server.keepAliveTimeout = 65000;
+server.headersTimeout = 66000;
+server.requestTimeout = 0;
+
+
