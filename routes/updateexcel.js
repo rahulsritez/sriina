@@ -6,23 +6,9 @@ const NUMERIC_PRODUCT_FIELDS = new Set([
   "cat_id",
 ]);
 
-const REQUIRED_EXCEL_HEADERS = [
-  "BookCode",
-  "BookName",
-  "PublisherName",
-  "Author",
-  "SalePrice",
-  "ClBal",
-];
+const REQUIRED_EXCEL_HEADERS = ["ISBN13", "BookName", "MRP", "Stock"];
 
-const REQUIRED_DB_FIELDS = [
-  "isbn13",
-  "name",
-  "publisher",
-  "author",
-  "price",
-  "quantity",
-];
+const REQUIRED_DB_FIELDS = ["isbn13", "name", "price", "quantity"];
 
 const PRODUCT_EXCEL_FIELDS = [
   "isbn",
@@ -239,8 +225,8 @@ exports.saveExcelFileData = async (req, res, next) => {
               data.isbn || null,
               data.isbn13,
               data.name,
-              data.author,
-              data.publisher,
+              data.author || null,
+              data.publisher || null,
               data.book_edition || null,
               data.book_language || null,
               data.book_binding || null,
