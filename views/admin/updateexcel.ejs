@@ -55,9 +55,10 @@
                     <input type="file" name="updateexcel" id="updateexcel" accept=".xlsx, .xls, .csv">
                     <input type="button" name="UPDATE EXCEL" value="UPDATE EXCEL" class="map-books">
                 </form>
+                <div id="import-progress" style="display:none; margin-top: 15px;"></div>
               </div>
             </div>
-        </div> 
+        </div>
 
         </div>
       </div>
@@ -248,7 +249,29 @@ $(function() {
     }
   });
 
-});  
+  // the import runs in the background; poll for progress instead of waiting on the request
+  var jobId = new URLSearchParams(window.location.search).get('job');
+  if (jobId) {
+    var $progress = $('#import-progress').show();
+    var poll = setInterval(function () {
+      $.getJSON('/update-xlsx-status/' + jobId, function (job) {
+        if (job.status === 'processing') {
+          $progress.html('<div class="alert alert-info">Processing... ' + job.processed + ' of ' + job.total + ' rows done.</div>');
+        } else if (job.status === 'done') {
+          clearInterval(poll);
+          $progress.html('<div class="alert alert-success">' + job.message + '</div>');
+          setTimeout(function () { window.location.href = '/productlist'; }, 2000);
+        } else if (job.status === 'error') {
+          clearInterval(poll);
+          $progress.html('<div class="alert alert-danger">' + job.message + '</div>');
+        }
+      }).fail(function () {
+        clearInterval(poll);
+      });
+    }, 1500);
+  }
+
+});
 </script>
 </body>
 </html>
