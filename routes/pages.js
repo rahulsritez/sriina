@@ -428,7 +428,7 @@ exports.getCategories = async function (req, res, next) {
       }
     } else if (category_type_id === 2) {
       prodsQuery = `
-        SELECT p.id, p.cat_id, p.product_type_id, p.name, p.price, p.discount, p.delivery_charge, p.sku,
+        SELECT p.id, p.cat_id, p.product_type_id, p.name, p.price, p.discount, p.delivery_charge,
                p.description, p.image, p.slug, p.status, p.unit, p.grocery_category, p.grocery_sub_category,
                pi.grocery_image AS groceryImage,
                pv.unit_price AS groceryPrice, pv.unit_discount AS groceryDiscount,

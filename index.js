@@ -18,6 +18,18 @@ var express = require("express"),
   http = require("http"),
   path = require("path");
 
+// Many route handlers do `if (error) throw error` inside a MySQL callback. Since that
+// callback runs outside the request's call stack, Express can't turn it into a 500 for
+// just that request - it becomes an uncaught exception that kills the whole process,
+// taking every other visitor down with it. These handlers stop that: log the failure and
+// keep the server running instead of crashing on every DB hiccup.
+process.on("uncaughtException", (error) => {
+  console.error("uncaughtException (server kept running):", error);
+});
+process.on("unhandledRejection", (reason) => {
+  console.error("unhandledRejection (server kept running):", reason);
+});
+
 const helmet = require("helmet");
 var app = express();
 var mysql = require("mysql2");
@@ -363,6 +375,7 @@ app.post("/uploads-xlsx", routes.authGaurd, uploadcsv.saveExcelFileData);
 app.get("/updateexcel", routes.authGaurd, csrfProtection, updateexcel.uploadExcel);
 app.post("/updateexcelfile", uploadFile.single("updateexcel"), routes.authGaurd, updateexcel.uploadExcelFile);
 app.post("/update-xlsx", routes.authGaurd, updateexcel.saveExcelFileData);
+app.get("/update-xlsx-status/:jobId", routes.authGaurd, updateexcel.importStatus);
 app.get("/getMarketingTSVfile", electronic.getProductionTSVfile);
 
 // Sitemap routes
