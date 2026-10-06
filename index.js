@@ -81,23 +81,23 @@ var csrfProtection = csrf({ cookie: true });
 
 var parseForm = bodyParser.urlencoded({ extended: true });
 
-var connection = mysql.createConnection({
+// A pool replaces dropped connections automatically; a single connection stays dead
+// once MySQL closes it (idle timeout, network blip, DB restart) until the process restarts.
+var pool = mysql.createPool({
   host: process.env.DB_HOST,
   user: process.env.DB_USERNAME,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 10000,
 });
 
-connection.connect(function (err) {
-  if (err) throw err;
-  console.log("Connection Established Successfully!");
-  // The application's cart/checkout/account queries were written against
-  // MySQL's pre-5.7 GROUP BY behaviour (they SELECT non-aggregated columns
-  // alongside aggregates while grouping by product_id). Newer MySQL enables
-  // ONLY_FULL_GROUP_BY by default, which rejects those queries. Drop just that
-  // flag for this connection so the whole flow keeps working, while leaving the
-  // other strict modes (e.g. STRICT_TRANS_TABLES) intact.
-  connection.query(
+// The application's queries were written against MySQL's pre-5.7 GROUP BY behaviour,
+// so drop only ONLY_FULL_GROUP_BY on every physical connection, keeping other strict modes.
+pool.on("connection", function (conn) {
+  conn.query(
     "SET SESSION sql_mode = (SELECT REPLACE(@@sql_mode, 'ONLY_FULL_GROUP_BY', ''))",
     function (modeErr) {
       if (modeErr) {
@@ -106,7 +106,20 @@ connection.connect(function (err) {
     }
   );
 });
-global.db = connection;
+
+pool.on("error", function (err) {
+  console.error("MySQL pool error (will reconnect):", err.code || err.message);
+});
+
+pool.query("SELECT 1", function (err) {
+  if (err) {
+    console.error("Database connection check failed:", err.message);
+  } else {
+    console.log("Connection Established Successfully!");
+  }
+});
+
+global.db = pool;
 global.baseURL = "https://sriina.com/";
 
 app.use(cookieParser());
