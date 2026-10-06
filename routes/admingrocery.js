@@ -37,10 +37,10 @@ exports.groceryPage = function(req, res){
     var query = db.query(sql1, function(err, result) {
 
         if(userType==1){
-            var sql2 = "SELECT p.id,p.`product_type_id`,p.`name`,p.`delivery_charge`,p.`sku`,p.`description`,p.`slug`,p.`status`,p.`unit`,p.`grocery_category`,p.`grocery_sub_category`, pi.`grocery_image` as `groceyimage`, pv.`unit_price` as `price`, pv.`unit_id` as `unit_id`, pv.`unit_discount` as `discount`, pv.`inventory` as `quantity`, pv.`unit_weight` as `weight`, um.`name` as `unit_title` FROM `products` as p, `products_images` as pi, `product_variables` as pv, `unit_master` as um where p.`id` = pi.`product_id` and p.`id` = pv.`product_id` and pv.`unit_id` = um.`id` and p.product_type_id=2 order by p.id desc";
-            
+            var sql2 = "SELECT p.id,p.`product_type_id`,p.`name`,p.`delivery_charge`,p.`description`,p.`slug`,p.`status`,p.`unit`,p.`grocery_category`,p.`grocery_sub_category`, pi.`grocery_image` as `groceyimage`, pv.`unit_price` as `price`, pv.`unit_id` as `unit_id`, pv.`unit_discount` as `discount`, pv.`inventory` as `quantity`, pv.`unit_weight` as `weight`, um.`name` as `unit_title` FROM `products` as p, `products_images` as pi, `product_variables` as pv, `unit_master` as um where p.`id` = pi.`product_id` and p.`id` = pv.`product_id` and pv.`unit_id` = um.`id` and p.product_type_id=2 order by p.id desc";
+
         } else {
-            var sql2 = "SELECT p.id,p.`product_type_id`,p.`name`,p.`delivery_charge`,p.`sku`,p.`description`,p.`slug`,p.`status`,p.`unit`,p.`grocery_category`,p.`grocery_sub_category`, pi.`grocery_image` as `groceyimage`, pv.`unit_price` as `price`, pv.`unit_id` as `unit_id`, pv.`unit_discount` as `discount`, pv.`inventory` as `quantity`, pv.`unit_weight` as `weight`, um.`name` as `unit_title` FROM `products` as p, `products_images` as pi, `product_variables` as pv, `unit_master` as um where p.`id` = pi.`product_id` and p.`id` = pv.`product_id` and pv.`unit_id` = um.`id` and p.product_type_id=2 order by p.id and p.`user_id`='"+userId+"' and p.`user_id`!='0' desc";
+            var sql2 = "SELECT p.id,p.`product_type_id`,p.`name`,p.`delivery_charge`,p.`description`,p.`slug`,p.`status`,p.`unit`,p.`grocery_category`,p.`grocery_sub_category`, pi.`grocery_image` as `groceyimage`, pv.`unit_price` as `price`, pv.`unit_id` as `unit_id`, pv.`unit_discount` as `discount`, pv.`inventory` as `quantity`, pv.`unit_weight` as `weight`, um.`name` as `unit_title` FROM `products` as p, `products_images` as pi, `product_variables` as pv, `unit_master` as um where p.`id` = pi.`product_id` and p.`id` = pv.`product_id` and pv.`unit_id` = um.`id` and p.product_type_id=2 order by p.id and p.`user_id`='"+userId+"' and p.`user_id`!='0' desc";
         }
         if(userType==5){
             var sidebar = 'seosidebar';
@@ -246,12 +246,11 @@ exports.addGroceryProduct = (req,res) =>{
                     let g_food_type     = xss(fields.food_type);
                     
                     let slug_url = slugify(product_name,{replacement: '-',remove: /[,*+~.()'"!:@]/g,lower: true,strict: false});
-                    let sku = Math.floor(Math.random() * 100);
                     if(!product_name){
                         req.flash('errors','Product name cannot be empty.');
                         res.redirect("/grocerylist");
                     } else {
-                        let sql12 = "INSERT INTO `products`(`user_id`,`product_type_id`,`name`,`unit`,`delivery_charge`,`sku`,`cat_id`,`sub_category`,`tax_included`,`status`,`description`,`features_details`,`disclaimer`,`slug`, `manufacturer_id`, `brand_id`, `country_id`, `food_type`,`created_at`,`updated_at`) VALUES ('"+userId+"', '"+product_type_id+"', '"+product_name+"', '"+units_data+"', '"+delivery_charge+"','"+sku+"','"+g_category+"','"+g_sub_category+"','"+g_tax+"', '"+g_status+"', '"+g_descriptions+"', '"+features_details+"',  '"+disclaimer+"', '"+slug_url+"', '"+g_manufacturer+"', '"+g_brand+"', '"+g_food_country+"', '"+g_food_type+"', '"+today+"','"+today+"')";
+                        let sql12 = "INSERT INTO `products`(`user_id`,`product_type_id`,`name`,`unit`,`delivery_charge`,`cat_id`,`sub_category`,`tax_included`,`status`,`description`,`features_details`,`disclaimer`,`slug`, `manufacturer_id`, `brand_id`, `country_id`, `food_type`,`created_at`,`updated_at`) VALUES ('"+userId+"', '"+product_type_id+"', '"+product_name+"', '"+units_data+"', '"+delivery_charge+"','"+g_category+"','"+g_sub_category+"','"+g_tax+"', '"+g_status+"', '"+g_descriptions+"', '"+features_details+"',  '"+disclaimer+"', '"+slug_url+"', '"+g_manufacturer+"', '"+g_brand+"', '"+g_food_country+"', '"+g_food_type+"', '"+today+"','"+today+"')";
                         
                         var query = db.query(sql12, function(error, result) {
                             if(error){

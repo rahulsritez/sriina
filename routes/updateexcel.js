@@ -10,6 +10,22 @@ const REQUIRED_EXCEL_HEADERS = ["ISBN13", "BookName", "MRP", "Stock"];
 
 const REQUIRED_DB_FIELDS = ["isbn13", "name", "price", "quantity"];
 
+// import jobs run in the background so the HTTP request returns instantly,
+// no matter how large the file is (avoids proxy/CDN gateway timeouts like a 524)
+const importJobs = new Map();
+const IMPORT_BATCH_SIZE = 300;
+const JOB_RETENTION_MS = 60 * 60 * 1000; // keep a finished job's status around for an hour
+
+function makeJobId() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+}
+
+function toBatches(list, size) {
+  const batches = [];
+  for (let i = 0; i < list.length; i += size) batches.push(list.slice(i, i + size));
+  return batches;
+}
+
 const PRODUCT_EXCEL_FIELDS = [
   "isbn",
   "isbn13",
@@ -106,6 +122,186 @@ function capitalizeFirstLetter(string) {
   string = string.replaceAll(" ", "_").trim().toLowerCase();
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
+// Runs in the background, detached from the request that triggered it. This is what
+// keeps the HTTP response fast no matter how many rows the sheet has: large sheets
+// used to mean one SELECT + one INSERT/UPDATE per row, which on a production DB
+// (real network latency, unlike localhost) could take minutes and trip a 524 at the
+// CDN/proxy long before the import finished. Batching (300 rows per query) plus running
+// it after the response is sent removes both the slowness and the timeout risk.
+async function runImportJob(jobId, exFile, mapped_fields, userId) {
+  const job = importJobs.get(jobId);
+  const readXlsxFile = require("read-excel-file/node");
+  const slugify = require("slugify");
+
+  try {
+    const rows = await readXlsxFile(exFile);
+    const headers = rows.shift();
+
+    const newBooksArr = rows.map((record) => {
+      return headers.reduce((obj, key, index) => {
+        obj[capitalizeFirstLetter(key)] = record[index];
+        return obj;
+      }, {});
+    });
+
+    // last occurrence of a book code in the sheet wins if it appears more than once
+    const byIsbn13 = new Map();
+    let skippedRecords = 0;
+
+    for (const row of newBooksArr) {
+      let data = {};
+
+      for (const [key, value] of Object.entries(mapped_fields)) {
+        let excelFields = value.split(",");
+        data[key] = row[capitalizeFirstLetter(excelFields[0])];
+      }
+
+      // book code must be exactly 13 digits, every mandatory value must be filled
+      data.isbn13 = String(data.isbn13 == null ? "" : data.isbn13).trim();
+      let isMissing = REQUIRED_DB_FIELDS.some(
+        (field) => data[field] == null || String(data[field]).trim() === ""
+      );
+      if (!/^\d{13}$/.test(data.isbn13) || isMissing) {
+        skippedRecords++;
+        continue;
+      }
+
+      for (const key of Object.keys(data)) {
+        if (NUMERIC_PRODUCT_FIELDS.has(key)) {
+          // pull the leading number out of values like "100+"
+          let match = String(data[key]).match(/-?\d+(\.\d+)?/);
+          data[key] = match ? Number(match[0]) : 0;
+        }
+      }
+
+      data.slug = slugify(data.name, {
+        replacement: "-",
+        lower: true,
+        remove: /[,*+~.(){}'"\/\\#$%<>?!:@]/g,
+      });
+      data.user_id = userId;
+      data.product_type_id = 1;
+      data.created_at = new Date().toISOString().slice(0, 19).replace("T", " ");
+      data.updated_at = data.created_at;
+      data.currency_code = "INR";
+
+      byIsbn13.set(data.isbn13, data);
+    }
+
+    const rowsToSave = [...byIsbn13.values()];
+    job.total = newBooksArr.length;
+    job.skipped = skippedRecords;
+
+    // one query per batch to find which book codes already exist, instead of one per row
+    const existingIsbn13s = new Set();
+    for (const batch of toBatches(rowsToSave, IMPORT_BATCH_SIZE)) {
+      const codes = batch.map((data) => data.isbn13);
+      const [existing] = await db
+        .promise()
+        .query(`SELECT isbn13 FROM products WHERE isbn13 IN (${codes.map(() => "?").join(",")})`, codes);
+      existing.forEach((row) => existingIsbn13s.add(row.isbn13));
+    }
+
+    const toInsert = rowsToSave.filter((data) => !existingIsbn13s.has(data.isbn13));
+    const toUpdate = rowsToSave.filter((data) => existingIsbn13s.has(data.isbn13));
+
+    const insertColumns = [
+      "isbn", "isbn13", "name", "author", "publisher", "book_edition", "book_language",
+      "book_binding", "currency_code", "price", "weight", "delivery_charge", "quantity",
+      "discount", "publishing_year", "description", "no_of_pages", "image", "cat_id",
+      "cluster_subject", "author_details", "slug", "user_id", "product_type_id",
+      "created_at", "updated_at",
+    ];
+
+    // multi-row INSERT per batch instead of one INSERT per row
+    for (const batch of toBatches(toInsert, IMPORT_BATCH_SIZE)) {
+      try {
+        const values = batch.map((data) => [
+          data.isbn || null,
+          data.isbn13,
+          data.name,
+          data.author || null,
+          data.publisher || null,
+          data.book_edition || null,
+          data.book_language || null,
+          data.book_binding || null,
+          data.currency_code,
+          data.price,
+          data.weight || 0,
+          data.delivery_charge || 0,
+          data.quantity,
+          data.discount || 0,
+          data.publishing_year || null,
+          data.description || null,
+          data.no_of_pages || 0,
+          data.image || null,
+          data.cat_id || null,
+          data.cluster_subject || null,
+          data.author_details || null,
+          data.slug,
+          data.user_id,
+          data.product_type_id,
+          data.created_at,
+          data.updated_at,
+        ]);
+        await db
+          .promise()
+          .query(`INSERT INTO products (${insertColumns.join(", ")}) VALUES ?`, [values]);
+        job.added += batch.length;
+      } catch (batchError) {
+        console.error("Import job " + jobId + ": insert batch failed:", batchError.message);
+        job.failed += batch.length;
+      }
+      job.processed = job.added + job.updated + job.failed;
+    }
+
+    // only touch the columns that were actually mapped for this upload
+    const updatableFields = Object.keys(mapped_fields).filter(
+      (field) => PRODUCT_EXCEL_FIELDS.includes(field) && field !== "isbn13"
+    );
+
+    // one CASE-based UPDATE per batch (each row can set different values) instead of one UPDATE per row
+    for (const batch of toBatches(toUpdate, IMPORT_BATCH_SIZE)) {
+      try {
+        const params = [];
+        const setClause = updatableFields
+          .map((field) => {
+            const cases = batch.map((data) => {
+              params.push(data.isbn13, data[field] === undefined ? null : data[field]);
+              return "WHEN ? THEN ?";
+            });
+            return `${field} = CASE isbn13 ${cases.join(" ")} ELSE ${field} END`;
+          })
+          .concat("updated_at = NOW()")
+          .join(", ");
+        const codes = batch.map((data) => data.isbn13);
+        await db
+          .promise()
+          .query(
+            `UPDATE products SET ${setClause} WHERE isbn13 IN (${codes.map(() => "?").join(",")})`,
+            [...params, ...codes]
+          );
+        job.updated += batch.length;
+      } catch (batchError) {
+        console.error("Import job " + jobId + ": update batch failed:", batchError.message);
+        job.failed += batch.length;
+      }
+      job.processed = job.added + job.updated + job.failed;
+    }
+
+    job.status = "done";
+    job.finishedAt = Date.now();
+    job.message = `Upload completed. ${job.added} added, ${job.updated} updated, ${job.skipped} skipped (invalid book code or missing data), ${job.failed} failed.`;
+  } catch (error) {
+    console.error("Import job " + jobId + " failed:", error);
+    job.status = "error";
+    job.finishedAt = Date.now();
+    job.message = "An error occurred while processing the file: " + error.message;
+  } finally {
+    setTimeout(() => importJobs.delete(jobId), JOB_RETENTION_MS).unref();
+  }
+}
+
 exports.saveExcelFileData = async (req, res, next) => {
   const userId = req.session.userId;
   const userType = req.session.type;
@@ -117,8 +313,6 @@ exports.saveExcelFileData = async (req, res, next) => {
 
   const formidable = require("formidable");
   const path = require("path");
-  const readXlsxFile = require("read-excel-file/node");
-  const slugify = require("slugify");
 
   const form = new formidable.IncomingForm();
 
@@ -139,134 +333,39 @@ exports.saveExcelFileData = async (req, res, next) => {
       }
 
       const exFile = path.join(__dirname, "../exceldata", xlsx_file_name);
+      const jobId = makeJobId();
 
-      const rows = await readXlsxFile(exFile);
-      const headers = rows.shift();
-
-      const newBooksArr = rows.map((record) => {
-        return headers.reduce((obj, key, index) => {
-          obj[capitalizeFirstLetter(key)] = record[index];
-          return obj;
-        }, {});
+      importJobs.set(jobId, {
+        status: "processing",
+        startedAt: Date.now(),
+        total: 0,
+        processed: 0,
+        added: 0,
+        updated: 0,
+        skipped: 0,
+        failed: 0,
+        message: "",
       });
 
-      let failedRecords = 0,
-        addedRecords = 0,
-        updatedRecords = 0,
-        skippedRecords = 0;
+      // fire and forget: the request below returns immediately, this keeps running after
+      runImportJob(jobId, exFile, mapped_fields, userId).catch((error) => {
+        console.error("Import job " + jobId + " crashed:", error);
+      });
 
-      // one row at a time so a book code repeated in the sheet is updated, not duplicated
-      for (const row of newBooksArr) {
-        let data = {};
-
-        for (const [key, value] of Object.entries(mapped_fields)) {
-          let excelFields = value.split(",");
-          data[key] = row[capitalizeFirstLetter(excelFields[0])];
-        }
-
-        // book code must be exactly 13 digits, every mandatory value must be filled
-        data.isbn13 = String(data.isbn13 == null ? "" : data.isbn13).trim();
-        let isMissing = REQUIRED_DB_FIELDS.some(
-          (field) => data[field] == null || String(data[field]).trim() === ""
-        );
-        if (!/^\d{13}$/.test(data.isbn13) || isMissing) {
-          skippedRecords++;
-          continue;
-        }
-
-        for (const key of Object.keys(data)) {
-          if (NUMERIC_PRODUCT_FIELDS.has(key)) {
-            // pull the leading number out of values like "100+"
-            let match = String(data[key]).match(/-?\d+(\.\d+)?/);
-            data[key] = match ? Number(match[0]) : 0;
-          }
-        }
-
-        data.slug = slugify(data.name, {
-          replacement: "-",
-          lower: true,
-          remove: /[,*+~.(){}'"\/\\#$%<>?!:@]/g,
-        });
-        data.user_id = userId;
-        data.product_type_id = 1;
-        data.created_at = new Date()
-          .toISOString()
-          .slice(0, 19)
-          .replace("T", " ");
-        data.updated_at = data.created_at;
-        data.currency_code = "INR";
-
-        try {
-          let sqlCheck = "SELECT id FROM products WHERE isbn13 = ?";
-          let [existingProduct] = await db
-            .promise()
-            .query(sqlCheck, [data.isbn13]);
-
-          if (existingProduct.length) {
-            // only touch the columns that were actually mapped for this upload
-            const updatableFields = Object.keys(mapped_fields).filter(
-              (field) => PRODUCT_EXCEL_FIELDS.includes(field) && field !== "isbn13"
-            );
-            const setClause = updatableFields
-              .map((field) => `${field} = ?`)
-              .concat("updated_at = NOW()")
-              .join(", ");
-            const updateValues = updatableFields.map((field) =>
-              data[field] === undefined ? null : data[field]
-            );
-            let sqlUpdate = `UPDATE products SET ${setClause} WHERE isbn13 = ?`;
-            await db
-              .promise()
-              .query(sqlUpdate, [...updateValues, data.isbn13]);
-            updatedRecords++;
-          } else {
-            let sqlInsert = `INSERT INTO products (isbn, isbn13, name, author, publisher, book_edition, book_language, book_binding, currency_code, price, weight, delivery_charge, quantity, discount, publishing_year, description, no_of_pages, image, cat_id, cluster_subject, author_details, slug, user_id, product_type_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-            let values = [
-              data.isbn || null,
-              data.isbn13,
-              data.name,
-              data.author || null,
-              data.publisher || null,
-              data.book_edition || null,
-              data.book_language || null,
-              data.book_binding || null,
-              data.currency_code,
-              data.price,
-              data.weight || 0,
-              data.delivery_charge || 0,
-              data.quantity,
-              data.discount || 0,
-              data.publishing_year || null,
-              data.description || null,
-              data.no_of_pages || 0,
-              data.image || null,
-              data.cat_id || null,
-              data.cluster_subject || null,
-              data.author_details || null,
-              data.slug,
-              data.user_id,
-              data.product_type_id,
-              data.created_at,
-              data.updated_at
-            ];
-            await db.promise().query(sqlInsert, values);
-            addedRecords++;
-          }
-        } catch (rowError) {
-          console.error("Row failed for book code " + data.isbn13 + ":", rowError.message);
-          failedRecords++;
-        }
-      }
-
-      req.flash(
-        "message",
-        `Upload completed. ${addedRecords} added, ${updatedRecords} updated, ${skippedRecords} skipped (invalid book code or missing data), ${failedRecords} failed.`
-      );
-      res.redirect("/productlist");
+      req.flash("message", "Import started in the background. Progress is shown below.");
+      res.redirect("/updateexcel?job=" + jobId);
     } catch (error) {
       console.error("Error processing file:", error);
       req.flash("errors", "An error occurred while processing the file.");
       res.redirect("/updateexcel");
     }
   });
+};
+
+exports.importStatus = (req, res) => {
+  const job = importJobs.get(req.params.jobId);
+  if (!job) {
+    return res.status(404).json({ status: "not_found" });
+  }
+  res.json(job);
 };
