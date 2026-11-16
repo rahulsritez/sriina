@@ -2061,8 +2061,14 @@ exports.AdminUpdateProduct = (req, res, next) => {
         return;
       }
 
+      // check ISBN13 only when it is changed, so old products with bad data can still be edited
       try {
-        var isbnError = await checkIsbn13(edit_ISBN13, edit_id);
+        var isbnError = null;
+        const [current] = await db.promise().query("SELECT isbn13 FROM products WHERE id = ?", [edit_id]);
+        const oldIsbn13 = current[0] && current[0].isbn13 ? String(current[0].isbn13).trim() : "";
+        if (edit_ISBN13 !== oldIsbn13) {
+          isbnError = await checkIsbn13(edit_ISBN13, edit_id);
+        }
       } catch (e) {
         console.log(e);
         isbnError = "Unable to check ISBN13, please try again.";
