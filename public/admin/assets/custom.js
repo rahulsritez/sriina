@@ -332,6 +332,25 @@ function lettersOnly() {
     else return false;
 }
 
+// select the matching option (ignores case); if the saved value is not in the list, add it so it still shows
+function setSelectValue(selector, value, label) {
+    var select = $(selector);
+    value = value == null ? "" : String(value).trim();
+    if (!value) {
+        select.val(select.find("option:first").val());
+        return;
+    }
+    var match = select.find("option").filter(function () {
+        return this.value.toLowerCase() === value.toLowerCase();
+    });
+    if (match.length === 0) {
+        select.append(new Option(label || value, value));
+        select.val(value);
+    } else {
+        select.val(match.first().val());
+    }
+}
+
 $("#products_tbl").on("click", ".edit_products", function () {
     var edit_id = $(this).data("id");
     var product_type_id = $(this).data("product_type_id");
@@ -354,10 +373,12 @@ $("#products_tbl").on("click", ".edit_products", function () {
     var no_of_pages = $(this).data("no_of_pages");
     var weight = $(this).data("weight");
     var images = $(this).data("images");
-    var descriptiondata = $(this).data("description");
-    var author_details = $(this).data("author_details");
-    var meta_title = $(this).data("meta_title");
-    var meta_description = $(this).data("meta_description");
+    // attr() keeps the text as it is (data() can convert it to number/JSON)
+    var descriptiondata = $(this).attr("data-description") || "";
+    var author_details = $(this).attr("data-author_details") || "";
+    var meta_title = $(this).attr("data-meta_title") || "";
+    var meta_description = $(this).attr("data-meta_description") || "";
+    var categoryname = $(this).attr("data-categoryname");
     var status = $(this).data("status");
     //alert(descriptiondata);
     $("#myModaledit").modal("show");
@@ -376,14 +397,19 @@ $("#products_tbl").on("click", ".edit_products", function () {
     $("#edit_quantity").val(quantity);
     $("#edit_ISBN").val(isbn10);
     $("#edit_ISBN13").val(isbn13);
-    $("#edit_language").val(language);
-    $("#edit_category").val(cat_id);
+    $("#edit_ISBN13")[0].setCustomValidity("");
+    $(".isbn13-error").text("");
+    setSelectValue("#edit_language", language);
+    setSelectValue("#edit_category", cat_id, categoryname);
     $("#edit_no_of_pages").val(no_of_pages);
-    $("#edit_book_binding").val(book_binding);
+    setSelectValue("#edit_book_binding", book_binding);
     $("#edit_weight").val(weight);
     $("#edit_included").val(tax_included);
     $("#edit_status").val(status);
-    $("#edit_product_images").html(images);
+    $("#edit_product_images").val("");
+    $("#edit_current_image").html(
+        images ? '<img src="' + (window.IMAGE_URL || "") + images + '" width="60"> <small>' + images + "</small>" : ""
+    );
     $("#edit_author_details").val(author_details);
     $("#edit_meta_title").val(meta_title);
     $("#edit_meta_description").val(meta_description);

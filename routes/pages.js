@@ -383,52 +383,38 @@ exports.getCategories = async function (req, res, next) {
 
     const { cat_id: catId, url_name, category_type_id, parents_id: parent_id } = getCat_id[0];
 
-    // Step 2: Build products SQL (sql1)
-    let sql1 = "";
-    let sqlParams = [];
+    let products = [];
+    let results = [];
+    let totalProducts = 0;
 
-    let child_categories = [];
-    if (parent_id === 0) {
-      [child_categories] = await db.promise().query(
-        "SELECT id FROM books_category WHERE parents_id = ? AND is_deleted = 0",
-        [catId]
+    if (Number(category_type_id) === 1) {
+      // this category + all its sub categories (any level)
+      const catIds = [Number(catId)];
+      let parentIds = [Number(catId)];
+      while (parentIds.length > 0) {
+        const [children] = await db.promise().query(
+          "SELECT id FROM books_category WHERE parents_id IN (?) AND is_deleted = 0",
+          [parentIds]
+        );
+        parentIds = children.map((c) => c.id).filter((id) => !catIds.includes(id));
+        catIds.push(...parentIds);
+      }
+
+      const where = "status = 1 AND product_type_id = 1 AND cat_id IN (?)";
+      const [countRows] = await db.promise().query(
+        `SELECT COUNT(*) AS total FROM products WHERE ${where}`,
+        [catIds]
       );
-    }
+      totalProducts = countRows[0].total;
 
-    if (parent_id === 0) {
-      if (child_categories.length > 0) {
-        const childIds = child_categories.map(c => c.id).join(",");
-        sql1 = `SELECT * FROM products WHERE status=1 AND cat_id IN (${childIds}) AND product_type_id=?`;
-        sqlParams = [category_type_id];
-      } else {
-        // fallback if no child categories exist
-        sql1 = `SELECT * FROM products WHERE status=1 AND product_type_id=?`;
-        sqlParams = [category_type_id];
-      }
-    } else {
-      sql1 = `SELECT * FROM products WHERE status=1 AND cat_id=? AND product_type_id=?`;
-      sqlParams = [catId, category_type_id];
-    }
-
-    const [products] = await db.promise().query(sql1, sqlParams);
-
-    // Step 3: Handle pagination queries
-    let prodsQuery = "";
-    let prodsParams = [];
-
-    if (category_type_id === 1) {
-      if (child_categories.length > 0) {
-        const childIds = child_categories.map(c => c.id).join(",");
-        prodsQuery = `SELECT * FROM products WHERE status=1 AND cat_id IN (${childIds}) AND product_type_id=1 LIMIT ? OFFSET ?`;
-        prodsParams = [perPage, offset];
-      } else {
-        // fallback if no child categories exist
-        prodsQuery = `SELECT * FROM products WHERE status=1 AND cat_id = ? AND product_type_id=? LIMIT ? OFFSET ?`;
-        prodsParams = [catId, category_type_id, perPage, offset];
-      }
-    } else if (category_type_id === 2) {
-      prodsQuery = `
-        SELECT p.id, p.cat_id, p.product_type_id, p.name, p.price, p.discount, p.delivery_charge,
+      [results] = await db.promise().query(
+        `SELECT * FROM products WHERE ${where} ORDER BY id DESC LIMIT ? OFFSET ?`,
+        [catIds, perPage, offset]
+      );
+      products = results;
+    } else if (Number(category_type_id) === 2) {
+      [results] = await db.promise().query(
+        `SELECT p.id, p.cat_id, p.product_type_id, p.name, p.price, p.discount, p.delivery_charge,
                p.description, p.image, p.slug, p.status, p.unit, p.grocery_category, p.grocery_sub_category,
                pi.grocery_image AS groceryImage,
                pv.unit_price AS groceryPrice, pv.unit_discount AS groceryDiscount,
@@ -438,28 +424,32 @@ exports.getCategories = async function (req, res, next) {
         INNER JOIN product_variables pv ON pv.product_id = p.id
         WHERE p.cat_id=?
         GROUP BY p.name
-        LIMIT ? OFFSET ?`;
-      prodsParams = [catId, perPage, offset];
+        LIMIT ? OFFSET ?`,
+        [catId, perPage, offset]
+      );
+      const [allGrocery] = await db.promise().query(
+        "SELECT COUNT(*) AS total FROM products WHERE status=1 AND cat_id=? AND product_type_id=2",
+        [catId]
+      );
+      totalProducts = allGrocery[0].total;
+      products = results;
     }
-
-    console.log(prodsQuery);
-    const [results] = prodsQuery ? await db.promise().query(prodsQuery, prodsParams) : [[]];
 
     // Step 4: Build JSON response
     const jsonResult = {
       products_page_count: results.length,
       current: page,
       products: results,
-      pages: Math.ceil(products.length / perPage),
+      pages: Math.ceil(totalProducts / perPage),
     };
 
     const myJsonString = JSON.parse(JSON.stringify(jsonResult));
 
     // Step 5: Get category meta + other info
     let tblCategory = "";
-    if (category_type_id === 1) {
+    if (Number(category_type_id) === 1) {
       tblCategory = "books_category";
-    } else if (category_type_id === 2) {
+    } else if (Number(category_type_id) === 2) {
       tblCategory = "grocery_category";
     }
 
@@ -477,7 +467,7 @@ exports.getCategories = async function (req, res, next) {
     );
 
     // Step 6: Render view
-    if (category_type_id === 1) {
+    if (Number(category_type_id) === 1) {
       res.render("front/productbycategory", {
         csrfToken: req.csrfToken(),
         getmeta: getmeta[0],

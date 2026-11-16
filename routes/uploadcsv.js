@@ -238,6 +238,7 @@ exports.saveExcelFileData = (req, res, next) => {
       var errors = null;
       var total = 0;
       var uploaded = 0;
+      var seenIsbn13 = new Set();
 
       const promises = newBooksArr.map(async (row, index, array) => {
         total += 1;
@@ -254,6 +255,15 @@ exports.saveExcelFileData = (req, res, next) => {
             valueData = match ? Number(match[0]) : 0;
           }
           data[key] = valueData;
+        }
+
+        // skip same ISBN13 repeated in the file
+        if (data["isbn13"]) {
+          if (seenIsbn13.has(data["isbn13"])) {
+            is_valid_record = false;
+            failed_by_exist += 1;
+          }
+          seenIsbn13.add(data["isbn13"]);
         }
         var slug_url = slugify(data["name"], {
           replacement: "-",
