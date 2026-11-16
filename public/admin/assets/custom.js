@@ -407,8 +407,9 @@ $("#products_tbl").on("click", ".edit_products", function () {
     $("#edit_included").val(tax_included);
     $("#edit_status").val(status);
     $("#edit_product_images").val("");
+    var imageSrc = /^https?:\/\//i.test(images) ? images : (window.IMAGE_URL || "") + encodeURIComponent(images);
     $("#edit_current_image").html(
-        images ? '<img src="' + (window.IMAGE_URL || "") + images + '" width="60"> <small>' + images + "</small>" : ""
+        images ? '<img src="' + imageSrc + '" width="60"> <small>' + $("<span>").text(images).html() + "</small>" : ""
     );
     $("#edit_author_details").val(author_details);
     $("#edit_meta_title").val(meta_title);

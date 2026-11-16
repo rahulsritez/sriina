@@ -33,6 +33,21 @@ async function checkIsbn13(isbn13, productId) {
   return null;
 }
 
+// safe and unique S3 file name, e.g. "1700000000000-my-book-cover.jpg"
+// (spaces, +, #, ?, ' etc. in the original name were breaking the image url)
+function makeImageName(originalName) {
+  const path = require("path");
+  const ext = path.extname(originalName).toLowerCase().replace(/[^a-z0-9.]/g, "");
+  const base =
+    path
+      .basename(originalName, path.extname(originalName))
+      .replace(/[^a-zA-Z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "")
+      .toLowerCase()
+      .slice(0, 60) || "image";
+  return Date.now() + "-" + base + ext;
+}
+
 exports.login = function (req, res) {
   var message = "";
   var sess = req.session;
@@ -1699,7 +1714,7 @@ exports.Addproduct = function (req, res) {
       var delivery_charge = fields.delivery_charge;
       var quantity = fields.quantity;
       /* unique image name */
-      var productimage = Date.now() + files.product_images.name;
+      var productimage = makeImageName(files.product_images.name || "image.jpg");
       // console.log(productimage);
       if (!product_type_id || product_type_id.search(/\w/) < 0) {
         res.status(200).json({ message: "Please select product type id." });
@@ -1729,35 +1744,22 @@ exports.Addproduct = function (req, res) {
         return res.redirect("/productlist");
       }
 
-      // var newpath = './public/admin/images/' + productimage;
-      fs.readFile(oldpath, function (err, data) {
-        if (err) throw err;
-        //console.log('File read!');
-        const params = {
-          Bucket: process.env.Bucket || "sriinaproduct",
-          Key: productimage,
-          Body: data,
-          ContentType: files.product_images.type,
-        };
-        s3.upload(params, function (err, s3Data) {
-          if (err) {
-            console.error("Error uploading to S3:", err);
-            return;
-          }
-          // console.log('Image uploaded to S3:', s3Data.Location);
-        });
-        // Write the file
-        // fs.writeFile(newpath, data, function (err) {
-        //     if (err) throw err;
-        //     //console.log('File written!');
-        // });
-
-        // // Delete the file
-        // fs.unlink(oldpath, function (err) {
-        //     if (err) throw err;
-        //     //console.log('File deleted!');
-        // });
-      });
+      // upload the image first, save the product only after the upload is done
+      try {
+        const data = await fs.promises.readFile(oldpath);
+        await s3
+          .upload({
+            Bucket: process.env.Bucket || "sriinaproduct",
+            Key: productimage,
+            Body: data,
+            ContentType: files.product_images.type,
+          })
+          .promise();
+      } catch (err) {
+        console.error("Error uploading to S3:", err);
+        req.flash("errors", "Unable to upload the image, product was not saved. Please try again.");
+        return res.redirect("/productlist");
+      }
 
       let sql1 =
         "INSERT INTO products(`user_id`,`product_type_id`,`name`,`author`,`publisher`,`book_edition`,`price`,`discount`,`delivery_charge`,`quantity`,`isbn`,`isbn13`,`language`,`book_binding`,`cat_id`,`status`,`no_of_pages`,`weight`,`image`,`description`,`slug`,`product_type`,`publishing_year`, `author_details`, `meta_title`, `meta_description`, `created_at`,`updated_at`) VALUES ('" +
@@ -2040,7 +2042,7 @@ exports.AdminUpdateProduct = (req, res, next) => {
         "''"
       );
       var edit_descriptions = fields.edit_descriptions.replace(/'/g, "''");
-      var productimage = files.edit_product_images.name;
+      var productimage = files.edit_product_images.name ? makeImageName(files.edit_product_images.name) : "";
       //console.log(fields);
 
       if (!edit_product_type_id || edit_product_type_id.search(/\w/) < 0) {
@@ -2081,12 +2083,16 @@ exports.AdminUpdateProduct = (req, res, next) => {
       if (productimage) {
         var fs = require("fs");
         fs.readFile(oldpath, function (err, data) {
-          if (err) throw err;
+          if (err) {
+            console.error("Error reading image:", err);
+            req.flash("errors", "Unable to read the image. Please try again.");
+            return res.redirect("/productlist");
+          }
           const params = {
             Bucket: process.env.Bucket || "sriinaproduct",
             Key: productimage,
             Body: data,
-            // ContentType: files.product_images.type
+            ContentType: files.edit_product_images.type,
           };
           console.log("params", params);
           s3.upload(params, function (err, s3Data) {

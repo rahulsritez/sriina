@@ -175,8 +175,14 @@
                                           <!-- <%= ((+query.count )*(+query.page-1))+index+1 %> -->
                                         </td>
                                         <td>
-                                          <img src="<%= process.env.IMAGE_URL %><%= list.image %>"
-                                          width="50" />
+                                          <%
+                                            // full links are used as they are, file names get the image server url, no image shows the placeholder
+                                            var imageSrc = !list.image ? '/assets/images/404.jpg'
+                                              : /^https?:\/\//i.test(list.image) ? list.image
+                                              : process.env.IMAGE_URL + encodeURIComponent(list.image);
+                                          %>
+                                          <img src="<%= imageSrc %>" width="50"
+                                          onerror="this.onerror=null; this.src='/assets/images/404.jpg'" />
                                           <%= list.name %>
                                         </td>
                                         <!-- <td><%= list.categoryname %></td> -->
