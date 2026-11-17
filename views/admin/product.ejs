@@ -142,7 +142,9 @@
                               <div class="col-sm-6">
                                 <p align="right" class="right">
                                   Search:
-                                  <input type="text" id="searchitem" value="" />
+                                  <input type="text" id="searchitem" value="<%= query.search || '' %>"
+                                  placeholder="Name, author, publisher, ISBN"
+                                  onkeydown="if (event.key === 'Enter') handleValueChange(1, '<%= query.count %>')" />
                                   <button
                                   onclick="handleValueChange(1, '<%= query.count %>')">Search</button>
                                 </p>
@@ -173,8 +175,14 @@
                                           <!-- <%= ((+query.count )*(+query.page-1))+index+1 %> -->
                                         </td>
                                         <td>
-                                          <img src="<%= process.env.IMAGE_URL %><%= list.image %>"
-                                          width="50" />
+                                          <%
+                                            // full links are used as they are, file names get the image server url, no image shows the placeholder
+                                            var imageSrc = !list.image ? '/assets/images/404.jpg'
+                                              : /^https?:\/\//i.test(list.image) ? list.image
+                                              : process.env.IMAGE_URL + encodeURIComponent(list.image);
+                                          %>
+                                          <img src="<%= imageSrc %>" width="50"
+                                          onerror="this.onerror=null; this.src='/assets/images/404.jpg'" />
                                           <%= list.name %>
                                         </td>
                                         <!-- <td><%= list.categoryname %></td> -->
@@ -196,7 +204,7 @@
                                             <a class="edit_products btn btn-info btn-sm"
                                             data-id="<%= list.id %>"
                                             data-product_type_id="<%= list.product_type_id %>"
-                                            data-name="<%= list.name %>" data-cat_id="<%= list.cat_id %>"
+                                            data-name="<%= list.name %>" data-cat_id="<%= list.cat_id %>" data-categoryname="<%= list.categoryname %>"
                                             data-price="<%= list.price %>"
                                             data-discount="<%= list.discount %>"
                                             data-delivery_charge="<%= list.delivery_charge %>"
@@ -208,7 +216,7 @@
                                             data-publishing_year="<%= list.publishing_year %>"
                                             data-product_type="<%= list.product_type %>"
                                             data-publisher="<%= list.publisher %>"
-                                            data-language="<%= list.language %>"
+                                            data-language="<%= list.language || list.book_language %>"
                                             data-no_of_pages="<%= list.no_of_pages %>"
                                             data-weight="<%= list.weight %>" data-images="<%= list.image %>"
                                             data-author_details="<%= list.author_details %>"
@@ -387,7 +395,9 @@
                                         <div class="col-md-4">
                                           <label class="control-label label-margin">ISBN-13</label>
                                           <input type="text" class="form-control" id="ISBN12" placeholder="ISBN13"
-                                          name="ISBN13" minlength="13" maxlength="13" onkeypress="return isNumber(event)" required>
+                                          name="ISBN13" minlength="13" maxlength="13" pattern="[0-9]{13}" title="ISBN13 must be exactly 13 digits"
+                                          oninput="this.value = this.value.replace(/\D/g, '')" onkeyup="checkISBM13(this, '')" required>
+                                          <small class="text-danger isbn13-error"></small>
                                         </div>
 
                                       </div>
@@ -510,7 +520,7 @@
 
                                         <div class="pagination">
                                           <!-- Previous Button -->
-                                          <span onclick="changePage('previous', '<%= query.page || 1 %>', '<%= totalpages || 1 %>', '<%= query.count || 10 %>', '<%= query.search %>')">
+                                          <span onclick="changePage('previous', '<%= query.page || 1 %>', '<%= totalpages || 1 %>', '<%= query.count || 10 %>')">
                                             Previous
                                           </span>
 
@@ -520,7 +530,7 @@
                                           </span>
 
                                           <!-- Next Button -->
-                                          <span onclick="changePage('next', '<%= query.page || 1 %>', '<%= totalpages || 1 %>', '<%= query.count || 10 %>', '<%= query.search  %>')">
+                                          <span onclick="changePage('next', '<%= query.page || 1 %>', '<%= totalpages || 1 %>', '<%= query.count || 10 %>')">
                                             Next
                                           </span>
 
@@ -535,7 +545,7 @@
                                           }
                                           %>
 
-                                          <select onchange="onPageChange('<%= query.count || 10 %>', this.value, '<%= query.search  %>')">
+                                          <select onchange="onPageChange('<%= query.count || 10 %>', this.value)">
                                             <% for (var i = 1; i <= totalPagesSafe; i++) { %>
                                               <option value="<%= i %>" <%= i === (query.page || 1) ? 'selected' : '' %>><%= i %></option>
                                               <% } %>
@@ -544,7 +554,7 @@
 
                                             <!-- Input and Button for Direct Page Entry -->
                                             <input value="<%= query.page || 1 %>" id="page" />
-                                            <button onclick="getcube('<%= query.count || 10 %>', '<%= totalpages || 1 %>', '<%= query.search  %>')">Go</button>
+                                            <button onclick="getcube('<%= query.count || 10 %>', '<%= totalpages || 1 %>')">Go</button>
                                           </div>
 
                                           <div class="modal fade" id="myModaledit" tabindex="-1" role="dialog" aria-hidden="true">
@@ -663,8 +673,10 @@
                                                       <div class="col-md-4">
                                                         <label class="control-label label-margin">ISBN-13</label>
                                                         <input type="text" class="form-control ISBN13" id="edit_ISBN13"
-                                                        placeholder="ISBN13" name="edit_ISBN13" onkeyup="checkISBM13()"
-                                                        minlength="13" maxlength="13" onkeypress="return isNumber(event)">
+                                                        placeholder="ISBN13" name="edit_ISBN13" onkeyup="checkISBM13(this, $('#edit_id').val())"
+                                                        minlength="13" maxlength="13" title="ISBN13 must be exactly 13 digits"
+                                                        oninput="this.value = this.value.replace(/\D/g, '')">
+                                                        <small class="text-danger isbn13-error"></small>
                                                       </div>
 
                                                     </div>
@@ -672,7 +684,7 @@
                                                     <div class="row mb-2">
                                                       <div class="col-md-4">
                                                         <label class="control-label label-margin">Language</label>
-                                                        <select class="form-control" name="edit_language" id="language" required>
+                                                        <select class="form-control" name="edit_language" id="edit_language" required>
                                                           <option value="">-Please select Language-</option>
 
                                                           <% for (let i = 0; i < languages.length; i++) { %>
@@ -729,6 +741,7 @@
                                                               <label class="control-label label-margin">Images</label>
                                                               <input type="file" name="edit_product_images" id="edit_product_images"
                                                               class="form-control" accept="image/png, image/jpeg">
+                                                              <div id="edit_current_image" class="mt-1"></div>
                                                             </div>
                                                           </div>
                                                           <div class="row mb-2">
@@ -777,6 +790,7 @@
                                         </div>
                                         <%- include ("../../common/footer") %>
                                       </div>
+                                      <script>var IMAGE_URL = "<%= process.env.IMAGE_URL || '' %>";</script>
                                       <%- include ("../../common/js") %>
                                       <script type="text/javascript">
                                         $(function () {
@@ -790,32 +804,32 @@
                                           $('.textarea').summernote()
 
                                         });
-                                        const changeCount = (count) => {
-                                          const $select = document.querySelector('#count-select');
-                                          $select.value = count
-                                          document.location.href = '/productlist?count=' + count + '&page=1&search='
+                                        // current search text from the URL (safe for quotes and special characters)
+                                        function currentSearch() {
+                                          return new URLSearchParams(window.location.search).get('search') || '';
                                         }
-                                        const changePage = (type, no = 1, total, count, search) => {
+                                        function goToProductList(page, count, search) {
+                                          var params = new URLSearchParams({ search: search, page: page, count: count });
+                                          document.location.href = '/productlist?' + params.toString();
+                                        }
+                                        const changeCount = (count) => {
+                                          goToProductList(1, count, currentSearch());
+                                        }
+                                        const changePage = (type, no = 1, total, count) => {
                                           if (type === 'previous' && +no > 1) {
-                                            document.location.href = '/productlist?count=' + count + '&page=' + (+no - 1) + '&search=' + search
+                                            goToProductList(+no - 1, count, currentSearch());
                                           }
                                           if (type === 'next' && +no < +total) {
-                                            document.location.href = '/productlist?count=' + count + '&page=' + (+no + 1) + '&search=' + search
-
+                                            goToProductList(+no + 1, count, currentSearch());
                                           }
                                         }
-                                        const onPageChange = (count, page, search) => {
-                                          let item = document.getElementById('searchitem').value
-                                          const urlParams = new URLSearchParams(window.location.search);
-                                          console.log("urlParams",urlParams)
-                                          const myParam = urlParams.get('search');
-                                          console.log("myParam",9789394547704	)
-                                          document.location.href = '/productlist?search=' + myParam + '&page=' + page + '&count=' + count
+                                        const onPageChange = (count, page) => {
+                                          goToProductList(page, count, currentSearch());
                                         }
-                                        function getcube(count, number, search) {
-                                          var number = document.getElementById("page").value;
-                                          if (!isNaN(number)) {
-                                            document.location.href = '/productlist?count=' + count + '&page=' + number + '&search=' + search
+                                        function getcube(count, total) {
+                                          var number = parseInt(document.getElementById("page").value);
+                                          if (number >= 1 && number <= +total) {
+                                            goToProductList(number, count, currentSearch());
                                           }
                                         }
                                         function calculateDiscount(evt) {
@@ -825,24 +839,23 @@
                                           $('#discount').val(discountPer.toFixed(2));
                                         }
 
-                                        function checkISBM13() {
-                                          var data = $('input[name=edit_ISBN13]').val();
-                                          $.ajax({
-                                            type: 'post',
-                                            url: '/checkuniqueISBM13',
-                                            data: { id: data },
-                                            dataType: 'text'
-                                          })
-                                          .done(function (data) {
-                                            $('h1').html(data.quote);
-                                          });
+                                        function checkISBM13(input, productId) {
+                                          var errorBox = $(input).siblings('.isbn13-error');
+                                          input.setCustomValidity('');
+                                          errorBox.text('');
+
+                                          // check only when full 13 digits are entered
+                                          if (input.value.length !== 13) return;
+
+                                          $.post('/checkuniqueISBM13', { isbn13: input.value, id: productId }, function (res) {
+                                            if (!res.valid) {
+                                              input.setCustomValidity(res.message);
+                                              errorBox.text(res.message);
+                                            }
+                                          }, 'json');
                                         }
                                         function handleValueChange(page, count) {
-                                          console.log("111111111111111111111111111")
-                                          let item = document.getElementById('searchitem').value
-                                          console.log("item",item)
-                                          document.location.href = '/productlist?search=' + item + '&page=' + page + '&count=' + count
-
+                                          goToProductList(page, count, document.getElementById('searchitem').value.trim());
                                         }
                                         // $(document).ready(function(){
                                         //     $("form.ISBN13").on('keyup', function(e){

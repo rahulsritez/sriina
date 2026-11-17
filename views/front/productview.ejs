@@ -421,6 +421,11 @@
                 margin-top: 4px;
             }
 
+            .delivery-row {
+                color: #333;
+                margin-top: 4px;
+            }
+
             /* 📱 Mobile adjustments */
             @media (max-width: 576px) {
                 .price-row {
@@ -617,6 +622,15 @@
                                                                             </span>
                                                                         </div>
 
+                                                                        <div class="delivery-row">
+                                                                            <strong>Delivery:</strong>
+                                                                            <% if(Number(viewlist.delivery_charge) > 0) { %>
+                                                                                ₹ <%= viewlist.delivery_charge %> Delivery charge
+                                                                            <% } else { %>
+                                                                                FREE Delivery
+                                                                            <% } %>
+                                                                        </div>
+
                                                                         <% if (viewlist.tax_included=='0' ) { %>
                                                                             <div class="tax-text">(Inclusive of all
                                                                                 taxes)</div>
@@ -630,17 +644,6 @@
                                                                 <div class="col-sm-12">
                                                                     <h2>Book Details</h2>
                                                                     <div class="book-details-container">
-                                                                        <div class="detail-item">
-                                                                            <span class="detail-label">Delivery:</span>
-                                                                            <% if(viewlist.delivery_charge) { %>
-                                                                                <span class="detail-value">₹ <%=
-                                                                                        viewlist.delivery_charge %>
-                                                                                        Delivery charge</span>
-                                                                                <% } else { %>
-                                                                                    <span class="detail-value">FREE
-                                                                                        Delivery</span>
-                                                                                    <% } %>
-                                                                        </div>
                                                                         <% if(viewlist.author) { %>
                                                                             <div class="detail-item">
                                                                                 <span
@@ -775,7 +778,7 @@
                                                                                                                                         </div>
                                                                                                                                         <% }
                                                                                                                                             %>
-                                                                                                                                            <% if(viewlist.language)
+                                                                                                                                            <% if(viewlist.language || viewlist.book_language)
                                                                                                                                                 {
                                                                                                                                                 %>
                                                                                                                                                 <div
@@ -784,7 +787,7 @@
                                                                                                                                                         class="detail-label">Language:</span>
                                                                                                                                                     <span
                                                                                                                                                         class="detail-value">
-                                                                                                                                                        <%= viewlist.language
+                                                                                                                                                        <%= viewlist.language || viewlist.book_language
                                                                                                                                                             %>
                                                                                                                                                     </span>
                                                                                                                                                 </div>
@@ -924,50 +927,48 @@
                                         </div>
                                     </div>
 
-                                    <% if (viewlist.author_details || viewlist.description) { %>
+                                    <%
+                                      // empty, "null" or blank values are treated as missing
+                                      function cleanText(value) {
+                                        if (!value) return "";
+                                        var text = String(value).trim();
+                                        return (text.toLowerCase() === "null" || text.toLowerCase() === "undefined") ? "" : text;
+                                      }
+                                      var aboutAuthor = cleanText(viewlist.author_details);
+                                      var bookDescription = cleanText(viewlist.description);
+                                    %>
                                         <div class="product-tabs inner-bottom-xs wow fadeInUp">
                                             <div class="row">
                                                 <div class="col-sm-3">
                                                     <ul id="product-tabs" class="nav nav-tabs nav-tab-cell">
-                                                        <% if (viewlist.author_details) { %>
-                                                            <li class="active"><a data-toggle="tab" href="#review">About
-                                                                    the Author</a></li>
-                                                            <% } %>
-                                                                <% if (viewlist.description) { %>
-                                                                    <li
-                                                                        class="<%= !viewlist.author_details ? 'active' : '' %>">
-                                                                        <a data-toggle="tab"
-                                                                            href="#description">DESCRIPTION</a>
-                                                                    </li>
-                                                                    <% } %>
+                                                        <li class="active"><a data-toggle="tab" href="#review">About the Author</a></li>
+                                                        <li><a data-toggle="tab" href="#description">DESCRIPTION</a></li>
                                                     </ul>
                                                 </div>
                                                 <div class="col-sm-9">
                                                     <div class="tab-content">
-                                                        <% if (viewlist.author_details) { %>
-                                                            <div id="review" class="tab-pane in active">
-                                                                <div class="product-tab">
-                                                                    <p class="text addReadMore showlesscontent">
-                                                                        <%= viewlist.author_details %>
-                                                                    </p>
-                                                                </div>
+                                                        <div id="review" class="tab-pane in active">
+                                                            <div class="product-tab">
+                                                                <% if (aboutAuthor) { %>
+                                                                    <p class="text addReadMore showlesscontent"><%= aboutAuthor %></p>
+                                                                <% } else { %>
+                                                                    <p class="text">Author details are not available for this book.</p>
+                                                                <% } %>
                                                             </div>
-                                                            <% } %>
-                                                                <% if (viewlist.description) { %>
-                                                                    <div id="description"
-                                                                        class="tab-pane <%= !viewlist.author_details ? 'in active' : '' %>">
-                                                                        <div class="product-tab">
-                                                                            <p class="text addReadMore showlesscontent">
-                                                                                <%= viewlist.description %>
-                                                                            </p>
-                                                                        </div>
-                                                                    </div>
-                                                                    <% } %>
+                                                        </div>
+                                                        <div id="description" class="tab-pane">
+                                                            <div class="product-tab">
+                                                                <% if (bookDescription) { %>
+                                                                    <p class="text addReadMore showlesscontent"><%= bookDescription %></p>
+                                                                <% } else { %>
+                                                                    <p class="text">Description is not available for this book.</p>
+                                                                <% } %>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        <% } %>
                                             <% } else { %>
                                                 <p class="text-center">Record Not Found.</p>
                                                 <% } %>

@@ -12,6 +12,42 @@ AWS.config.update({
   region: process.env.Region,
 });
 const s3 = new AWS.S3();
+
+// ISBN13 should be 13 digits only and should not exist for another product
+async function checkIsbn13(isbn13, productId) {
+  if (!/^\d{13}$/.test(isbn13)) {
+    return "ISBN13 must be exactly 13 digits (numbers only).";
+  }
+
+  let sql = "SELECT id FROM products WHERE isbn13 = ?";
+  let params = [isbn13];
+  if (productId) {
+    sql += " AND id != ?";
+    params.push(productId);
+  }
+
+  const [rows] = await db.promise().query(sql, params);
+  if (rows.length > 0) {
+    return "A product with this ISBN13 already exists.";
+  }
+  return null;
+}
+
+// safe and unique S3 file name, e.g. "1700000000000-my-book-cover.jpg"
+// (spaces, +, #, ?, ' etc. in the original name were breaking the image url)
+function makeImageName(originalName) {
+  const path = require("path");
+  const ext = path.extname(originalName).toLowerCase().replace(/[^a-z0-9.]/g, "");
+  const base =
+    path
+      .basename(originalName, path.extname(originalName))
+      .replace(/[^a-zA-Z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "")
+      .toLowerCase()
+      .slice(0, 60) || "image";
+  return Date.now() + "-" + base + ext;
+}
+
 exports.login = function (req, res) {
   var message = "";
   var sess = req.session;
@@ -122,136 +158,87 @@ exports.logout = function (req, res) {
 };
 
 exports.productpage = function (req, res) {
-  var user = req.session.user,
-    userId = req.session.userId;
-  const page = req.query.page || 1;
-  const count = req.query.count || 25;
-  const limit_start = count;
-  const limit_end = (page - 1) * count;
-  var sql1 = "Select * from books_category where is_deleted=0";
-  var query = db.query(sql1, function (err, result) {
-    if (userId == null) {
-      res.redirect("/admin");
+  var userId = req.session.userId;
+  if (userId == null) {
+    return res.redirect("/admin");
+  }
+
+  const page = Math.max(parseInt(req.query.page) || 1, 1);
+  const count = Math.min(Math.max(parseInt(req.query.count) || 25, 1), 100);
+  const offset = (page - 1) * count;
+  const search = (req.query.search || "").trim().replace(/\s+/g, " ");
+
+  let where = ["p.status = 1", "p.product_type_id = 1"];
+  let params = [];
+
+  // admin (1) and type 5 see all books, other users see only their own books
+  if (req.session.type != 1 && req.session.type != 5) {
+    where.push("p.user_id = ?", "p.user_id != '0'");
+    params.push(userId);
+  }
+
+  if (search) {
+    const digits = search.replace(/[\s-]/g, "");
+    if (/^\d{5,13}$/.test(digits)) {
+      // looks like an ISBN, hyphens and spaces are ignored
+      where.push("(p.isbn13 LIKE ? OR p.isbn LIKE ? OR p.name LIKE ?)");
+      params.push("%" + digits + "%", "%" + digits + "%", "%" + escapeLike(search) + "%");
     } else {
-      let countQuery = "";
+      // every word should match somewhere, in any order
+      search.split(" ").forEach((word) => {
+        const like = "%" + escapeLike(word) + "%";
+        where.push(
+          "(p.name LIKE ? OR p.author LIKE ? OR p.publisher LIKE ? OR p.isbn13 LIKE ? OR p.isbn LIKE ? OR p.language LIKE ? OR p.book_language LIKE ?)"
+        );
+        params.push(like, like, like, like, like, like, like);
+      });
+    }
+  }
 
-      let newkey = req.query.search + "";
-      if (req.session.type == 1) {
-        if (req.query.search) {
-          var sql2 =
-            "SELECT p.*,c.name as categoryname from products p left join books_category c on c.id=p.cat_id WHERE p.status=1 and (p.name LIKE '%" +
-            req.query.search +
-            "%' or `isbn13` ='" +
-            req.query.search +
-            "' or `isbn` ='" +
-            req.query.search +
-            "' or `publisher` LIKE '%" +
-            req.query.search +
-            "%' or `author` LIKE '%" +
-            req.query.search +
-            "%' or `description` LIKE '%" +
-            req.query.search +
-            "%') and product_type_id=1 ORDER BY id DESC LIMIT " +
-            limit_start +
-            " OFFSET " +
-            limit_end;
-          countQuery =
-            "SELECT count(*) as count from products p left join books_category c on c.id=p.cat_id where p.status=1 and product_type_id=1  and (p.name LIKE '%" +
-            req.query.search +
-            "%' ) order by c.id desc  ";
-        } else {
-          var sql2 =
-            "SELECT p.*,c.name as categoryname from products p left join books_category c on c.id=p.cat_id where p.status=1 and product_type_id=1 order by id desc LIMIT " +
-            limit_start +
-            " OFFSET " +
-            limit_end;
-          countQuery =
-            "SELECT count(*) as count from products p left join books_category c on c.id=p.cat_id where p.status=1 and product_type_id=1 order by c.id desc  ";
-        }
-      } else if (req.session.type == 2) {
-        var sql2 =
-          "SELECT p.*,c.name as categoryname from products p left join books_category c on c.id=p.cat_id where p.status=1 and product_type_id=1 and `user_id`!='0' and p.user_id='" +
-          userId +
-          "'  order by p.id desc LIMIT " +
-          limit_start +
-          " OFFSET " +
-          limit_end;
-        countQuery =
-          "SELECT count(*) as coun from products p left join books_category c on c.id=p.cat_id where p.status=1 and product_type_id=1 and `user_id`!='0' and p.user_id='" +
-          userId +
-          "'  order by p.id desc ";
-      } else if (req.session.type == 5) {
-        // var sql2 =
-        //   "SELECT p.*,c.name as categoryname from products p left join books_category c on c.id=p.cat_id where p.status=1 and product_type_id=1 and `user_id`!='0' order by id desc LIMIT " +
-        //   limit_start +
-        //   " OFFSET " +
-        //   limit_end;
-        // countQuery =
-        //   "SELECT count(*) as count from products p left join books_category c on c.id=p.cat_id where p.status=1 and product_type_id=1 order by c.id desc ";
+  const whereSql = where.join(" AND ");
+  // books whose name matches the full search come first
+  let orderSql = "p.id DESC";
+  let orderParams = [];
+  if (search) {
+    orderSql = "(p.name LIKE ?) DESC, p.id DESC";
+    orderParams.push("%" + escapeLike(search) + "%");
+  }
 
-        var sql2 =
-          "SELECT p.*,c.name as categoryname from products p left join books_category c on c.id=p.cat_id WHERE p.status=1 and (p.name LIKE '%" +
-          req.query.search +
-          "%' or `isbn13` ='" +
-          req.query.search +
-          "' or `isbn` ='" +
-          req.query.search +
-          "' or `publisher` LIKE '%" +
-          req.query.search +
-          "%' or `author` LIKE '%" +
-          req.query.search +
-          "%' or `description` LIKE '%" +
-          req.query.search +
-          "%') and product_type_id=1 ORDER BY id DESC LIMIT " +
-          limit_start +
-          " OFFSET " +
-          limit_end;
-        countQuery =
-          "SELECT count(*) as count from products p left join books_category c on c.id=p.cat_id where p.status=1 and product_type_id=1  and (p.name LIKE '%" +
-          req.query.search +
-          "%' ) order by c.id desc  ";
-      } else {
-        var sql2 =
-          "SELECT p.*,c.name as categoryname from products p left join books_category c on c.id=p.cat_id where p.status=1 and product_type_id=1 and `user_id`='" +
-          userId +
-          "' and `user_id`!='0' order by p.id desc LIMIT " +
-          limit_start +
-          " OFFSET " +
-          limit_end;
-        countQuery =
-          "SELECT count(*) as count from products p left join books_category c on c.id=p.cat_id where p.status=1 and product_type_id=1 and `user_id`='" +
-          userId +
-          "' and `user_id`!='0' order by p.id desc ";
-      }
+  const listSql =
+    "SELECT p.*, c.name AS categoryname FROM products p LEFT JOIN books_category c ON c.id = p.cat_id WHERE " +
+    whereSql + " ORDER BY " + orderSql + " LIMIT ? OFFSET ?";
+  const countSql = "SELECT COUNT(*) AS count FROM products p WHERE " + whereSql;
 
-      db.query(sql2, function (err, result1) {
-        db.query(countQuery, function (err, total) {
-          if (err) throw err;
-          let get_type = "SELECT * FROM products_type order by name";
-          const totalpages =
-            total?.[0]?.count / req.query.count >
-            Math.ceil(total?.[0]?.count / req.query.count)
-              ? Math.ceil(total?.[0]?.count / req.query.count) + 1
-              : Math.ceil(total?.[0]?.count / req.query.count);
-          db.query(get_type, function (err, get_type_data) {
-            res.render("admin/product", {
-              categorylist: buildCategoryTree(result),
-              total: total?.[0].count,
-              productlist: result1,
-              get_type_data: get_type_data,
-              message: req.flash("message"),
-              errors: req.flash("errors"),
-              query: req.query,
-              totalpages: totalpages,
-              languages: iso6391.getAllNames(), // Passing all language names
-              languageCodes: iso6391.getAllCodes(), // Passing language codes
-            });
+  db.query("SELECT * FROM books_category WHERE is_deleted = 0", function (err, categories) {
+    db.query(listSql, [...params, ...orderParams, count, offset], function (err, products) {
+      if (err) console.log("Product list error:", err);
+      db.query(countSql, params, function (err, total) {
+        if (err) console.log("Product count error:", err);
+        const totalCount = total && total[0] ? total[0].count : 0;
+        db.query("SELECT * FROM products_type ORDER BY name", function (err, types) {
+          res.render("admin/product", {
+            categorylist: buildCategoryTree(categories || []),
+            total: totalCount,
+            productlist: products || [],
+            get_type_data: types || [],
+            message: req.flash("message"),
+            errors: req.flash("errors"),
+            query: { ...req.query, page: page, count: count, search: search },
+            totalpages: Math.max(Math.ceil(totalCount / count), 1),
+            languages: iso6391.getAllNames(),
+            languageCodes: iso6391.getAllCodes(),
           });
         });
       });
-    }
+    });
   });
 };
+
+// so that % and _ typed by the user are searched as normal characters
+function escapeLike(text) {
+  return text.replace(/[\\%_]/g, "\\$&");
+}
+
 exports.countrypage = function (req, res) {
   var user = req.session.user,
     userId = req.session.userId;
@@ -1695,7 +1682,7 @@ exports.Addproduct = function (req, res) {
     var today = new Date().toISOString().slice(0, 19).replace("T", " ");
     var form = new formidable.IncomingForm();
 
-    form.parse(req, function (err, fields, files) {
+    form.parse(req, async function (err, fields, files) {
       var oldpath = files.product_images.path;
       var product_type_id = fields.product_type_id;
       var product_name = fields.product_name.replace(/'/g, "''");
@@ -1707,7 +1694,7 @@ exports.Addproduct = function (req, res) {
       var price = fields.price;
       var discount = fields.discount ? fields.discount : 0;
       var ISBN = fields.ISBN;
-      var ISBN13 = fields.ISBN13;
+      var ISBN13 = (fields.ISBN13 || "").trim();
       var language = fields.language;
       var category = fields.category;
       var status = fields.status;
@@ -1727,7 +1714,7 @@ exports.Addproduct = function (req, res) {
       var delivery_charge = fields.delivery_charge;
       var quantity = fields.quantity;
       /* unique image name */
-      var productimage = Date.now() + files.product_images.name;
+      var productimage = makeImageName(files.product_images.name || "image.jpg");
       // console.log(productimage);
       if (!product_type_id || product_type_id.search(/\w/) < 0) {
         res.status(200).json({ message: "Please select product type id." });
@@ -1746,35 +1733,33 @@ exports.Addproduct = function (req, res) {
         return;
       }
 
-      // var newpath = './public/admin/images/' + productimage;
-      fs.readFile(oldpath, function (err, data) {
-        if (err) throw err;
-        //console.log('File read!');
-        const params = {
-          Bucket: process.env.Bucket || "sriinaproduct",
-          Key: productimage,
-          Body: data,
-          ContentType: files.product_images.type,
-        };
-        s3.upload(params, function (err, s3Data) {
-          if (err) {
-            console.error("Error uploading to S3:", err);
-            return;
-          }
-          // console.log('Image uploaded to S3:', s3Data.Location);
-        });
-        // Write the file
-        // fs.writeFile(newpath, data, function (err) {
-        //     if (err) throw err;
-        //     //console.log('File written!');
-        // });
+      try {
+        var isbnError = await checkIsbn13(ISBN13);
+      } catch (e) {
+        console.log(e);
+        isbnError = "Unable to check ISBN13, please try again.";
+      }
+      if (isbnError) {
+        req.flash("errors", isbnError);
+        return res.redirect("/productlist");
+      }
 
-        // // Delete the file
-        // fs.unlink(oldpath, function (err) {
-        //     if (err) throw err;
-        //     //console.log('File deleted!');
-        // });
-      });
+      // upload the image first, save the product only after the upload is done
+      try {
+        const data = await fs.promises.readFile(oldpath);
+        await s3
+          .upload({
+            Bucket: process.env.Bucket || "sriinaproduct",
+            Key: productimage,
+            Body: data,
+            ContentType: files.product_images.type,
+          })
+          .promise();
+      } catch (err) {
+        console.error("Error uploading to S3:", err);
+        req.flash("errors", "Unable to upload the image, product was not saved. Please try again.");
+        return res.redirect("/productlist");
+      }
 
       let sql1 =
         "INSERT INTO products(`user_id`,`product_type_id`,`name`,`author`,`publisher`,`book_edition`,`price`,`discount`,`delivery_charge`,`quantity`,`isbn`,`isbn13`,`language`,`book_binding`,`cat_id`,`status`,`no_of_pages`,`weight`,`image`,`description`,`slug`,`product_type`,`publishing_year`, `author_details`, `meta_title`, `meta_description`, `created_at`,`updated_at`) VALUES ('" +
@@ -2022,7 +2007,7 @@ exports.AdminUpdateProduct = (req, res, next) => {
     var post = req.body;
     var today = new Date().toISOString().slice(0, 19).replace("T", " ");
     var form = new formidable.IncomingForm();
-    form.parse(req, function (err, fields, files) {
+    form.parse(req, async function (err, fields, files) {
       var oldpath = files.edit_product_images.path;
       var edit_id = fields.edit_id;
       var edit_product_type_id = fields.edit_product_type_id;
@@ -2042,7 +2027,7 @@ exports.AdminUpdateProduct = (req, res, next) => {
         : 0;
       var edit_quantity = fields.edit_quantity;
       var edit_ISBN = fields.edit_ISBN;
-      var edit_ISBN13 = fields.edit_ISBN13;
+      var edit_ISBN13 = (fields.edit_ISBN13 || "").trim();
       var edit_language = fields.edit_language ? fields.edit_language : 1;
       var edit_category = fields.edit_category ? fields.edit_category : 0;
       var edit_no_of_pages = fields.edit_no_of_pages;
@@ -2057,7 +2042,7 @@ exports.AdminUpdateProduct = (req, res, next) => {
         "''"
       );
       var edit_descriptions = fields.edit_descriptions.replace(/'/g, "''");
-      var productimage = files.edit_product_images.name;
+      var productimage = files.edit_product_images.name ? makeImageName(files.edit_product_images.name) : "";
       //console.log(fields);
 
       if (!edit_product_type_id || edit_product_type_id.search(/\w/) < 0) {
@@ -2078,15 +2063,36 @@ exports.AdminUpdateProduct = (req, res, next) => {
         return;
       }
 
+      // check ISBN13 only when it is changed, so old products with bad data can still be edited
+      try {
+        var isbnError = null;
+        const [current] = await db.promise().query("SELECT isbn13 FROM products WHERE id = ?", [edit_id]);
+        const oldIsbn13 = current[0] && current[0].isbn13 ? String(current[0].isbn13).trim() : "";
+        if (edit_ISBN13 !== oldIsbn13) {
+          isbnError = await checkIsbn13(edit_ISBN13, edit_id);
+        }
+      } catch (e) {
+        console.log(e);
+        isbnError = "Unable to check ISBN13, please try again.";
+      }
+      if (isbnError) {
+        req.flash("errors", isbnError);
+        return res.redirect("/productlist");
+      }
+
       if (productimage) {
         var fs = require("fs");
         fs.readFile(oldpath, function (err, data) {
-          if (err) throw err;
+          if (err) {
+            console.error("Error reading image:", err);
+            req.flash("errors", "Unable to read the image. Please try again.");
+            return res.redirect("/productlist");
+          }
           const params = {
             Bucket: process.env.Bucket || "sriinaproduct",
             Key: productimage,
             Body: data,
-            // ContentType: files.product_images.type
+            ContentType: files.edit_product_images.type,
           };
           console.log("params", params);
           s3.upload(params, function (err, s3Data) {
@@ -2239,9 +2245,15 @@ exports.Deleteproduct = function (req, res) {
   });
 };
 
-exports.checkUniqueISBM13 = (req, res, next) => {
-  console.log(req.body);
-  return;
+exports.checkUniqueISBM13 = async (req, res) => {
+  var isbn13 = (req.body.isbn13 || "").trim();
+  try {
+    var error = await checkIsbn13(isbn13, req.body.id);
+    res.json({ valid: !error, message: error || "" });
+  } catch (e) {
+    console.log(e);
+    res.json({ valid: false, message: "Unable to check ISBN13" });
+  }
 };
 
 exports.webPages = (req, res, next) => {

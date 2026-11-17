@@ -178,6 +178,24 @@ app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static("public"));
 
+// category id -> page url, used by the category sidebar (refreshed every 5 minutes)
+let categoryUrls = {};
+let categoryUrlsLoadedAt = 0;
+app.use(async function (req, res, next) {
+  if (Date.now() - categoryUrlsLoadedAt > 5 * 60 * 1000) {
+    try {
+      const [rows] = await db.promise().query("SELECT cat_id, url_name FROM category_url WHERE category_type_id = 1");
+      categoryUrls = {};
+      rows.forEach((row) => (categoryUrls[row.cat_id] = "/" + row.url_name));
+      categoryUrlsLoadedAt = Date.now();
+    } catch (err) {
+      console.log("Category url load error:", err.message);
+    }
+  }
+  res.locals.categoryUrls = categoryUrls;
+  next();
+});
+
 // Routes (same as original, included for completeness)
 app.get("/robots.txt", function (req, res) {
   res.type("text/plain");
@@ -251,7 +269,7 @@ app.post("/adminupdateproduct", routes.authGaurd, user.AdminUpdateProduct);
 app.post("/editproduct", routes.authGaurd, user.Editproduct);
 app.post("/updateproduct", routes.authGaurd, user.Updateproduct);
 app.post("/deleteproduct", routes.authGaurd, user.Deleteproduct);
-app.post("/checkuniqueISBM13", user.checkUniqueISBM13);
+app.post("/checkuniqueISBM13", routes.authGaurd, user.checkUniqueISBM13);
 app.post("/userresetpwd", parseForm, csrfProtection, user.userResetPwd);
 app.post("/delay_box_massege", parseForm, csrfProtection, order.delayBoxMassege);
 app.post("/cancel_product_from_admin", parseForm, csrfProtection, order.cancelProductFromAdmin);
