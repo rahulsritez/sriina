@@ -134,6 +134,12 @@ pool.query("SELECT 1", function (err) {
 global.db = pool;
 global.baseURL = "https://sriina.com/";
 
+// image helpers (imageUrl, NO_IMAGE_URL, imageFallback) for every view and route
+const imageHelpers = require("./helpers/image");
+const { ACTIVE_BOOK_SQL, getCategoryIds } = require("./helpers/category");
+Object.assign(app.locals, imageHelpers);
+global.imageUrl = imageHelpers.imageUrl;
+
 app.use(cookieParser());
 app.use(
   session({
@@ -505,9 +511,13 @@ app.get("/sitemap/:category.xml", async (req, res) => {
       return res.status(404).send("Category not found");
     }
 
-    const catId = categoryData[0].cat_id;
-    const productSql = "SELECT id, slug FROM products WHERE cat_id = ?";
-    const [products] = await db.promise().query(productSql, [catId]);
+    // same books as the category page: active books of the category + its sub categories
+    const catIds = await getCategoryIds(categoryData[0].cat_id);
+    if (catIds.length === 0) {
+      return res.status(404).send("Category not found");
+    }
+    const productSql = `SELECT id, slug FROM products WHERE ${ACTIVE_BOOK_SQL} AND cat_id IN (?)`;
+    const [products] = await db.promise().query(productSql, [catIds]);
 
     if (products.length === 0) {
       return res.status(404).send("No products found in this category");

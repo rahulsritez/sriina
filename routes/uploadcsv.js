@@ -16,16 +16,16 @@ exports.findMissingImage = (req, res) => {
   db.query(sql_plan, async function (error, result) {
     const missingImage = [];
     for (let product of result) {
-      console.log(
-        `https://sriina-images.s3.ap-south-1.amazonaws.com/${product.image}`
-      );
+      if (!product.image) continue; // no image saved, nothing to check
+      console.log(imageUrl(product.image));
       try {
         await axios.get(
-          "https://sriina-images.s3.ap-south-1.amazonaws.com/" + product.image
+          imageUrl(product.image)
         );
       } catch (e) {
-        console.log("e.response", e.response);
-        if (e.response.status == 403) {
+        console.log("e.response", e.response && e.response.status);
+        // S3 gives 403 (or 404) when the file is not in the bucket
+        if (!e.response || e.response.status == 403 || e.response.status == 404) {
           missingImage.push(product);
         }
       }

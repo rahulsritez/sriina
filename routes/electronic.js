@@ -44,14 +44,12 @@ exports.getProductionTSVfile = function (req, res) {
         const currency = "INR"; // Ensure INR
 
         // Ensure valid image format
-        const imageUrl =
-          product.image && process.env.IMAGE_URL
-            ? `${process.env.IMAGE_URL.replace(/\/$/, "")}/${product.image}`
-            : "";
+        const productImageUrl =
+          product.image && process.env.IMAGE_URL ? global.imageUrl(product.image) : "";
 
-        const imageExtension = imageUrl.split(".").pop().toLowerCase();
+        const imageExtension = productImageUrl.split(".").pop().toLowerCase();
         const finalImageUrl = validImageExtensions.includes(imageExtension)
-          ? imageUrl
+          ? productImageUrl
           : process.env.DEFAULT_IMAGE_URL || "";
 
         // Ensure valid price calculation

@@ -115,19 +115,9 @@
                                         <div class="products">
                                             <div class="product">
                                                 <div class="product-image_single">
-                                                    <% if(list.image) {%>
-                                                        <div class="image">
-                                                            <% if(/(http(s?)):\/\//i.test(list.image)) {%>
-                                                                <a href="/book/<%= list.slug %>"><img src="<%= list.image %>" loading="lazy"  alt="<%= list.name.substring(0, 60) %>"></a>
-                                                            <% } else { %>
-                                                                <a href="/book/<%= list.slug %>"><img loading="lazy"  src="<%= process.env.IMAGE_URL %><%= list.image %>" alt="Image"></a>
-                                                            <% } %>
-                                                        </div>
-                                                    <% } else { %>
-                                                        <div class="image">
-                                                            <a href="/book/<%= list.slug %>"><img loading="lazy"  src="<%= process.env.IMAGE_URL %>404.jpg" alt="Image"></a>
-                                                        </div>
-                                                    <% } %>
+                                                    <div class="image">
+                                                        <a href="/book/<%= list.slug %>"><img loading="lazy" src="<%= imageUrl(list.image, NO_IMAGE_URL) %>" <%- imageFallback %> alt="<%= (list.name || 'Image').substring(0, 60) %>"></a>
+                                                    </div>
                                                 </div>
                                                 <div class="product-info text-left">
                                                     <div style="min-height:110px;">

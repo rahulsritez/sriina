@@ -141,6 +141,13 @@
 
                               <div class="col-sm-6">
                                 <p align="right" class="right">
+                                  Category:
+                                  <%# books of the selected category and its sub categories, same as the category page on the site %>
+                                  <select id="category-filter" onchange="handleValueChange(1, '<%= query.count %>')">
+                                    <option value="">All categories</option>
+                                    <option value="none" <%= query.cat_id === 'none' ? 'selected' : '' %>>No / deleted category</option>
+                                    <%- include('category_options', { options: categoryOptions, selected: query.cat_id }) %>
+                                  </select>
                                   Search:
                                   <input type="text" id="searchitem" value="<%= query.search || '' %>"
                                   placeholder="Name, author, publisher, ISBN"
@@ -159,7 +166,7 @@
                                   <th>
                                     Name
                                   </th>
-                                  <!-- <th>Category</th> -->
+                                  <th>Category</th>
                                   <th>ISBN13</th>
                                   <th>Price</th>
                                   <th>Discount</th>
@@ -175,17 +182,18 @@
                                           <!-- <%= ((+query.count )*(+query.page-1))+index+1 %> -->
                                         </td>
                                         <td>
-                                          <%
-                                            // full links are used as they are, file names get the image server url, no image shows the placeholder
-                                            var imageSrc = !list.image ? '/assets/images/404.jpg'
-                                              : /^https?:\/\//i.test(list.image) ? list.image
-                                              : process.env.IMAGE_URL + encodeURIComponent(list.image);
-                                          %>
-                                          <img src="<%= imageSrc %>" width="50"
-                                          onerror="this.onerror=null; this.src='/assets/images/404.jpg'" />
+                                          <img src="<%= imageUrl(list.image, NO_IMAGE_URL) %>" width="50" <%- imageFallback %> />
                                           <%= list.name %>
                                         </td>
-                                        <!-- <td><%= list.categoryname %></td> -->
+                                        <td>
+                                          <% if (!list.categoryname) { %>
+                                            <span class="text-danger">No category</span>
+                                          <% } else if (list.category_deleted) { %>
+                                            <%= list.categoryname %> <span class="text-danger">(deleted)</span>
+                                          <% } else { %>
+                                            <%= list.category_path || list.categoryname %>
+                                          <% } %>
+                                        </td>
                                         <td>
                                           <%= list.isbn13 %>
                                         </td>
@@ -244,6 +252,7 @@
                                             <tr>
                                               <th>#</th>
                                               <th>Name</th>
+                                              <th>Category</th>
                                               <th>ISBN</th>
                                               <th>Price</th>
                                               <th>Discount</th>
@@ -420,16 +429,8 @@
 
                                             <select class="form-control" name="category" id="category" required>
                                               <option value="">-Please select category-</option>
-                                              <% for(var i=0; i < categorylist?.length; i++){ %>
-                                                <optgroup value="<%= categorylist[i].id %>" label="<%= categorylist[i].name %>">
-                                                  <% for(var j=0; j<categorylist[i]['children'].length; j++) {%>
-                                                    <option value="<%= categorylist[i]['children'][j].id; %>">
-                                                      <%= categorylist[i]['children'][j].name; %>
-                                                    </option>
-                                                    <% } %>
-                                                  </optgroup>
-                                                  <% }%>
-                                                </select>
+                                              <%- include('category_options', { options: categoryOptions, selected: '' }) %>
+                                            </select>
                                               </div>
                                               <div class="col-md-2">
                                                 <label class="control-label label-margin">No of Pages</label>
@@ -698,16 +699,8 @@
                                                           <label class="control-label label-margin">Category</label>
                                                           <select class="form-control" name="edit_category" id="edit_category">
                                                             <option value="">Select</option>
-                                                            <% for(var i=0; i < categorylist?.length; i++){ %>
-                                                              <optgroup value="<%= categorylist[i].id %>" label="<%= categorylist[i].name %>">
-                                                                <% for(var j=0; j<categorylist[i]['children'].length; j++) {%>
-                                                                  <option value="<%= categorylist[i]['children'][j].id; %>">
-                                                                    <%= categorylist[i]['children'][j].name; %>
-                                                                  </option>
-                                                                  <% } %>
-                                                                </optgroup>
-                                                                <% }%>
-                                                              </select>
+                                                            <%- include('category_options', { options: categoryOptions, selected: '' }) %>
+                                                          </select>
                                                             </div>
                                                             <div class="col-md-2">
                                                               <label class="control-label label-margin">No of Pages</label>
@@ -810,6 +803,9 @@
                                         }
                                         function goToProductList(page, count, search) {
                                           var params = new URLSearchParams({ search: search, page: page, count: count });
+                                          // keep the selected category filter on search / paging
+                                          var category = document.getElementById('category-filter').value;
+                                          if (category) params.set('cat_id', category);
                                           document.location.href = '/productlist?' + params.toString();
                                         }
                                         const changeCount = (count) => {

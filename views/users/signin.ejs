@@ -145,7 +145,7 @@
                         </div>
                         <% } %>
                         <div class="col-md-6 sign-in-banner-img">
-                            <img src="assets/images/authentication-bg-08.svg" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+                            <img src="/assets/images/authentication-bg-08.svg" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
                         </div>
                         <div class="col-md-6 col-sm-6 sign-in">
                             <h2>Sign In</h2>
@@ -268,7 +268,7 @@
                     const row = document.createElement('tr');
                     row.innerHTML = `
                         <td class="cart-description item">
-                            <img src="https://sriina-images.s3.ap-south-1.amazonaws.com/${image}" 
+                            <img src="<%= process.env.IMAGE_URL || "" %>${encodeURIComponent(image || '')}" <%- imageFallback %> 
                                 alt="${name}" class="cart-image">
                         </td>
                         <td class="cart-product-name item">${name}</td>

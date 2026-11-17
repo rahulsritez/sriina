@@ -4,6 +4,7 @@ const { Readable } = require("stream");
 const { create } = require("xmlbuilder2");
 let sitemap;
 var base64 = require("base-64");
+const { ACTIVE_BOOK_SQL, getCategoryIds } = require("../helpers/category");
 
 exports.siteMapMethod = (req, res) => {
   res.header("Content-Type", "application/xml");
@@ -131,7 +132,7 @@ exports.categoryXML = (req, res) => {
         item.ele("g:id").txt(product.id);
         item
           .ele("g:image_link")
-          .txt(`${process.env.IMAGE_URL}${product.image}`);
+          .txt(imageUrl(product.image));
         item.ele("g:product_type").txt("Book");
 
         const shipping = item.ele("g:shipping");
@@ -388,19 +389,12 @@ exports.getCategories = async function (req, res, next) {
     let totalProducts = 0;
 
     if (Number(category_type_id) === 1) {
-      // this category + all its sub categories (any level)
-      const catIds = [Number(catId)];
-      let parentIds = [Number(catId)];
-      while (parentIds.length > 0) {
-        const [children] = await db.promise().query(
-          "SELECT id FROM books_category WHERE parents_id IN (?) AND is_deleted = 0",
-          [parentIds]
-        );
-        parentIds = children.map((c) => c.id).filter((id) => !catIds.includes(id));
-        catIds.push(...parentIds);
+      // this category + all its sub categories (any level), same as the dashboard filter
+      const catIds = await getCategoryIds(catId);
+      if (catIds.length === 0) {
+        return res.redirect("/"); // category is deleted, its page should not open
       }
-
-      const where = "status = 1 AND product_type_id = 1 AND cat_id IN (?)";
+      const where = `${ACTIVE_BOOK_SQL} AND cat_id IN (?)`;
       const [countRows] = await db.promise().query(
         `SELECT COUNT(*) AS total FROM products WHERE ${where}`,
         [catIds]
