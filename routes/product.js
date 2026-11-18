@@ -159,9 +159,7 @@ exports.viewProduct = function (req, res, next) {
                         "@type": "Book",
                         name: book.name ? book.name.trim() : "Unknown",
                         url: `https://sriina.com/book/${bookSlug}`,
-                        image: book.image
-                          ? `https://sriina-products.s3.ap-south-1.amazonaws.com/${book.image}`
-                          : "",
+                        image: book.image ? imageUrl(book.image) : "",
                         description: book.description
                           ? book.description.trim()
                           : "",

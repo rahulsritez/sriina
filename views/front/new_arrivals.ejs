@@ -6,23 +6,10 @@
                     <div class="products">
                         <div class="product">
                             <div class="product-image">
-                                <% if(list.image) {%>
-                                    <div class="img-wrap">
-                                        <% if(/(http(s?)):\/\//i.test(list.image)) {%>
-                                            <a href="/book/<%= list.slug %>"><img src="<%= list.image %>"
-                                                    alt="<%= list.name %>"></a>
-                                            <% } else { %>
-                                                <a href="/book/<%= list.slug %>"><img
-                                                        src="<%= process.env.IMAGE_URL %><%= list.image %>"
-                                                        alt="<%= list.name %>"></a>
-                                                <% } %>
-                                    </div>
-                                    <% } else {%>
-                                        <div class="img-wrap">
-                                            <a href="/book/<%= list.slug %>"><img
-                                                    src="<%= process.env.IMAGE_URL %>404.jpg" alt=""></a>
-                                        </div>
-                                        <% } %>
+                                <div class="img-wrap">
+                                    <a href="/book/<%= list.slug %>"><img src="<%= imageUrl(list.image, NO_IMAGE_URL) %>" <%- imageFallback %>
+                                            alt="<%= list.name %>"></a>
+                                </div>
                             </div>
                             <div class="product-info text-left">
                                 <div style="min-height:110px;">

@@ -73,7 +73,7 @@
                     <td><%= i+1 %></td>
                     <td><%= categorylist[i].id %></td>
                     <td><%= categorylist[i].name %></td>
-                    <td><img height="100" src="<%= process.env.IMAGE_URL %><%= categorylist[i].image %>" ></td>
+                    <td><img height="100" src="<%= imageUrl(categorylist[i].image, NO_IMAGE_URL) %>" <%- imageFallback %> ></td>
                     <td><% if(categorylist[i].status==1){ %>Active<% } else{ %>Inactive<% } %></td>
                     <td>
                       <a class="edit_category btn btn-info btn-sm" data-id="<%= categorylist[i].id %>" data-name="<%= categorylist[i].name %>" data-image="<%= categorylist[i].image %>" data-status="<%= categorylist[i].status %>" data-meta_title="<%= categorylist[i].meta_title %>" data-meta_description="<%= categorylist[i].meta_description %>" data-meta_canonical_tag="<%= categorylist[i].meta_canonical_tag %>" data-category_text="<%= categorylist[i].category_text %>" data-parent="<%= categorylist[i].parents_id %>" data-target="#myModaledit" data-toggle="modal"><i class="fas fa-pencil-alt"></i>Edit</a>

@@ -1,0 +1,5 @@
+<%# every category as an option, sub categories indented, so any level can be picked.
+    usage: include('category_options', { options: categoryOptions, selected: '' }) %>
+<% (options || []).forEach(function (c) { %>
+  <option value="<%= c.id %>" <%= String(selected) === String(c.id) ? 'selected' : '' %>><%- '&nbsp;&nbsp;&nbsp;'.repeat(c.level) %><%= c.level ? '└ ' : '' %><%= c.name %></option>
+<% }) %>

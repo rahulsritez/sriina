@@ -1,14 +1,24 @@
 -- Category & product checks (read only, safe to run)
 
 -- 1. Number of active books in each category, with its parent and page url
-SELECT bc.id, bc.name, parent.name AS parent_category, cu.url_name,
-       COUNT(p.id) AS books
+--    books_direct = books saved in this category
+--    books        = books shown on the category page (this category + all its sub categories)
+WITH RECURSIVE tree AS (
+  SELECT id AS root_id, id AS cat_id FROM books_category WHERE is_deleted = 0
+  UNION ALL
+  SELECT t.root_id, c.id FROM tree t
+  JOIN books_category c ON c.parents_id = t.cat_id AND c.is_deleted = 0
+)
+SELECT bc.id, bc.name, parent.name AS parent_category,
+       (SELECT cu.url_name FROM category_url cu
+         WHERE cu.cat_id = bc.id AND cu.category_type_id = 1 LIMIT 1) AS url_name,
+       (SELECT COUNT(*) FROM products p
+         WHERE p.cat_id = bc.id AND p.status = 1 AND p.product_type_id = 1) AS books_direct,
+       (SELECT COUNT(*) FROM products p JOIN tree t ON t.cat_id = p.cat_id
+         WHERE t.root_id = bc.id AND p.status = 1 AND p.product_type_id = 1) AS books
 FROM books_category bc
 LEFT JOIN books_category parent ON parent.id = bc.parents_id
-LEFT JOIN category_url cu ON cu.cat_id = bc.id AND cu.category_type_id = 1
-LEFT JOIN products p ON p.cat_id = bc.id AND p.status = 1 AND p.product_type_id = 1
 WHERE bc.is_deleted = 0
-GROUP BY bc.id
 ORDER BY parent_category, bc.name;
 
 -- 2. Categories that have no page url (their page cannot be opened)

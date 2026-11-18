@@ -3,6 +3,7 @@ var xss = require("xss");
 var nodemailer = require("nodemailer");
 require("dotenv").config();
 const iso6391 = require("iso-639-1");
+const { getCategoryIds, categoryOptions } = require("../helpers/category");
 const AWS = require("aws-sdk");
 const fs = require("fs");
 
@@ -157,7 +158,7 @@ exports.logout = function (req, res) {
   });
 };
 
-exports.productpage = function (req, res) {
+exports.productpage = async function (req, res) {
   var userId = req.session.userId;
   if (userId == null) {
     return res.redirect("/admin");
@@ -195,6 +196,21 @@ exports.productpage = function (req, res) {
     }
   }
 
+  // category filter: the category + its sub categories, same books as the category page on the site
+  const catFilter = String(req.query.cat_id || "").trim();
+  if (catFilter === "none") {
+    // books without a category, or with a deleted / missing one (they show on no category page)
+    where.push("NOT EXISTS (SELECT 1 FROM books_category bc WHERE bc.id = p.cat_id AND bc.is_deleted = 0)");
+  } else if (catFilter) {
+    try {
+      const catIds = await getCategoryIds(catFilter);
+      where.push(catIds.length ? "p.cat_id IN (?)" : "1 = 0");
+      if (catIds.length) params.push(catIds);
+    } catch (e) {
+      console.log("Category filter error:", e.message);
+    }
+  }
+
   const whereSql = where.join(" AND ");
   // books whose name matches the full search come first
   let orderSql = "p.id DESC";
@@ -205,7 +221,7 @@ exports.productpage = function (req, res) {
   }
 
   const listSql =
-    "SELECT p.*, c.name AS categoryname FROM products p LEFT JOIN books_category c ON c.id = p.cat_id WHERE " +
+    "SELECT p.*, c.name AS categoryname, c.is_deleted AS category_deleted FROM products p LEFT JOIN books_category c ON c.id = p.cat_id WHERE " +
     whereSql + " ORDER BY " + orderSql + " LIMIT ? OFFSET ?";
   const countSql = "SELECT COUNT(*) AS count FROM products p WHERE " + whereSql;
 
@@ -216,14 +232,22 @@ exports.productpage = function (req, res) {
         if (err) console.log("Product count error:", err);
         const totalCount = total && total[0] ? total[0].count : 0;
         db.query("SELECT * FROM products_type ORDER BY name", function (err, types) {
+          // full path of each book's category, e.g. "Academic Books › Engineering"
+          const catById = {};
+          (categories || []).forEach((c) => (catById[c.id] = c));
+          (products || []).forEach((p) => {
+            const names = [];
+            for (let c = catById[p.cat_id], n = 0; c && n < 10; c = catById[c.parents_id], n++) names.unshift(c.name);
+            p.category_path = names.join(" › ");
+          });
           res.render("admin/product", {
-            categorylist: buildCategoryTree(categories || []),
+            categoryOptions: categoryOptions(categories || []),
             total: totalCount,
             productlist: products || [],
             get_type_data: types || [],
             message: req.flash("message"),
             errors: req.flash("errors"),
-            query: { ...req.query, page: page, count: count, search: search },
+            query: { ...req.query, page: page, count: count, search: search, cat_id: catFilter },
             totalpages: Math.max(Math.ceil(totalCount / count), 1),
             languages: iso6391.getAllNames(),
             languageCodes: iso6391.getAllCodes(),
@@ -2782,23 +2806,3 @@ exports.getGrocerySubCategory = function (req, res) {
     res.send(results);
   });
 };
-
-function buildCategoryTree(categories) {
-  const map = {};
-  const roots = [];
-
-  // Create a map of all categories
-  categories.forEach(cat => {
-    map[cat.id] = { ...cat, children: [] };
-  });
-
-  // Link children to parents
-  categories.forEach(cat => {
-    if (cat.parents_id && map[cat.parents_id]) {
-      map[cat.parents_id].children.push(map[cat.id]);
-    } else {
-      roots.push(map[cat.id]);
-    }
-  });
-  return roots;
-}

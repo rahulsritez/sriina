@@ -220,25 +220,11 @@
                             <!-- Centered Image with Bigger Size -->
                             <div class="col-12 col-sm-4 col-lg-3 d-flex justify-content-center">
                               <div class="product-thumbnail">
-                                <% if (list.image) { %>
-                                  <div class="thumbnail">
-                                    <% if (/(http(s?)):\/\//i.test(list.image)) { %>
-                                      <a target="_blank" href="/book/<%= list.slug %>">
-                                        <img src="<%= list.image %>" alt="<%= list.name %>">
-                                      </a>
-                                    <% } else { %>
-                                      <a target="_blank" href="/book/<%= list.slug %>">
-                                        <img src="<%= process.env.IMAGE_URL %><%= list.image %>" alt="<%= list.name %>">
-                                      </a>
-                                    <% } %>
-                                  </div>
-                                <% } else { %>
-                                  <div class="thumbnail">
-                                    <a target="_blank" href="/book/<%= list.slug %>">
-                                      <img src="<%= process.env.IMAGE_URL %>404.jpg" alt="<%= list.name %>">
-                                    </a>
-                                  </div>
-                                <% } %>
+                                <div class="thumbnail">
+                                  <a target="_blank" href="/book/<%= list.slug %>">
+                                    <img src="<%= imageUrl(list.image, NO_IMAGE_URL) %>" <%- imageFallback %> alt="<%= list.name %>">
+                                  </a>
+                                </div>
                               </div>
                             </div>
 
