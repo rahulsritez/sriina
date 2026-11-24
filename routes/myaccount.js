@@ -141,7 +141,7 @@ exports.saveAdminPwdOTP = (req, res) => {
           var sql =
             "UPDATE `users` SET password='" +
             hash +
-            "' WHERE (type='1' or type='2' or type='5') and email='" +
+            "', password_changed_at=NOW() WHERE (type='1' or type='2' or type='5') and email='" +
             email +
             "'";
           var query = db.query(sql, function (error, updatepwd) {

@@ -202,6 +202,35 @@ app.use(async function (req, res, next) {
   next();
 });
 
+// Force-logout admin sessions whose password was changed on another device
+app.use(function (req, res, next) {
+  var userId = req.session && req.session.userId;
+  if (!userId) return next();
+
+  var adminTypes = ["1", "2", "3", "5"];
+  if (!adminTypes.includes(String(req.session.type))) return next();
+
+  db.query(
+    "SELECT password_changed_at FROM users WHERE id = ? LIMIT 1",
+    [userId],
+    function (err, rows) {
+      if (err || !rows || rows.length === 0) return next();
+      var dbTimestamp = rows[0].password_changed_at;
+      if (
+        dbTimestamp &&
+        (!req.session.passwordChangedAt ||
+          new Date(dbTimestamp).getTime() >
+            new Date(req.session.passwordChangedAt).getTime())
+      ) {
+        return req.session.destroy(function () {
+          res.redirect("/admin");
+        });
+      }
+      next();
+    }
+  );
+});
+
 // Routes (same as original, included for completeness)
 app.get("/robots.txt", function (req, res) {
   res.type("text/plain");

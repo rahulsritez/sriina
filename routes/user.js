@@ -57,7 +57,7 @@ exports.login = function (req, res) {
     var email = post.user_name;
     var pass = post.password;
     var sql =
-      "SELECT `id`, `name`, `type`, `password` FROM `users` WHERE `email`='" +
+      "SELECT `id`, `name`, `type`, `password`, `password_changed_at` FROM `users` WHERE `email`='" +
       email +
       "' and status='0' and (`type`='1' || `type`='2' || `type`='3' || `type`='5') ";
 
@@ -68,6 +68,7 @@ exports.login = function (req, res) {
             req.session.userId = results[0].id;
             req.session.type = results[0].type;
             req.session.user = results[0];
+            req.session.passwordChangedAt = results[0].password_changed_at;
 
             var user = req.session.user,
               userId = req.session.userId,
@@ -2357,7 +2358,7 @@ exports.userResetPwd = (req, res, next) => {
         var SQL =
           "UPDATE `users` SET `password` ='" +
           hash +
-          "' WHERE `email`='" +
+          "', `password_changed_at`=NOW() WHERE `email`='" +
           email +
           "' ";
         var query = db.query(SQL, function (error, updatePwd) {
